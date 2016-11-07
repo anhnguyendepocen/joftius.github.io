@@ -25,6 +25,8 @@ fontsize: 12pt
 Joshua Loftus (jloftus@turing.ac.uk)  
 
 November 8, 2016    
+
+Slides and markdown source at https://joftius.github.io/turing/shorttalk/
   
 # Setting: regression model selection
 
