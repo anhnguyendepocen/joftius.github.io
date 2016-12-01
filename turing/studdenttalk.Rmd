@@ -1,0 +1,307 @@
+---
+output: 
+  beamer_presentation:
+    fonttheme: professionalfonts
+    includes:
+      in_header: header.tex
+    theme: Boadilla
+    fig_caption: false
+fontsize: 12pt
+---
+
+# Inference after model selection
+
+![](turing.png)
+
+    
+```
+
+
+
+
+
+``` 
+
+Joshua Loftus (jloftus@turing.ac.uk)  
+
+2 December, 2016    
+
+Slides and markdown source at https://joftius.github.io/turing/studenttalk/
+  
+# Setting: regression model selection
+
+\begin{exampleblock}{Linear model}
+$$y = X\beta + \epsilon$$
+\end{exampleblock}
+
+- $y$ vector of outcomes
+- $X$ predictor/feature matrix
+- $\beta$ parameters/weights to be estimated, assume most are "null," i.e. equal 0 (sparsity)
+- $\epsilon$ random errors, assume probability distribution $N(0, \sigma^2 I)$
+- Pick subset of predictors we think are non-null
+- How good is the model using this subset?
+- Are chosen predictors actually non-null, i.e. significant?
+
+**Type 1 error**: declaring a predictor significant when it is actually null.
+
+# Motivating example: forward stepwise
+
+Data: California county health data...  
+Outcome: log-years of potential life lost.  
+Model: 4 out of 31 predictors chosen by FS with BIC.  
+
+```{r, include=FALSE}
+set.seed(1)
+n <- 50
+p <- 31
+df <- data.frame(matrix(rnorm(n*p), nrow=n))
+df$y <- rnorm(n)
+names(df)[c(6, 14, 20, 24)] <- 
+  c("Poverty12mo", "MedianIncome",
+    "%Obese", "InjuryRate")
+```
+
+```{r}
+model <- step(lm(y ~ ., df), k = log(n), trace = 0)
+print(summary(model)$coefficients, digits = 2)
+```
+
+4 interesting effects, all significant. Time to publish!
+
+# What's wrong with this?
+
+\pause
+
+**The data was actually random: uncorrelated noise!**
+
+```{r}
+set.seed(1)
+n <- 50
+p <- 31
+df <- data.frame(matrix(rnorm(n*p), nrow=n))
+df$y <- rnorm(n)
+names(df)[c(6, 14, 20, 24)] <- 
+  c("Poverty12mo", "MedianIncome",
+    "%Obese", "InjuryRate")
+```
+
+(With apologies for deceiving you, I hope this makes the point...)
+
+# What is going wrong?
+
+Simple example: choose the largest of 5 effects.
+
+```{r}
+maxz <- function(n) return(max(rnorm(n)))
+selected <- replicate(1000, maxz(5))
+range <- seq(min(selected),
+             max(selected),
+             length.out = 1000)
+```
+
+This data is generated under a global null, all effects have 0 mean.
+What happens if we now compute $p$-values for the selected effects
+using standard normal tail areas?
+
+# Selection bias: type 1 error `r mean(selected > qnorm(.95))` instead of 0.05
+
+```{r, echo=FALSE}
+hist(selected, probability = TRUE, breaks = 30)
+lines(range, dnorm(range), col = "red", lwd = 2)
+abline(v = qnorm(.95), col = "blue", lwd = 2, lty = 2)
+```
+
+# Selection can make noise look like signal
+
+Any time we use the data to make a decision (e.g. pick one model instead of some others), we introduce a selection effect (bias).
+\pause
+
+```
+
+```
+
+Forward stepwise, Lasso, elastic net with cross-validation, etc, all use the data in a way that would result in such bias.
+\pause
+
+```
+
+```
+
+Significance tests, prediction error, $R^2$, goodness of fit tests, etc, will all suffer from selection bias
+
+# Big contributor to reproducibility crisis
+
+> **We conducted replications** of 100 experimental and correlational studies published in three psychology journals using high-powered designs and original materials when available. ... Thirty-six percent of replications had significant results; 47% of original effect sizes were in the 95% confidence interval of the replication effect size; **39% of effects were subjectively rated to have replicated the original result**
+
+From *Estimating the reproducibility of psychological science* (Open Science Collaboration, 2015). See also *Why most published research findings are false* (Ioannidis, 2005).
+
+# What's the most common solution?
+
+\pause
+
+### Data splitting
+Before doing any selection, set aside some **validation data**. Then, *after* the final model is chosen, use this validation set to compute prediction error, significance tests, etc.
+
+# Survival example: Cox's PH model, regularized
+
+- Data: 240 lymphoma patients, 7399 genes
+
+```{r, include=FALSE}
+set.seed(1)
+library(glmnet)
+library(survival)
+load("LymphomaData.rda")
+x <- t(patient.data$x)
+y <- patient.data$time
+status <- patient.data$status
+```
+
+```{r, cache=TRUE, warning=FALSE}
+train <- sample(nrow(x), 140)
+x.train <- x[train,]
+y.train <- Surv(y[train], status[train])
+fit <- glmnet(x.train, y.train, family = "cox")
+cv.fit <- cv.glmnet(x.train, y.train,
+                    family = "cox")
+coefs <- coef(fit, s = cv.fit$lambda.min)
+active <- which(coefs != 0)
+length(active)
+```
+
+# Inference for the selected model
+
+```{r, cache=TRUE}
+test <- setdiff(1:nrow(x), train)
+x.test <- x[test, active]
+y.test <- Surv(y[test], status[test])
+fit.test <- coxph(y.test ~ x.test)
+fit.test
+```
+
+# Data splitting
+
+Pros:
+
+- Simple: only took a few lines of code
+- Robust: requires few assumptions
+- Controls type 1 error, no selection bias
+
+\pause
+Cons:
+
+- Reproducibility issues: different random splits, different split proportions
+- Efficiency: using less data for model selection, also less power
+- Feasibility: categorical variables with rare levels (e.g. rare variants)
+
+# Selective error control
+
+New and active research area; Taylor, Tibshirani, Fithian, many others.  
+
+To adjust for the selection effect, *condition* on the selected model.  
+
+Mathematically, if we select $M$, want test a null hypothesis $H_0$ about $M$ (e.g. significance test for a variable in $M$), we want tests that control
+
+\begin{exampleblock}{Selective type 1 error}
+$P_{M,H_0}({\text{reject } H_0|M \text{ selected}}) \leq \alpha$
+\end{exampleblock}
+
+\pause
+If a variable ``surprises'' us enough to be *included in the model*, it must surprise us *again* in order to be *declared significant*
+
+- Data splitting controls this error trivially
+- Controlling this would fix reproducibility problems
+
+# A simple example: marginal screening rule
+
+Observe many (independent) means, select the effects which might be large, say > 1
+
+```{r}
+Zs <- rnorm(10000)
+screen <- Zs > 1
+Zscreened <- Zs[screen]
+mean(screen)
+```
+
+\pause
+These are all null. What distribution can we compare them to, and still control type 1 error?
+
+# Truncated probability law
+
+```{r, echo=FALSE}
+range <- seq(0, max(Zscreened), length.out = 1000)
+hist(Zscreened, probability = TRUE, breaks = 30, xlim = c(0, max(range)))
+lines(range, dnorm(range), col="red", lwd=2)
+lines(range, dnorm(range)/(1-pnorm(1)), col="green", lwd=2)
+text(1.8, 1.3, expression(phi(x)/(1-Phi(1))), cex=2)
+text(.4, .5, expression(phi(x)), cex=2)
+```
+
+# Details vary depending on procedure
+
+Most of the work in this field is in understanding the geometry of truncation for each particular selection procedure
+
+```
+
+```
+
+My work focuses on procedures with complicated geometry (quadratic constraints), and includes a few important special cases (groups of variables, cross-validation)
+
+# groupfs simulation: $n = 100$, $p = 100$, $P = 50$
+
+Model size chosen with \textsc{bic}. Groups 1-4 have
+$\| \beta \|_2 = .84$ within groups, all else 0
+
+```
+> set.seed(1)
+  ...
+> fit <- groupfs(x, y, ...)
+> pvals <- groupfsInf(fit)
+> pvals
+  Group Pvalue     TF df   Size Ints    Min     Max
+1     3  0.088 49.913  2 67.811    1 44.949 112.760
+2     1  0.000 98.077  1 54.267    1 68.151 122.418
+3     2  0.003 69.266  1 28.659    1 50.423  79.082
+4     4  0.000 37.099  2 28.803    1 20.194  48.997
+5    47  0.319  5.143  1  3.887    1  3.518   7.406
+```
+
+Ignoring selection, first 4 $p$-values are <0.001, for 47 it's 0.024
+
+# Remarks
+
+Technical details in the papers, but beware:
+
+- Tests not independent (with one notable exception)
+- Some examples are computationally expensive (cross-validation)
+- May be low powered against some alternatives
+
+Software implementation: \texttt{selectiveInference} R package on CRAN
+Github repo: https://github.com/selective-inference/
+
+# Which method to use for a given problem?
+
+- If $n$ is very large, might just use data splitting (simple)
+- Otherwise, consider the conditional approach, especially if $p > n$ or bottlenecks like rare observations limit effective sample size
+- If $p$ is small, more robust/conservative method ("PoSI") is available, see Berk et. al. (2013).
+
+# Most general takeaway message
+
+### **Selection** is a source of uncertainty
+
+Data science pipelines must **address all sources of uncertainty**. Otherwise we might just be fooling ourselves...
+
+# References
+
+- Taylor, Tibshirani (2015). Statistical learning and selective inference. **PNAS**.
+- Benjamini, (2010). Simultaneous and selective inference: current successes and future challenges. Biometrical Journal.
+- Berk et al, (2010). Statistical inference after model selection. Journal of Quantitative Criminology.
+- Berk et al, (2013). Valid post-selection inference. Annals of Statistics.
+- Simon et al, (2011). Regularization Paths for Cox's Proportional Hazards Model via Coordinate Descent. Journal of Statistical Software. 
+- Loftus, (2015). Selective inference after cross-validation. arXiv Preprint.
+- Loftus and Taylor, (2015). Selective inference in regression models with groups of variables. arXiv Preprint.
+
+# Thanks for your attention!
+
+### Questions?
+Message (jloftus@turing.ac.uk) or find me at the Alan Turing Institute.
+
