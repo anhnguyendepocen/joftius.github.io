@@ -308,7 +308,7 @@ Data science pipelines must **address all sources of uncertainty**. Otherwise we
   
   \[
     \underbrace{\mathcal L( y | M(y) = m)}_{\text{what we want}} =
-    \mathcal L( y | \underbrace{{A}(m) y \leq  b(m) }_{\text{simple geometry}})
+    \mathcal L( y | \underbrace{A(m) y \leq  b(m) }_{\text{simple geometry}})
     \quad \text{on } \{ M(y) = m \}
   \]
 
