@@ -1,0 +1,46 @@
+
+% \usepackage[utf8]{inputenc}
+% \usepackage{pgf,tikz}
+% \usepackage{mathrsfs}
+% \usetikzlibrary{arrows}
+% \pagestyle{empty}
+% \begin{document}
+% \definecolor{uuuuuu}{rgb}{0.26666666666666666,0.26666666666666666,0.26666666666666666}
+% \definecolor{qqttzz}{rgb}{0.,0.2,0.6}
+% \definecolor{ffttww}{rgb}{1.,0.2,0.4}
+% \definecolor{ffdxqq}{rgb}{1.,0.8431372549019608,0.}
+
+\begin{tikzpicture}[line cap=round,line join=round,>=triangle 45,x=1.0cm,y=1.0cm]
+\clip(-3.5,-2.) rectangle (3.5,3.);
+\draw [samples=50,domain=-0.99:0.99,rotate around={175.710846671181:(0.,0.)},xshift=0.cm,yshift=0.cm,line width=1.2pt,color=ffdxqq,fill=ffdxqq,fill opacity=0.3] plot ({1.3632829747652853*(1+(\x)^2)/(1-(\x)^2)},{3.7724606731833688*2*(\x)/(1-(\x)^2)});
+\draw [samples=50,domain=-0.99:0.99,rotate around={175.710846671181:(0.,0.)},xshift=0.cm,yshift=0.cm,line width=1.2pt,color=ffdxqq,fill=ffdxqq,fill opacity=0.3] plot ({1.3632829747652853*(-1-(\x)^2)/(1-(\x)^2)},{3.7724606731833688*(-2)*(\x)/(1-(\x)^2)});
+\draw [samples=50,domain=-0.99:0.99,rotate around={101.30993247402021:(0.,0.)},xshift=0.cm,yshift=0.cm,line width=1.2pt,color=ffttww,fill=ffttww,fill opacity=0.3] plot ({0.34055628190383713*(1+(\x)^2)/(1-(\x)^2)},{0.37950153999138686*2*(\x)/(1-(\x)^2)});
+\draw [samples=50,domain=-0.99:0.99,rotate around={101.30993247402021:(0.,0.)},xshift=0.cm,yshift=0.cm,line width=1.2pt,color=ffttww,fill=ffttww,fill opacity=0.3] plot ({0.34055628190383713*(-1-(\x)^2)/(1-(\x)^2)},{0.37950153999138686*(-2)*(\x)/(1-(\x)^2)});
+
+\only<3->{
+\draw [line width=1.2pt] (-1.340476759629669,0.4200212100025541)-- (-0.7775074544238689,0.5386653832994599);
+\draw [line width=1.2pt] (0.52509555812019,0.8131852481095897)-- (1.5034713063441172,1.019375142919815);
+}
+\draw [samples=50,domain=-0.99:0.99,rotate around={71.56505117707799:(0.,0.)},xshift=0.cm,yshift=0.cm,line width=1.2pt,color=qqttzz,fill=qqttzz,fill opacity=0.35] plot ({1.3458260544276703*(1+(\x)^2)/(1-(\x)^2)},{2.8615995930988753*2*(\x)/(1-(\x)^2)});
+\draw [samples=50,domain=-0.99:0.99,rotate around={71.56505117707799:(0.,0.)},xshift=0.cm,yshift=0.cm,line width=1.2pt,color=qqttzz,fill=qqttzz,fill opacity=0.35] plot ({1.3458260544276703*(-1-(\x)^2)/(1-(\x)^2)},{2.8615995930988753*(-2)*(\x)/(1-(\x)^2)});
+
+\begin{scriptsize}
+%\draw[color=ffdxqq] (-3.12,-5.62) node {$f$};
+\draw [fill=black] (1.1354044268638637,0.9418060992257847) circle (1.5pt);
+\only<1-3>{
+\draw[color=black] (1.28,1.22) node {$y$};
+}
+%\draw[color=black] (1.28,0.7) node {$Y$};
+\only<2-3>{
+\draw [->,line width=1.2pt] (0.,0.) -- (0.8174145978593168,0.17226779205731055);
+\draw[color=black] (0.34,0.32) node {$u$};
+}
+\only<2-3>{
+\draw [fill=uuuuuu] (-0.14175857018565358,0.672647645027388) circle (1.5pt);
+\draw[color=uuuuuu] (0.,0.96) node {$z$};
+}
+\only<4>{
+\draw[color=uuuuuu] (.9, .65) node {$uT+z$};
+}
+\end{scriptsize}
+\end{tikzpicture}
