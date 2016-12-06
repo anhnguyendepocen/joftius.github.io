@@ -12,14 +12,16 @@ bibliography: biblio.bib
 
 # Post-selection inference for models characterized by quadratic constraints
 
+```
+
+```
+
 ![](turing.png)
+
+\includegraphics[width=.6\textwidth]{statslab.png}
 
     
 ```
-
-
-
-
 
 ``` 
 
@@ -386,18 +388,19 @@ Ignoring selection, first 4 $p$-values are <0.001, for 47 it's 0.024
 
   This quadratic form allows us to conduct inference conditional on models selected by cross-validation
 
-# Simulation 
+# Simulation: empirical CDF
   
   \includegraphics[width=\textwidth]{cvECDF.pdf}
 
-
 # Remarks
 
-Technical details in the papers, but beware:
+Technical details in the papers, a few notes:
 
 - Tests not independent (with one notable exception)
 - Some examples are computationally expensive (cross-validation)
 - May be low powered against some alternatives
+- Can also do $\sigma^2$ unknown case
+- Most usual limitations of model selection still apply
 
 Software implementation: \texttt{selectiveInference} R package on CRAN
 Github repo: https://github.com/selective-inference/
@@ -414,13 +417,6 @@ Github repo: https://github.com/selective-inference/
 
 Data science pipelines must **address all sources of uncertainty**. Otherwise we might just be fooling ourselves...
 
-# Pros and cons of this approach
-
-- Can also do $\sigma^2$ unknown case
-- Model selection procedures like cross-validation (previously unsolved)
-- Can be computationally expensive (particularly cross-validation)
-- Most usual limitations of model selection still apply
-
 # References
 
 - Taylor, Tibshirani (2015). Statistical learning and selective inference. **PNAS**.
@@ -434,6 +430,6 @@ Data science pipelines must **address all sources of uncertainty**. Otherwise we
 # Thanks for your attention!
 
 ### Questions?
-Message (jloftus@turing.ac.uk) or find me at the Alan Turing Institute.
+jloftus@turing.ac.uk or visit me at the Alan Turing Institute.
 
 # More references
