@@ -1,0 +1,439 @@
+---
+output: 
+  beamer_presentation:
+    fonttheme: professionalfonts
+    includes:
+      in_header: header.tex
+    theme: Boadilla
+    fig_caption: false
+fontsize: 12pt
+bibliography: biblio.bib
+---
+
+# Post-selection inference for models characterized by quadratic constraints
+
+![](turing.png)
+
+    
+```
+
+
+
+
+
+``` 
+
+Joshua Loftus (jloftus@turing.ac.uk)  
+
+6 December, 2016    
+
+Slides and markdown source at https://joftius.github.io/turing
+  
+# Setting: regression model selection
+
+\begin{exampleblock}{Linear model}
+$$y = X\beta + \epsilon$$
+\end{exampleblock}
+
+- $y$ vector of outcomes
+- $X$ predictor/feature matrix
+- $\beta$ parameters/weights to be estimated, assume most are "null," i.e. equal 0 (sparsity)
+- $\epsilon$ random errors, assume probability distribution $N(0, \sigma^2 I)$
+- Pick subset of predictors we think are non-null
+- How good is the model using this subset?
+- Are chosen predictors actually non-null, i.e. significant?
+
+**Type 1 error**: declaring a predictor significant when it is actually null.
+
+# Motivating example: forward stepwise
+
+Data: California county health data...  
+Outcome: log-years of potential life lost.  
+Model: 5 out of 30 predictors chosen by FS with AIC.  
+
+```{r, include=FALSE}
+set.seed(1)
+df = read.csv("CaliforniaCountyHealth.csv")
+df = df[complete.cases(df), 9:ncol(df)]
+names(df) <- gsub("X.", "%", names(df), fixed = T)
+df$y <- rnorm(nrow(df))
+df$y <- df$y - mean(df$y)
+```
+
+```{r}
+model <- step(lm(y ~ .-1, df), k = 2, trace = 0)
+print(summary(model)$coefficients[,c(1,4)], digits = 2)
+```
+
+5 interesting effects, all significant. Time to publish!
+
+# What's wrong with this?
+
+\pause
+
+**The outcome was actually just noise, independent of the predictors**
+
+```{r}
+set.seed(1)
+df = read.csv("CaliforniaCountyHealth.csv")
+df$y <- rnorm(nrow(df)) #!!!
+```
+
+(With apologies for deceiving you, I hope this makes the point...)
+
+# Selection can make noise look like signal
+
+Any time we use the data to make a decision (e.g. pick one model instead of some others), we introduce a selection effect (bias).
+\pause
+
+```
+
+```
+
+Forward stepwise, Lasso, elastic net with cross-validation, etc, all use the data in a way that would result in such bias.
+\pause
+
+```
+
+```
+
+Significance tests, prediction error, $R^2$, goodness of fit tests, etc, will all suffer from selection bias
+
+# Big contributor to reproducibility crisis
+
+> **We conducted replications** of 100 experimental and correlational studies published in three psychology journals using high-powered designs and original materials when available. ... Thirty-six percent of replications had significant results; 47% of original effect sizes were in the 95% confidence interval of the replication effect size; **39% of effects were subjectively rated to have replicated the original result**
+
+From *Estimating the reproducibility of psychological science* (Open Science Collaboration, 2015). See also *Why most published research findings are false* (Ioannidis, 2005).
+
+# What's the most common solution?
+
+\pause
+
+### Data splitting
+Before doing any selection, set aside some **validation data**. Then, *after* the final model is chosen, use this validation set to compute prediction error, significance tests, etc.
+
+# Survival example: Cox's PH model, regularized
+
+- Data: 240 lymphoma patients, 7399 genes
+
+```{r, include=FALSE}
+set.seed(1)
+library(glmnet)
+library(survival)
+load("LymphomaData.rda")
+x <- t(patient.data$x)
+y <- patient.data$time
+status <- patient.data$status
+```
+
+```{r, cache=TRUE, warning=FALSE}
+train <- sample(nrow(x), 140)
+x.train <- x[train,]
+y.train <- Surv(y[train], status[train])
+fit <- glmnet(x.train, y.train, family = "cox")
+cv.fit <- cv.glmnet(x.train, y.train,
+                    family = "cox")
+coefs <- coef(fit, s = cv.fit$lambda.min)
+active <- which(coefs != 0)
+length(active)
+```
+
+# Inference for the selected model
+
+```{r, cache=TRUE}
+test <- setdiff(1:nrow(x), train)
+x.test <- x[test, active]
+y.test <- Surv(y[test], status[test])
+fit.test <- coxph(y.test ~ x.test)
+fit.test
+```
+
+# Data splitting
+
+Pros:
+
+- Simple: only took a few lines of code
+- Robust: requires few assumptions
+- Controls type 1 error, no selection bias
+
+\pause
+Cons:
+
+- Reproducibility issues: different random splits, different split proportions
+- Efficiency: using less data for model selection, also less power
+- Feasibility: categorical variables with rare levels (e.g. rare variants)
+
+# Related work
+  
+There has been much recent work in this area. Following Berk et al. (2013), we consider two categories:
+
+### Full-model: inference about the parameters $\beta_j$
+In the (possibly undetermined/singular) linear model
+$$y = X\beta + \epsilon$$
+
+### Sub-model: inference about the parameters $\beta(A_0)_j$
+In the (sparse, nonsingular) linear model
+$$y = X(A_0)\beta(A_0) + \epsilon$$
+for some $A_0 \subset \{ 1, \ldots, p \}$.
+
+# Inference in the full model $\mu = X\beta$
+
+FDR control or similar
+
+- Screen \& clean \hfill @wasserman2009high
+- Stability selection \hfill @meinshausen2010stability
+- Empirical Bayes \hfill @efron2011tweedie
+- SLOPE \hfill @bogdan2014slope
+- Knockoffs \hfill @barber2015knockoff
+
+Type 1 error
+
+- Univariate treatment \hfill @belloni2014inference
+- Debiasing methods \hfill @buhlmann2013significance, @javanmard2014confidence, @zhang2014confidence
+
+# Inference in the sub-model $\mu = X(A_0)\beta(A_0)$
+
+- PoSI: simultaneous inference \hfill @berk2013valid
+- Selective inference, FCR \hfill Benjamini \& Yekutieli (2005)
+- Answer must be valid given that the question was asked
+- Conditional approach: conditions the model selection event and uses corresponding truncated probability distributions
+
+# Literature on the conditional approach
+
+- Frequentist interpretation \hfill Hurvich \& Tsai (1990)
+- Lasso, sequential \hfill @lockhart2014significance
+- General penalty, global null, geometry \hfill @taylor2013tests, @azais2015power
+- Forward stepwise, sequential \hfill @loftus2014significance
+- Fixed $\lambda$ Lasso / conditional \hfill @lee2013exact, @fithian2014optimal
+- Forward stepwise and LAR \hfill @tibshirani2014exact
+- Asymptotics \hfill @tian2015asymptotics
+- Unknown $\sigma$ \hfill @tian2015sqrtlasso, @gross2015internal
+- Group selection / unknown $\sigma$ \hfill  @loftus2015groups
+- Cross-validation \hfill @tian2015randomized, @loftus2015cv
+- Unsupervised learning \hfill @blier2015cluster
+
+
+# Selective error control
+
+New and active research area; Taylor, Tibshirani, Fithian, many others.  
+
+To adjust for the selection effect, *condition* on the selected model.  
+
+Mathematically, if we select $M$, test a null hypothesis $H_0$ about $M$ (e.g. significance test for a variable in $M$), we want tests that control
+
+\begin{exampleblock}{Selective type 1 error}
+$P_{M,H_0}({\text{reject } H_0|M \text{ selected}}) \leq \alpha$
+\end{exampleblock}
+
+\pause
+If a variable ``surprises'' us enough to be *included in the model*, it must surprise us *again* in order to be *declared significant*
+
+- Data splitting controls this error trivially
+- Controlling this would fix reproducibility problems
+
+# A simple example: marginal screening rule
+
+Observe many (independent) means, select the effects which might be large, say > 1
+
+```{r}
+Zs <- rnorm(10000)
+screen <- Zs > 1
+Zscreened <- Zs[screen]
+mean(screen)
+```
+
+\pause
+These are all null. What distribution can we compare them to, and still control type 1 error?
+
+# Truncated probability law
+
+```{r, echo=FALSE}
+range <- seq(0, max(Zscreened), length.out = 1000)
+hist(Zscreened, probability = TRUE, breaks = 30, xlim = c(0, max(range)))
+lines(range, dnorm(range), col="red", lwd=2)
+lines(range, dnorm(range)/(1-pnorm(1)), col="green", lwd=2)
+text(1.8, 1.3, expression(phi(x)/(1-Phi(1))), cex=2)
+text(.4, .5, expression(phi(x)), cex=2)
+```
+
+# Details vary depending on procedure
+
+Most of the work in this field is in understanding the geometry of truncation for each particular selection procedure
+
+```
+
+```
+
+My work focuses on procedures with complicated geometry (quadratic constraints), and includes a few important special cases (groups of variables, cross-validation)
+
+
+# Previous work: affine model selection
+
+- Model selection map $M : \mathbb{R}^n \to \mathcal M$, with $\mathcal M$ space of potential models.
+- Observe $E_m = \{ M(y) = m \}$, want to condition on this event. 
+- For many model selection procedures
+  
+  \[
+    \underbrace{\mathcal L( y | M(y) = m)}_{\text{what we want}} =
+    \mathcal L( y | \underbrace{A(m) y \leq  b(m) }_{\text{simple geometry}})
+    \quad \text{on } \{ M(y) = m \}
+  \]
+
+
+\centering
+MVN constrained to a polytope.
+
+
+# Quadratic model selection framework
+
+  For some model selection procedures (e.g. forward stepwise with groups,
+  cross-validation), event can be decomposed as
+
+  \begin{block}{Quadratic selection event}
+    \[
+    E_m := \{ M(y) = m \} = \bigcap_{j \in J_m} \{ y : y^TQ_jy + a^T_jy + b_j \geq 0 \}
+    \]
+  \end{block}
+  
+- These $Q, a, b$ are constant on $E_m$, so conditionally they are constants
+- For conditional inference, need to compute this intersection of quadratics
+
+# Truncated $\chi$ significance test
+
+Suppose $y \sim N(\mu, \sigma^2I)$ with $\sigma^2$ known,
+  $H_0(m) : P_m\mu = 0$, $P_m$ is constant on $\{ M(y) = m \}$,
+  $r := \text{Tr}(P_m)$, $R := P_my$, $u := R/\| R\|_2$, $z: = y -
+  R$, $D_m := \{ t \geq 0 : M(ut\sigma+z) = m
+  \}$, and the observed statistic $T = \|R\|_2/\sigma$
+
+\begin{exampleblock}{Post-selection $T\chi$ distribution}
+  \begin{equation}
+    \label{eq:tchilaw}
+    T | (m, z, u) \sim \left.\chi_r \right|_{D_m}
+  \end{equation}
+  where the vertical bar denotes truncation. Hence, with $f_r$ the pdf
+  of a central $\chi_r$ random variable
+  \begin{equation}
+    \label{eq:tchisurv}
+    T\chi :=
+    \frac{\int_{D_m \cap [T, \infty]} f_r(t)dt }{\int_{D_m}
+      f_r(t)dt} \sim U[0,1]
+  \end{equation}
+  is a $p$-value controlling selective type 1 error.
+\end{exampleblock}
+
+
+# Geometry problem: intersection of quadratic regions
+  
+  \begin{figure}[h]
+    \centering
+    \input{intersection.tex}
+    \caption{\footnotesize The \textit{complement} of each quadratic
+      is shaded with a different color. The unshaded, white region is
+      $E_m$.}
+  \end{figure}
+
+
+# groupfs simulation: $n = 100$, $p = 100$, $P = 50$
+
+Model size chosen with \textsc{bic}. Groups 1-4 have
+$\| \beta \|_2 = .84$ within groups, all else 0
+
+```
+> set.seed(1)
+  ...
+> fit <- groupfs(x, y, ...)
+> pvals <- groupfsInf(fit)
+> pvals
+  Group Pvalue     TF df   Size Ints    Min     Max
+1     3  0.088 49.913  2 67.811    1 44.949 112.760
+2     1  0.000 98.077  1 54.267    1 68.151 122.418
+3     2  0.003 69.266  1 28.659    1 50.423  79.082
+4     4  0.000 37.099  2 28.803    1 20.194  48.997
+5    47  0.319  5.143  1  3.887    1  3.518   7.406
+```
+
+Ignoring selection, first 4 $p$-values are <0.001, for 47 it's 0.024
+
+# Adaptive model selection with cross-validation
+
+- For $K$-fold cv, data partitioned (randomly) into $D_1, \ldots, D_K$. For each $k = 1,\ldots,K$, hold out $D_k$ as a test set while training a model on the other $K-1$ folds. Form estimate $RSS_k$ of out-of-sample prediction error. Average these estimates over test folds. 
+- Use to choose model complexity: evaluate $RSS_{k,s}$ for various sparsity choices $s$. Pick $s$ minimizing the cv-RSS estimate.
+- Run forward stepwise with maxsteps $S$. For $s = 1,\ldots, S$ evaluate the test error $RSS_{k,s}$. Average to get $RSS_s$. Pick $s^*$ minimizing this. Run forward stepwise on the whole data for $s^*$ steps. 
+
+  Can we do selective inference for the final models chosen this way?
+
+# Notation for cross-validation
+
+- Let $f, g$ index CV test folds. 
+- On fold $f$, model $m_f$ at step $s$, and $-f$ denoting the training set for test fold $f$ (complement of $f$). 
+- Define $P_{f,s} := X^f_{m_f,s}(X^{-f}_{m_f,s})^\dagger$ (not a projection)
+- $s = \text{argmin}_s \sum_{f=1}^K \| y^{f} - P_{f,s} y^{-f} \|_2^2$ 
+- Sums of squares... maybe it's a quadratic form?
+
+# Blockwise quadratic form of cv-RSS
+  
+  \begin{block}{Key result of Loftus (2015).}
+    Define $Q^s_{ff} := \sum_{g\neq f}(P_{g,s})_f^T(P_{g,s})_f$ and
+    \[
+      Q^s_{fg} := -(P_{f,s})_g - (P_{g,s})^T_f + \sum_{\substack{h=1\\h \notin \{f, g \}}}^K (P_{h,s})^T_f (P_{h,s})^T_g
+    \]
+     Then with $y_K$ denoting the observations ordered by CV-folds, 
+    \[
+    \text{cv-RSS}(s) = y_K^TQ^sy_K
+    \]
+  \end{block}
+
+  This quadratic form allows us to conduct inference conditional on models selected by cross-validation
+
+# Simulation 
+  
+  \includegraphics[width=\textwidth]{cvECDF.pdf}
+
+
+# Remarks
+
+Technical details in the papers, but beware:
+
+- Tests not independent (with one notable exception)
+- Some examples are computationally expensive (cross-validation)
+- May be low powered against some alternatives
+
+Software implementation: \texttt{selectiveInference} R package on CRAN
+Github repo: https://github.com/selective-inference/
+
+# Which method to use for a given problem?
+
+- If $n$ is very large, might just use data splitting (simple)
+- Otherwise, consider the conditional approach, especially if $p > n$ or bottlenecks like rare observations limit effective sample size
+- If $p$ is small, more robust/conservative method ("PoSI") is available, see Berk et. al. (2013).
+
+# Most general takeaway message
+
+### **Selection** is a source of uncertainty
+
+Data science pipelines must **address all sources of uncertainty**. Otherwise we might just be fooling ourselves...
+
+# Pros and cons of this approach
+
+- Can also do $\sigma^2$ unknown case
+- Model selection procedures like cross-validation (previously unsolved)
+- Can be computationally expensive (particularly cross-validation)
+- Most usual limitations of model selection still apply
+
+# References
+
+- Taylor, Tibshirani (2015). Statistical learning and selective inference. **PNAS**.
+- Benjamini, (2010). Simultaneous and selective inference: current successes and future challenges. Biometrical Journal.
+- Berk et al, (2010). Statistical inference after model selection. Journal of Quantitative Criminology.
+- Berk et al, (2013). Valid post-selection inference. Annals of Statistics.
+- Simon et al, (2011). Regularization Paths for Cox's Proportional Hazards Model via Coordinate Descent. Journal of Statistical Software. 
+- Loftus, (2015). Selective inference after cross-validation. arXiv Preprint.
+- Loftus and Taylor, (2015). Selective inference in regression models with groups of variables. arXiv Preprint.
+
+# Thanks for your attention!
+
+### Questions?
+Message (jloftus@turing.ac.uk) or find me at the Alan Turing Institute.
+
+# More references

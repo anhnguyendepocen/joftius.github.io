@@ -1,0 +1,197 @@
+
+% \begin{frame}{Quadratic events: forward stepwise with groups}
+  
+% Predetermined groups of variables. FS add entire groups in each step. At the first step, $X_{j_1}$ is a submatrix with $\geq 1$ columns. Now the event that $j_1$ is the first group is equivalent to
+
+%   \[
+%     \| ( I -  X_{j_1}  X_{j_1}^\dagger )  y \|_2^2
+%     \leq 
+%     \| ( I -  X_{j}  X_{j}^\dagger )  y \|_2^2
+%     \quad \forall j \neq j_1
+%   \]
+
+%   or
+%   \[
+%      y^T[  X_{j_1}  X_{j_1}^\dagger 
+%     -  X_{j}  X_{j}^\dagger ]  y \geq 0
+%     \quad \forall j \neq j_1
+%   \]
+
+% \ 
+% \pause
+%   {\footnotesize JL; Taylor, J. A significance test for forward stepwise model selection. arXiv preprint (2014) 
+
+%     \ 
+
+% Taylor, J.; JL; Tibshirani, Ryan; Tests in adaptive regression via the Kac-Rice formula. Ann. Stat. To appear
+% }
+% \end{frame}
+
+\begin{frame}{Previous work: affine framework}
+
+  Model selection map $M : \bb{R}^n \to \mc M$, with $\mc M$ space of potential models. Observe $E_m = \{ M(Y) = m \}$, want to condition on this event. 
+
+\ 
+
+For many model selection procedures
+
+  \ 
+
+  \[
+    \underbrace{\mc L( Y | M(Y) = m)}_{\text{what we want}} =
+    \mc L( Y | \underbrace{{A}(m) Y \leq  b(m) }_{\text{simple geometry}})
+    \quad \text{on } \{ M(Y) = m \}
+  \]
+
+  \ 
+
+  MVN constrained to a polytope.
+
+
+\end{frame}
+
+
+\begin{frame}{Quadratic model selection framework}
+
+  For some model selection procedures (e.g. forward stepwise with groups,
+  cross-validation), event can be decomposed as
+
+  \begin{block}{Quadratic selection event}
+    \[
+    E_m := \{ M(Y) = m \} = \bigcap_{j \in J_m} \{ y : y^TQ_jy + a^T_jy + b_j \geq 0 \}
+    \]
+  \end{block}
+  
+  \ 
+
+  These $Q, a, b$ are constant on $E_m$, so conditionally they are constants
+
+  \ 
+
+  For conditional inference, need to compute this intersection of quadratics
+
+\end{frame}
+
+\begin{frame}{Geometry problem: intersection of quadratic regions}
+  
+%  \includegraphics[width=\textwidth]{leonard.jpeg}
+  \begin{figure}[h]
+    \centering
+    \input{intersection.tex}
+    \caption{\footnotesize The \textit{complement} of each quadratic
+      is shaded with a different color. The unshaded, white region is
+      $E_m$.}
+  \end{figure}
+
+\end{frame}
+
+\begin{frame}{Reduction to one-dimension, $\sigma^2$ known}
+  
+  Test statistics have form $T^2 = \| PY \|_2^2$, with $P$ a projection matrix
+
+  \ 
+
+  Write $Y = PY + Z$ where $Z = (I-P)Y$, $U = PY/\|PY\|_2$
+
+  \ 
+
+  Find $S_m = \{ t \geq 0 : tU+Z \in E_m \} \subseteq \mathbb R$ by
+  solving
+
+  \[
+  (tU+Z)^TQ_j(tU+Z) + a^T_j(tU+Z) + b_j \geq 0
+  \]
+  
+  \begin{block}{One-dimensional test (recall $y \sim N(\mu, \sigma^2)$)}
+    For a fixed $P$, under $H_0 : P\mu = 0$ we have $T^2 \sim \sigma^2
+    \chi^2_r$, where $r = \text{rank}(P)$.
+
+    \ 
+
+    Conditional on $E_m, Z$, and $U$, only remaining variation
+    is $T = \| PY \|_2$ with truncated support $S_m$.
+  \end{block}
+  
+\end{frame}
+
+\begin{frame}{Using this for linear models}
+
+  Suppose some algorithm (forward stepwise) selected a model $m$ with
+  quadratic selection region $E_m$. We want to test some group of
+  variables $g \in m$. Let $\beta^*_m$ be population least-squares
+  coefficients \textit{for model $m$}.
+
+  \ 
+
+  Null hypothesis: $\beta^*_{m,g} = 0 \iff P_{m,g} \mu = 0$
+
+  \ 
+
+  Key: $P_{m,g}$ is constant on $E_m$, so conditionally it is fixed
+  (even though it depends on $m$)
+
+  \ 
+
+  Apply previous result with $T = \| P_{m,g} y \|_2$
+
+  \begin{block}{Note}
+    $P_{m,g} \mu = 0 \iff \mu$ is in the span of $m \slash g$, or
+    in other words that the selected model (without $g$) is ``true''
+  \end{block}
+\end{frame}
+
+
+% \begin{frame}{Selective $F$ test for unknown $\sigma^2$}
+
+% Condition on a few more direction vectors. Again, only variation in
+% $F$ statistic itself
+
+% \ 
+
+% Things conditioned on are independent of $F$ under the null
+
+% \ 
+% \pause
+
+% Support: solve for roots of functions of the form
+% \[
+% a_{11} g_1(t)^2 + a_{22}g_2(t)^2 + a_{12} g_1(t) g_2(t) + a_1 g_1(t) +
+% a_2 g_2(t) + a_0
+% \]
+% where
+% \[
+% g_1(t) = \sqrt{\frac{t}{1+t}}, \qquad g_2(t) = \frac{1}{\sqrt{1+t}}
+% \]
+% Specialized numerical recipe for this
+
+% \end{frame}
+
+
+% ---------------------------------------------------------
+
+
+% ---------------------------------------------------------
+
+
+% ---------------------------------------------------------
+
+
+% \begin{frame}{Quadratic framework}
+
+%   Abstractly, we want to consider problems where
+%   \[
+%     \{ M( y) = m \} = \{  y^T  Q(m)  y +  A(m)  y + b(m) \geq 0 \}
+%   \]
+
+%   \begin{block}{Issues to address case-by-case}
+%     \begin{itemize}
+%       \item Getting a model selection procedure into this form (if possible)
+%       \item Which things to condition on (power vs. computation)
+%       \item Form of test statistic, interpretation of hypotheses
+%       \item Complicated geometry of selection region: how to sample?
+%     \end{itemize}
+%   \end{block}  
+
+% \end{frame}
+
+% ---------------------------------------------------------
