@@ -12,10 +12,6 @@ bibliography: biblio.bib
 
 # Post-selection inference for models characterized by quadratic constraints
 
-```
-
-```
-
 ![](turing.png)
 
 \includegraphics[width=.6\textwidth]{statslab.png}
@@ -27,7 +23,7 @@ bibliography: biblio.bib
 
 Joshua Loftus (jloftus@turing.ac.uk)  
 
-6 December, 2016    
+9 February, 2017    
 
 Slides and markdown source at https://joftius.github.io/turing
   
@@ -64,7 +60,7 @@ df$y <- df$y - mean(df$y)
 
 ```{r}
 model <- step(lm(y ~ .-1, df), k = 2, trace = 0)
-print(summary(model)$coefficients[,c(1,4)], digits = 2)
+print(summary(model)$coefficients[,4,drop=F], digits = 2)
 ```
 
 5 interesting effects, all significant. Time to publish!
