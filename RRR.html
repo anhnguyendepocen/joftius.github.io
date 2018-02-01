@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other
+    head content must come *after* these tags -->
+    <meta name="description" content="Academic homepage">
+    <meta name="author" content="Joshua Loftus">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Joshua Loftus</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap theme -->
+    <link href="bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="theme.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and
+    media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body role="document">
+
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Joshua Loftus</a>
+        </div>
+	<nav class="collapse navbar-collapse" role="navigation">
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="research.html">Research</a></li>
+            <li><a href="teaching.html">Teaching</a></li>
+	    <li><a href="personal.html">Personal</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+	</nav>
+      </div>
+    </nav>
+
+      <div class="container theme-showcase" role="main">
+
+      <hr \>
+
+      <div class="page-header">
+	<h3>Recommended Resources for R</h3>
+      </div>
+
+      <div class="row">
+	
+	There are a vast number of packages available in R. Look in any of the categories <a href="https://cran.r-project.org/web/views/">here</a> for just a small glimpse. It's enough for any beginner to easily get lost. So, I've compiled a short list of resources for beginners, with an emphasis on packages in the tidyverse and interesting data sets.
+	First things first: you'll need to <a href="https://cran.rstudio.com/">download</a> and install R itself, then <a href="https://www.rstudio.com/products/rstudio/download/">download</a> and install the free desktop version of RStudio, finally, you may find this short, <a href="https://ismayc.github.io/rbasics-book/">free book</a> on the basics of R and RStudio helpful for getting started.
+	
+	
+      </div>
+
+      <div class="row">
+	
+      <div class="page-header">
+	<h4>Packages and Guides</h4>
+      </div>
+
+      <div class="col-md-5">
+
+	The <a href="https://www.tidyverse.org/packages/">tidyverse</a> contains many packages widely considered essential by data scientists who use R, including blockbusters like <a href="http://ggplot2.tidyverse.org/">ggplot2</a> and <a href="http://dplyr.tidyverse.org/">dplyr</a>.
+
+	<br /> <br />
+	
+	For analyzing text--from the thousands of books available from <a href="https://cran.r-project.org/web/packages/gutenbergr/index.html">Project Gutenberg</a> to trends on <a href="https://cran.r-project.org/web/packages/twitteR/">twitteR</a>--there is a <a href="https://www.tidytextmining.com">free book</a> covering the basics using the package <a href="https://cran.r-project.org/web/packages/tidytext/">tidytext</a>, and a <a href="http://corpustext.com/articles/corpus.html">guide</a> for the <a href="http://corpustext.com/index.html">corpus</a> package.
+
+	<br /> <br />
+	
+	Here is a slightly <a href="https://support.rstudio.com/hc/en-us/articles/201057987-Quick-list-of-useful-R-packages">longer list</a> of very useful, high quality R packages, including some that may be a bit too advanced for beginners.
+
+	
+      </div>
+
+      <div class="col-md-5">
+
+	If you are interested in the aesthetic aspect of scientific plotting, <a href="http://motioninsocial.com/tufte/">this site</a> shows how to create <a href="https://en.wikipedia.org/wiki/Edward_Tufte">Edward Tufte</a>-style graphs.
+
+	<br /> <br />
+
+	A long <a href="https://cran.r-project.org/other-docs.html">list of documentation</a> on the official R Project site contains some references cards (cheatsheets) and translations of some documents into other (non-english) languages (e.g. there is a reference card in Chinese).
+	
+      </div>
+
+      <hr />
+
+      </div>
+      <div class="row">
+      
+      <div class="page-header">
+	<h4>Interesting data sets</h4>
+      </div>
+      
+      <div class="col-md-5">
+	
+	<a href="https://cran.r-project.org/web/packages/fivethirtyeight/index.html">FiveThiryEight</a> is an R package with <b>many interesting datasets</b> from the data journalism site with the <a href="https://github.com/fivethirtyeight/data">same name</a>. There are several sports and politics datasets, one about which movies pass or fail the <a href="https://en.wikipedia.org/wiki/Bechdel_test">Bechdel test</a>, one with every instance of swear words in Tarantino's films, one about the relationship between hate crimes and income inequality, one about employment and earnings of recent college graduates by major, one with the name, age, gender, race, and location of people killed by police in 2015, and so on. Check the <a href="https://cran.r-project.org/web/packages/fivethirtyeight/fivethirtyeight.pdf">documentation</a> for a full list of datasets and how to use each one.
+
+	<br /> <br />	
+	    
+	<a href="https://blog.rstudio.com/2014/07/23/new-data-packages/">Packages</a> for <a href="https://cran.r-project.org/web/packages/babynames/index.html">babynames</a> (year, sex, name, and number of births with that name), <a href="https://cran.r-project.org/web/packages/fueleconomy/index.html">fueleconomy</a> (vehicle, make, model, year, mpg, and other variables), <a href="https://cran.r-project.org/web/packages/nasaweather/index.html">nasaweather</a> (atmospheric measurements, glacier extents, tropic storms), <a href="https://cran.r-project.org/web/packages/nycflights13/index.html">nycflights13</a> (info on flights, planes, airports).
+
+	<br /> <br />	
+	    
+	This <a href="https://www.computerworld.com/article/3109890/data-analytics/these-r-packages-import-sports-weather-stock-data-and-more.html">article</a> lists packages with sports, economic, finance, and polling data. For example, <a href="https://cran.r-project.org/web/packages/pewdata/index.html">pewdata</a> has a function for easily downloading political and social survey data from <a href="http://www.pewresearch.org/download-datasets/">Pew Research</a>, the <a href="https://cran.r-project.org/web/packages/pollstR/">pollstR</a> package can download political polling data from Huffington Post (see the <a href="https://cran.r-project.org/web/packages/pollstR/vignettes/examples.html">examples</a>), the <a href="https://github.com/abresler/forbesListR">forbesListR</a> package can download lists of influential people and companies published by Forbes.
+
+	<br /> <br />
+	      
+	There are many packages for downloading and analyzing financial data. You might consider <a href="https://cran.r-project.org/web/packages/tidyquant/index.html">tidyquant</a> (see the <a href="https://cran.r-project.org/web/packages/tidyquant/vignettes/TQ01-core-functions-in-tidyquant.html">examples</a>), <a href="http://www.quantmod.com/">quantmod</a>, or <a href="https://cran.r-project.org/web/packages/PerformanceAnalytics/index.html">PerformanceAnalytics</a>.
+	      
+	<br /> <br />
+
+	This <a href="https://www.r-bloggers.com/sports-data-and-r-scope-for-a-thematic-rather-than-task-view-living-post/">blog post</a> lists several other suggestions for sports datasets.
+	    
+      </div>
+
+      <div class="col-md-5">
+	
+	Data in R packages is easy to access. Just <code>install.packages("packagename")</code> (with quotes), then <code>library(packagename)</code> (without quotes), and read the package documentation for help. For example, the <a href="https://cran.r-project.org/web/packages/nycflights13/nycflights13.pdf">nycflights13</a> documentation describes 5 dataframes contained in that package, like the <code>flights</code> dataframe and the name and meaning of each variable it contains.
+
+	<br /> <br />	
+
+	If a package is not available on CRAN (the central repository for R), but is instead only hosted on github, you may need to install the package <code>devtools</code> and use the command <code>devtools::install_github("authorname/packagename")</code>.
+
+	<br /> <br />
+
+	Some packages use an API (application programming interface), like the <a href="https://github.com/jcizel/FredR">FredR</a> package for downloading <a href="https://fred.stlouisfed.org/">Federal Reserve economic data</a>. This means you have to go through an extra step of registering an "API key" with the website before the package will work properly for you. The instructions should either be in the package documentation or on the website that the package downloads from.
+	    
+      </div>
+      </div>
+      </div> <!-- /container -->
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+  </body>
+</html>
