@@ -1,0 +1,43 @@
+---
+title: "Homework 2"
+author: By signing my name, I agree to abide by the Stern Code of Conduct _______________
+output: pdf_document
+---
+
+#### Question 1
+
+This question follows **Section 3.3** in the ModernDive book linked on the course page: http://moderndive.com/3-viz.html 
+
+- Load the libraries `dplyr, ggplot2, nycflights13`. If you get an error message, you might not have installed the packages yet, in that case you can install them by, for example, `install.packages("nycflights13")`
+- Run the command `?flights` and read the help documentation to learn about what variables are included in this data frame.
+- Run the command `head(flights)` and look at the first few rows of data.
+- Run the command `table(flights$carrier)` to create a table of counts of the different values of the `carrier` variable.
+
+##### a. How many flights are there from Hawaiian Airlines? Which airline had the most number of flights? Write your answers here.
+
+\ 
+
+\ 
+
+- The book creates a data frame called `all_alaskan_flights` of Alaskan Airline flights using the following line of code:
+`all_alaska_flights <- flights %>% filter(carrier == "AS")`
+- Let's make sure we understand this line. First, ignore the beginning part and focus on `flights %>% filter(carrier == "AS")`
+- Many commands in `R` have the format: `function(data, ...)` where `function` is the name of the command, `data` is the name of the data frame you are applying the command to, and `...` is other code that depends on the specific example.
+- If you want to run several commands, using the output from the previous one as input to the next, you can do that like this: `function3(function2(function1(data, ...), ...), ...)`
+- That can be hard to read and understand, so the `dplyr` package has a useful trick called "piping" which works like this: `data %>% function1(...) %>% function2(...) %>% function3()`
+- This makes a line of code read more like English and less like mathematics.
+- `flights %>% filter(carrier == "AS")` is the same as `filter(flights, carrier == "AS")`
+- The `filter()` command filters down to only those rows of the data that satisfy the condition inside the parentheses.
+- The condition `carrier == "AS"` is testing that the variable `carrier` (which the `filter()` command knows about because it was given `flights` as input by piping) equals the value `"AS"`
+- So the output from all of this so far should be a new data frame with only those rows of `flights` corresponding to the carrier Alaskan Airlines.
+- Now let's look back at the first part of the line.
+- `all_alaska_flights` is the name of a new data frame being created.
+- The left arrow `<-` means to assign value, i.e. the new data frame gets the value output by all the code to the right of the `<-`.
+
+- Following the example in the book, use `filter()` to create a 
+data frame with all Hawaiian Airlines flights (*instead of Alaskan Airlines*).
+
+
+- Create a histogram of the `air_time` variable using `ggplot()` and `geom_histogram()`.
+
+

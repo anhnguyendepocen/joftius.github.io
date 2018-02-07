@@ -127,12 +127,11 @@ $(document).ready(function () {
 
 
 <div id="review" class="section level4">
-<h4>Review?</h4>
+<h4>Review</h4>
 <ul>
-<li>Bradford Hill criteria?</li>
-<li>Issues with plots?</li>
-<li>Homework 1</li>
-<li>Reminder of histogram, boxplot, scatterplot, linegraph</li>
+<li>Optional reading on causation: <a href="https://en.wikipedia.org/wiki/Bradford_Hill_criteria">Bradford Hill criteria</a></li>
+<li>Reminder of histogram (and density), boxplot, scatterplot, linegraph</li>
+<li><a href="https://github.com/zonination/perceptions">Perceptions of probability</a> - plots showing survey responses about various words associated with probability</li>
 </ul>
 </div>
 <div id="probability" class="section level4">
@@ -148,15 +147,14 @@ $(document).ready(function () {
 <li>Gambling, e.g. Girolamo Cardano on dice in 1560, Abraham de Moivre “Doctrine of Chances” in 1718</li>
 <li>(Finite) set of outcomes, play the game, one outcome happens</li>
 <li>Players sometimes realized their intuition about something was wrong and they’d consistently lose money. So they tried to do rigorous calculations to figure out why their intuition was off.</li>
-<li>I’ll try to use examples other than just gambling games…</li>
 </ul>
 </div>
 <div id="a-diversion-into-set-theory" class="section level5">
 <h5>A diversion into set theory</h5>
 <ul>
 <li>Set <span class="math inline">\(S\)</span> is called <strong>sample space</strong> or “universe” (sometimes use <span class="math inline">\(\Omega\)</span>)</li>
-<li>Examples: sides of dice: <span class="math inline">\(\{ 1, 2, 3, 4, 5, 6 \}\)</span>, coin toss: { heads, tails }, twitter: { No action, Reply, Retweet, Like }, a stock’s daily closing price is { Up, Down, Roughly even }, the winner of an election is a { Democrat, Republican, Independent, Libertarian, Green, Socialist, actual cartoon character }, etc.</li>
-<li>What are the outcomes when tossing a coin 3 times? (Write on board, don’t erase)</li>
+<li>Examples: 6-sided die: <span class="math inline">\(\{ 1, 2, 3, 4, 5, 6 \}\)</span>, coin toss: { H, T }, twitter: { No action, Reply, Retweet, Like }, the winner of an election is a { Democrat, Republican, Independent, Libertarian, Green, Socialist, actual cartoon character }, etc.</li>
+<li><p>What are the outcomes when tossing a coin 3 times? (Write on board, don’t erase, e.g. HHH, HHT, …)</p></li>
 <li>To say the outcome <span class="math inline">\(s\)</span> is in the set <span class="math inline">\(S\)</span> (also called a member or element of <span class="math inline">\(S\)</span>), we write <span class="math inline">\(s \in S\)</span>.</li>
 <li><strong>Events</strong>: subsets <span class="math inline">\(E \subseteq S\)</span> are called events.</li>
 <li>Examples: roll a 6: <span class="math inline">\(\{ 6 \}\)</span>, roll even: <span class="math inline">\(\{ 2, 4, 6 \}\)</span>, the empty set <span class="math inline">\(\emptyset\)</span> etc.</li>
@@ -166,11 +164,8 @@ $(document).ready(function () {
 <li>Disjoint events: <span class="math inline">\(E_1\)</span> and <span class="math inline">\(E_2\)</span> are disjoint if <span class="math inline">\(E_1 \cap E_2 = \emptyset\)</span>, i.e. there is no overlap.</li>
 <li>Set operations: the <strong>complement</strong> <span class="math inline">\(E^c\)</span> of an event <span class="math inline">\(E\)</span> is all outcomes that are not in <span class="math inline">\(E\)</span>. e.g. for the 6-sided dice: <span class="math inline">\(\{ 2, 4, 6 \}^c = \{ 1, 3, 5 \}\)</span>.</li>
 <li>Set operations: the <strong>size</strong> of a set <span class="math inline">\(|E|\)</span> is the number of outcomes it contains. e.g. <span class="math inline">\(|\emptyset| = 0\)</span>.</li>
-<li>What is <span class="math inline">\(|S|\)</span> for tossing a coin <span class="math inline">\(n\)</span> times?</li>
+<li><p>What is <span class="math inline">\(|S|\)</span> for tossing a coin <span class="math inline">\(n\)</span> times?</p></li>
 </ul>
-</div>
-<div id="questions" class="section level5">
-<h5>Questions?</h5>
 </div>
 <div id="probability-1" class="section level5">
 <h5>Probability</h5>
@@ -187,23 +182,8 @@ $(document).ready(function () {
 <li><p>Addition rule: for any events, <span class="math inline">\(P(E_1 \cup E_2) = P(E_1) + P(E_2) - P(E_1 \cap E_2)\)</span> (subtract off the double-counted overlap).</p></li>
 <li><strong>Conditional probability</strong>: <span class="math inline">\(P(E_2 | E_1) = P(E_2 \cap E_1)/P(E_1)\)</span> (draw Venn diagram)</li>
 <li>Intuition: given that <span class="math inline">\(E_1\)</span> happened, make <span class="math inline">\(E_1\)</span> the new sample space</li>
-<li>e.g. What if <span class="math inline">\(E_1\)</span> is { Democrat, Republican } and <span class="math inline">\(E_2\)</span> is { Democrat }?</li>
-<li><strong>Independence</strong>: <span class="math inline">\(E_1\)</span> and <span class="math inline">\(E_2\)</span> are independent if <span class="math inline">\(P(E_2 | E_1) = P(E_2)\)</span></li>
-<li>If I toss a coin 10 times, what is the probability the 10th toss is H given the first 9 are T?</li>
-<li>Clofibrate trial example: adherence and survival</li>
-<li><strong>Multiplication rule</strong>: for independent events, <span class="math inline">\(P(E_1 \cap E_2) = P(E_1)P(E_2)\)</span></li>
-<li>This works for more than 2 events: e.g. probability of <a href="https://www.youtube.com/watch?v=gOwLEVQGbrM">all <span class="math inline">\(n\)</span> coin tosses being H</a></li>
-<li>Drawing with and without replacement (check out the <code>sample()</code> function in R)</li>
-<li>Deck of cards with replacement: draw one card, record it, return it, shuffle, draw a second card</li>
-<li>Deck of cards without replacement: draw one card, record it, set it aside, draw another from the remaining cards</li>
-<li><p>What is probability of drawing 4 Aces, with and without replacement?</p></li>
-<li><p><strong>Multiplication rule</strong>: <span class="math inline">\(P(E_1 \cap E_2) = P(E_2 | E_1)P(E_1)\)</span> (sometimes easier to calculate)</p></li>
-<li>Random variable: function defined on the set and outputting a number</li>
-<li><p>e.g. number of heads in 5 coin tosses</p></li>
+<li><p>e.g. What if <span class="math inline">\(E_1\)</span> is { Democrat, Republican } and <span class="math inline">\(E_2\)</span> is { Democrat }?</p></li>
 </ul>
-</div>
-<div id="homework-to-be-posted-tomorrow" class="section level5">
-<h5>Homework to be posted tomorrow</h5>
 </div>
 </div>
 
