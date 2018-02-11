@@ -1,0 +1,61 @@
+---
+title: "Lecture 7 - Probability part 2: Bayes' rule, independence"
+author: "Joshua Loftus"
+date: "January 31, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#### Review
+
+- Set notation? 
+
+#### Probability
+
+- Conditional probability
+- Independence
+- Bayes' theorem
+
+##### Conditional probability
+
+- Important for at least two reasons: (1) can calculate probabilities for complicated events by breaking it into steps, and (2) gives a way to adjust probabilities based on new information
+- Intuitively, if you know $E_1$ has occurred, make $S = E_1$ the new sample space
+- **Conditional probability**: $P(E_2 | E_1) = P(E_2 \cap E_1)/P(E_1)$. This tells us how probability in the new sample space relates to probability in the original one
+- (1) **Multiplication rule**: $P(E_2 \cap E_1) = P(E_1)P(E_2 | E_1)$ "probability that two things both happen"
+- Deck of 52 cards, 4 are aces. What is $P(E)$ for $E =$ \{ first two cards are aces \}.
+- $E_1 =$ \{ first card is an ace \}, $E_2 =$ \{ second card is an ace \}, 4/52, then new sample space has 51 cards, 3 of them aces (about 0.45\%)
+- `mean(replicate(10000, all(sample(1:52, 2) <= 4)))`
+
+##### Independence
+
+- One of the most important concepts in statistics. An underlying assumption of many common statistical methods. Something to always keep in mind... 
+- **Independence**: $E_1$ and $E_2$ are independent if $P(E_2 | E_1) = P(E_2)$
+- Knowing that one has happened doesn't change the probability of the other one
+- If I toss a coin 10 times, what is the probability the 10th toss is H given the first 9 are T?
+- Otherwise, they are called dependent
+- (In)dependence can make or break the accuracy/success of a probability model. Common error to believe/assume things are independent when they aren't
+- e.g. 2016 election: predictions that showed Secy. Clinton with a high chance of winning [relied on independence](https://www.quantamagazine.org/why-nate-silver-sam-wang-and-everyone-else-were-wrong-part-2-20161111/)
+- e.g. Financial crisis: more houses foreclosing in a neighborhood lowered property values, increasing probability of mortgage problems for other houses in the same neighborhood
+
+- **Multiplication rule**: for *independent events*, $P(E_1 \cap E_2) = P(E_1)P(E_2)$
+- This works for more than 2 events: e.g. probability of [all $n$ coin tosses being H](https://www.youtube.com/watch?v=gOwLEVQGbrM) multiply (1/2) $n$ times, get $1/2^n$
+
+- Drawing with and without replacement (check out the <code>sample()</code> function in R)
+- Deck of cards with replacement: draw one card, record it, return it, shuffle, draw a second card
+- Deck of cards without replacement: draw one card, record it, set it aside, draw another from the remaining cards
+
+- **Important**: which version of the multiplication rule should you use? *Depends on (in)dependence*
+- **Important**: multiplication rule is for *both events*, addition rule is for *either event*
+- Venn diagrams
+
+##### Bayes' theorem
+
+- Suppose some facial recognition software attempts to identify people with an outstanding arrest warrant from a database of photos. It inputs a photo of a person and classifies as a match to the database, or not a match. If the photo input is someone does not have a warrant, there is a 1\% chance it will mistakenly match them anyway, but it is 100\% accurate otherwise.
+- This software is given camera feeds from all over the city
+- There is a match. What's the probability the match is accurate?
+- Let $M$ denote a declared match, and $W$ denote that the person actually has an outstanding warrant. We know $P(M | W) = 1$, and $P(M | W^c) = .99$
+- Do we have enough information?
+

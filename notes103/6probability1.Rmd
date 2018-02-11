@@ -1,0 +1,63 @@
+---
+title: "Lecture 6 - Probability definitions, part 1"
+author: "Joshua Loftus"
+date: "January 31, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#### Review
+
+- Optional reading on causation: [Bradford Hill criteria](https://en.wikipedia.org/wiki/Bradford_Hill_criteria)
+- Reminder of histogram (and density), boxplot, scatterplot, linegraph
+- [Perceptions of probability](https://github.com/zonination/perceptions) - plots showing survey responses about various words associated with probability
+
+#### Probability
+
+- History
+- Set theory
+- Probability definitions and examples
+
+##### History
+
+- Gambling, e.g. Girolamo Cardano on dice in 1560, Abraham de Moivre "Doctrine of Chances" in 1718
+- (Finite) set of outcomes, play the game, one outcome happens
+- Players sometimes realized their intuition about something was wrong and they'd consistently lose money. So they tried to do rigorous calculations to figure out why their intuition was off.
+
+##### A diversion into set theory
+
+- Set $S$ is called **sample space** or "universe" (sometimes use $\Omega$)
+- Examples: 6-sided die: $\{ 1, 2, 3, 4, 5, 6 \}$, coin toss: \{ H, T \}, twitter: \{ No action, Reply, Retweet, Like \}, the winner of an election is a \{ Democrat, Republican, Independent, Libertarian, Green, Socialist, actual cartoon character \}, etc.
+- What are the outcomes when tossing a coin 3 times? (Write on board, don't erase, e.g. HHH, HHT, ...)
+
+- To say the outcome $s$ is in the set $S$ (also called a member or element of $S$), we write $s \in S$.
+- **Events**: subsets $E \subseteq S$ are called events.
+- Examples: roll a 6: $\{ 6 \}$, roll even: $\{ 2, 4, 6 \}$, the empty set $\emptyset$ etc.
+- The event $E$ "happens" if the outcome of the game $s \in E$.
+- Set operations: the **union** $E_1 \cup E_2$ contains outcomes $s$ if $s \in E_1$ or $s \in E_2$ (or both). e.g. $\{ 1, 2 \} \cup \{ 4 \} = \{ 1, 2, 4 \}$
+- Set operations: the **intersection** $E_1 \cap E_2$ contains outcomes $s$ if $s \in E_1$ and $s \in E_2$. e.g. $\{1, 2 \} \cap \{ 2, 4 \} = \{ 2 \}$.
+- Disjoint events: $E_1$ and $E_2$ are disjoint if $E_1 \cap E_2 = \emptyset$, i.e. there is no overlap.
+- Set operations: the **complement** $E^c$ of an event $E$ is all outcomes that are not in $E$. e.g. for the 6-sided dice: $\{ 2, 4, 6 \}^c = \{ 1, 3, 5 \}$.
+- Set operations: the **size** of a set $|E|$ is the number of outcomes it contains. e.g. $|\emptyset| = 0$.
+- What is $|S|$ for tossing a coin $n$ times?
+
+##### Probability
+
+- Probability: *measure* for events, $P(E)$ is the [likelihood](https://github.com/zonination/perceptions) of $E$ happening
+- Rules: $P(S) = 1$, $P(\emptyset) = 0$, for any E, $0 \leq P(E) \leq 1$
+- Complement event: $P(E^c) = 1 - P(E)$ (sometimes easier to calculate one or othe other)
+- If I toss coin 3 times, what's probability of getting at least one H?
+- What if I toss a coin $n$ times?
+- **Equiprobable** outcomes: for every $s \in S$, $P(s) = 1/|S|$. Reasonable for (fair!) games, maybe not for some of our other examples...
+- Counting rule: with equiprobable outcomes $P(E) = |E|/|S|$.
+- Count the number of ways $E$ can happen, divide by total number of things that could happen.
+- Addition rule: for *disjoint events* $E_1, E_2$, $P(E_1 \cup E_2) = P(E_1) + P(E_2)$.
+- Addition rule: for any events, $P(E_1 \cup E_2) = P(E_1) + P(E_2) - P(E_1 \cap E_2)$ (subtract off the double-counted overlap).
+
+- **Conditional probability**: $P(E_2 | E_1) = P(E_2 \cap E_1)/P(E_1)$ (draw Venn diagram)
+- Intuition: given that $E_1$ happened, make $E_1$ the new sample space
+- e.g. What if $E_1$ is \{ Democrat, Republican \} and $E_2$ is \{ Democrat \}?
+

@@ -1,0 +1,98 @@
+---
+title: "Lecture 2 - Observational studies"
+author: "Joshua Loftus"
+date: "January 22, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#### Review: RCTs
+
+- "Gold standard" of scientific studies
+- One of the highest quality types of evidence
+- **Control**: experimenter decides who gets treatment
+- **Randomized**: experimenter does that randomly
+- **Blinding**: control group receives placebo
+- **Double blinding**: evaluator (e.g. clinical doctor) also blinded
+
+#### Observational study
+
+- Not a controlled experiment
+- Individuals **self-select** whether to receive treatment, e.g. **smoking**
+- Or **other factors** outside of experimenter's control do it, e.g. **environment, lead paint**
+- "**Exposure**" sometimes used instead of treatment
+- *Groups might not be similar!*
+- Differences in outcome might be due to **other factors**, not treatment/exposure
+
+#### Smoking
+
+- We now know: [smoking causes](https://www.cdc.gov/tobacco/data_statistics/fact_sheets/health_effects/effects_cig_smoking/index.htm) more deaths each year than alcohol, HIV, car accidents, and guns combined.
+- More than 10x as many premature deaths of US citizens than in all US wars combined.
+- Not just death: heart disease, stroke, lung (and other kinds of) cancer, COPD, bronchitis, pregnancy/fertility problems, birth defects, erectile dysfunction, tooth loss, cataracts, etc
+- But there was a time when [doctors recommended](https://www.cbsnews.com/pictures/blowing-smoke-vintage-ads-of-doctors-endorsing-tobacco/32/) smoking
+
+#### Association is not causation
+
+- Epidemiological studies in 1940s-1950s found **association**: diseases more common among smokers
+- By the 1960s only 1/3 of US doctors believed this was causal
+- Differences in outcome might be due to other factors
+
+##### Aside from smoking, how else might smokers and nonsmokers be different?
+
+- US adults who are smokers: 18.6% of men, 14.2% of women
+- Men are more likely to get heart disease for other reasons
+- Gender (or possibly sex) is a **confounding variable**
+
+##### How can we fix this problem in the study?
+
+- Compare smokers who are (wo)men to nonsmokers who are (wo)men
+- This is called "**controlling for**" the confounding variable
+
+#### Berkeley graduate admissions sex bias
+
+- In 1973 UCB grad school admitted 44% of the men and 35% of the women who applied
+- Grad school applications handled by individual departments
+- Choice of department was a confounding variable
+- Over 50% of men applied to departments that were easy to get into
+- Over 90% of women applied to departments that were more competitive
+
+#### Confounding
+
+- A confounding variable is associated with both exposure and outcome
+- If the confounding variable is in your data, you can **try to control for** it
+- Hidden or unobserved confounders are a major problem for observational studies
+- Smoking: Sir R. A. Fisher thought maybe a gene caused propensity for smoking
+- (Fisher was a geneticist, a proponent of eugenics, and a staunch defender of tobacco)
+- He died aged 72, colon cancer (increased risk caused by smoking)
+
+#### More examples
+
+- Pellagra: epidemic, killed 100'000s in early 1900's. Fly? Corn, lack of niacin. Fortified flour
+- Ultrasounds cause low birth weights? Confounder: complication in pregnancy
+
+#### Adherence
+
+Clofibrate drug to prevent heart attacks, 5-year death rate
+
+|         | Treatment           | Placebo  |
+| ------------- |:-------------:| -----:|
+| Adherers      | 15% | 15% |
+| Non-adherers      | 25%      |   28% |
+| Total | 20%      |    21% |
+
+- Adherers may be more concerned with their health, better able to keep up habits, maybe have better support (e.g. family), etc
+- Also reminder of why it's important to have control group!
+- Adherence is a common confounding variable in studies of e.g. diet, exercise, nutritional supplements
+
+##### Do RCTs protect from confounding? How?
+
+#### Summary
+
+- Observational studies are not controlled, exposed group might be different from control
+- A confounding variable is one associated with both exposure and outcome
+- If measured and in the data, can control for confounding
+- Unobserved confounders are a serious problem affecting many studies
+

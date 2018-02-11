@@ -1,0 +1,120 @@
+---
+title: "Lecture 9 - Probability part 3: random variables, expectation"
+author: "Joshua Loftus"
+date: "January 31, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(ggthemes)
+```
+
+#### Review
+
+- Bayes' theorem
+- Switching between $P(A | B)$ and $P(B | A)$
+- $P(B | A) = P(A | B)P(B)/P(A)$
+
+- Today: probabilities related to sums, Binomial random variables, expectation(?)
+
+##### Probabilities for sums
+
+- Suppose we roll two 6-sided die, adding the two results, and are interested in calculating probabilities for different values of this sum
+- Let's call this value $X$
+- Each dice is between 1 and 6, so the $X$ is between 2 and 12
+- $P(X = 2) = P(D_1 = 1 \text{ and } D_2 = 1)$... *what's the easy way to calculate this?*
+- **Multiplication rule** -- the die are independent! $P(D_1 = 1)P(D_2 = 2)$
+- $P(X = 2) = (1/6)^2$ = 1/36
+- What is $P(X = 12)$? (same)
+- How about $P(X = 3)$? This can happen if $D_1 = 1$ and $D_2 = 2$ *or* if $D_1 = 2$ and $D_2 = 1$
+- Two ways it can happen, each of those has probability 1/36... *what's the easy way to calculate this?*
+- **Addition rule** -- disjoint events! $P(D_1 = 1)P(D_2 = 2) + P(D_1 = 2)P(D_2 = 1)$ 
+- $P(X = 3) = (1/6)^2 + (1/6)^2$
+- In general, to find $P(X = x)$ we count the number of ways two sides of the die can add up to $x$ and multiply that number by $(1/6)^2$
+- Which outcome(s) are the most likely ones? The middle: 7 (halfway between 2 and 12)
+- e.g. for 7 (1, 6), (2, 5), (3, 4), (4, 3), (5, 2), (6, 1)
+- $P(X = 7) = 6(1/6)^2 = 1/6$
+
+- Suppose we toss 4 coins and add up the number of heads, call this $X$
+- $P(X = 4) = P(X = 0) = (1/2)^4$
+- For $X = 2$, could be (0,0,1,1), (0,1,0,1), (0,1,1,0), (1,0,0,1), (1,0,1,0), (1,1,0,0)
+- $P(X = 2) = (1/2)^4 + (1/2)^4 + (1/2)^4 + (1/2)^4 + (1/2)^4 + (1/2)^4 = 6(1/2)^4 = 3/8$
+- What if we toss a coin 60 times and count the number of heads?
+- e.g. for 0, every one must be tails, probability $(1/2)^{60}$. Similar for 60
+- e.g. for 1, pick 1 out of 60 tosses to come up heads--this can happen in 60 ways. So $60(1/2)^{60}$
+- What about 30?... math to the rescue?
+- Yes! There is an easy formula. Answer: over $10^{17}$ ways!
+- About 10.2\% for 30, 9.9\% for 31 and 29, 8.9\% for 32 and 28.
+- These are really large compared to $1/2^{60} \approx 0.$(16 zeros)87\%
+
+- Many calculations like this are made possible by studying random outcomes that are *numbers*
+- i.e. random variables
+
+##### Random variables, continued
+
+- **Probability density function** $p_X(x) = P(X = x)$
+- **Cumulative distribution function** $F_X(x) = P(X \leq x)$
+- Bernoulli: Ber($p$), $D = \{ 0, 1 \}$ $P(X = 1) = p$. Standard: $p = 1/2$.
+- Binomial: Bin($n, p$) number of "successes" in $n$ independent "trials" with each having success probability $p$
+- If $p = 1/2$, like tossing a coin $n$ times and counting the tails
+- Otherwise need a "biased" coin--one with probability $p \neq 1/2$ of landing on heads
+
+- **Independent random variables** $X, Y$ are indepedent if $P(X = x \text{ and } Y = y) = P(X = x)P(Y = y) = p_X(x)p_Y(y)$
+- $P(X = x \text{ and } Y = y) = p_{X,Y}(x,y)$ is called the **joint distribution** of $X$ and $Y$
+- If they are independent, the joint distribution factors into the product of their individual distributions $p_{X,Y}(x,y) = p_X(x)p_Y(y)$
+
+- Suppose we have $n$ independent Ber($p$) r.v.s and we add them
+- What is the distribution of $X_1 + X_2 + \cdots + X_n$?
+- Each one is 0 or 1, there are $n$ of them, they are independent...
+- The sum is just the count of how many of them equal 1
+- This is Bin($n, p$)!
+
+##### Expected values of random variables
+
+- A random variable $X$ can potentially equal many possible values, just like how a variable in a dataset might take many different values
+- Can we summarize a random variable in a similar way to how we summarize data?
+- What about an average value, like the mean?
+- For random variables we call this the expected value
+- $E[X] = \sum_{x \in D} x p_X(x)$
+- Weighted sum of all the possible values, with weight given by probability of that value
+- e.g. for $X \sim Ber($p$)$, what is $E[X]$?
+- $0\cdot P(X = 0) + 1 \cdot P(X = 1) = 0(1-p) + 1(p) = p$
+
+##### Generating random variables in R
+
+Uniform integers between 0 and 10
+```{r}
+# One sample:
+sample(0:10, 1)
+# 10 samples:
+sample(0:10, 10, replace=T)
+# Plotting a probability histogram of 1000 samples
+df <- data.frame(x = sample(0:10, 1000, replace=T))
+ggplot(df, aes(x)) + stat_count() + theme_tufte()
+```
+
+Uniform continuous numbers between 0 and 1
+```{r}
+# One sample:
+runif(1)
+# 10 samples:
+runif(10)
+# Plotting 1000 samples
+df <- data.frame(x = runif(1000))
+ggplot(df, aes(x)) + geom_histogram(bins = 40) + theme_tufte()
+```
+
+Binomial with 10 trials, success prob 1/2
+```{r}
+# One sample:
+rbinom(1, 10, .5)
+# 10 samples:
+rbinom(10, 10, .5)
+# Plotting 1000 samples
+df <- data.frame(x = rbinom(1000, 10, .5))
+ggplot(df, aes(x)) + stat_count() + theme_tufte()
+```
+
+

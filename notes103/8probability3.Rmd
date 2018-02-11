@@ -1,0 +1,70 @@
+---
+title: "Lecture 8 - Probability part 3: Bayes' rule, random variables"
+author: "Joshua Loftus"
+date: "January 31, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#### Review
+
+- Multiplication rule: $P(E_1 \cap E_2) = P(E_1)P(E_2|E_1)$
+- Today: Bayes' theorem, random variables
+
+
+##### Bayes' theorem
+
+- Example: face recognition
+- Suppose some facial recognition software attempts to identify people with an outstanding arrest warrant from a database of photos. It inputs a photo of a person and classifies as a match to the database, or not a match. If the photo input is someone does not have a warrant, there is a 1\% chance it will mistakenly match them anyway, but it is 100\% accurate otherwise.
+- This software is given camera feeds from all over the city
+- There is a match. What's the probability the match is accurate?
+- Let $M$ denote a declared match, and $W$ denote that the person actually has an outstanding warrant. We know $P(M | W) = 1$, and $P(M | W^c) = .99$
+- Do we have enough information?
+- Suppose the population is 1,000,000, and 1,000 have outstanding warrants $W$
+- Suppose therefore that on a given day there are 100,000 photos input to the algorithm, and 100 of these have $W$
+- All 100 of these are matches $M$
+- But also... 1\% of the 100,000 without $W$ *also* match $M$
+- 1,100 matches total, but only 100 of them have $W$
+- $P(W | M) = 0.01$
+- If police are dispatched to arrest every one of these matches, only 1 out of every 100 of those arrests would be warranted
+
+- Bayes' theorem: 1763 - 1812 (Thomas Bayes, Richard Price, Pierre-Simon Laplace)
+- Switching between $P(E_2 | E_1)$ and $P(E_1 | E_2)$
+- $P(E_2 | E_1) = P(E_1 | E_2)P(E_2)/P(E_1)$
+
+- Example: basketball
+- Consider two players, Curry and James, attempting 3 point shots
+- $P(B | Curry) = .4$, $P(B | James) = .3$ (suppose)
+- $P(James) = .6$, $P(Curry) = .4$
+- If someone just scored a 3 point basket, who was it?
+- $P(Curry | B) = P(B | Curry)P(Curry)/P(James) = (.4)(.4)/(.6) = 0.267$
+- $P(James | B) = P(B | James)P(James)/P(Curry) = (.4)(.6)/(.4) = 0.6$
+
+- Example: quality control
+- Suppose we have 3 manufacturers producing computer chips
+
+##### Random variables
+
+- Basically: label the outcomes in a probability space with numbers, like the sides of a dice
+- Specific kinds of probability models defined in terms of numbers instead of events, can use mathematical properties of numbers to compute probabilities for more interesting kinds of events
+- First a few definitions, then examples will show how they're useful
+- A random variable is a function which takes an input $s \in S$ and gives an output which is a number
+- Convention: capital $X$ to represent the random variable, lower case $x$ to represent a specific value $X(s) = x$.
+- Technically, $P(X = x) = P(\{ s : X(s) = x \})$ -- but people usually don't think about it this way.
+- Usually we forget about $S$ and just calculate probabilities in terms of $X$
+- e.g. $S = \{ H, T \}$, $X(H) = 1, X(T) = 0$. Usually just forget about $H, T$ and remember $P(X = 0) = P(X = 1) = 1/2$
+- **Probability density function** $p_X(x) = P(X = x)$
+- **Cumulative distribution function** $F_X(x) = P(X \leq x)$
+- Can we really forget $S$?
+- For any discrete set of numbers $D$, if there is a function $p$ such that $0 \leq p(x) \leq 1$ for all $x \in D$, and $\sum_{x \in D} p(x) = 1$, then we can define a random variable $X$ so that $p_X(x) = p(x)$
+- Fortunately, there are just a few specific examples
+- Bernoulli: Ber($p$), $D = \{ 0, 1 \}$ $P(X = 1) = p$. Standard: $p = 1/2$.
+- If $X, Y$ are both Ber($p$), what is $X + Y$?
+- Need more information, for example, what if $Y = X$?
+- Needed concept: joint distribution $p_{X,Y}(x,y) = P(X = x \text{ and } Y = y)$
+- Random variables $X, Y$ are independent if $p_{X,Y}(x,y) = p_x(x)p_y(y)$
+- Sums of independent Bernoulli
+

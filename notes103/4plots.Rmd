@@ -1,0 +1,152 @@
+---
+title: "Lecture 4 - Plots, part 1"
+author: "Joshua Loftus"
+date: "1/28/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#### R Markdown
+
+The **R** language has many functions. First, in the "base," and many more in *thousands* of packages developed by researchers, companies, hobbyists, etc (including me). Probably the most popular packages are those in the "*tidyverse*," like *ggplot2*, *dplyr*, and so on. To use those functions, you must first install the packages on your computer (install.packages("packagename")). This may need to be repeated if you update to a new version of **R**. Second, each time you open **R** and want to use a function from a package, you must first load the package using "library(packagename)". It's best to put this at the top of the file.
+
+
+```{r}
+# This is a comment. Comments can be helpful for explaining how the code works.
+# These are useful not only for other people to understand your code...
+# but for you to understand your own code some time later, because you
+# will almost certainly forget what you were doing!
+library(lubridate)
+# If there are confusing messages when you load packages, you can sometimes just ignore them
+# (exception: if they say the package is not installed or not available).
+library(ggplot2)
+library(reshape2)
+```
+
+Next, we load the output from the class survey from the file "class_survey.csv" into **R** so we can start analyzing it. We also rename the variables for each column in the spreadsheet to something shorter and easier to read and type.
+
+```{r}
+class_survey <- read.csv("class_survey.csv", header=T, stringsAsFactors = F)
+names(class_survey) <- c("time", "major", "job_title", "stat_relevant", "math_proficiency",
+                 "stat_excited", "comp_proficiency", "skills", "takeaway", "topics",
+                 "learning_value", "suggestion", "hobby", "hours_study", "hours_play",
+                 "hours_work", "age", "gender", "distance")
+names(class_survey)
+```
+
+Now we have to do some data cleaning and processing, since some of the travel time responses have the format "x hours and y minutes" and some have the format "x:y," we must first put them all in the same format then create a new variable converting them all to total minutes.
+
+```{r}
+df <- class_survey
+df <- df[grep("([[:digit:]])", df$distance),]
+df$minutes <- gsub("^([0-9]*)$", "\\1:00", df$distance)
+df$minutes <- gsub("hour", ":00", fixed = T, df$minutes)
+df$minutes <- gsub(" ", "", df$minutes)
+df$minutes <- gsub("[[:alpha:]]", "", df$minutes)
+df$minutes <- hm(df$minutes)
+df$minutes <- 60*hour(df$minutes) + minute(df$minutes)
+summary(df$minutes)
+```
+
+What can we tell from the summary? Consider the relationship between the median and the mean.
+
+```{r}
+df <- df[!is.na(df$age),]
+abs(mean(df$age) - median(df$age)) <= sd(df$age)
+```
+To avoid typing the df$ part so many times, the with() function is useful
+
+```{r}
+with(df, abs(mean(age) - median(age)) <= sd(age))
+```
+
+with(df, ...) means to run the code ... using the variables in the data.frame called "df".
+
+
+#### Plots
+
+Summaries tell us a limited amount of information. They reduce a whole set of data to only one or a few numbers. Pictures can tell us a lot more. This is called a histogram. The horizontal axis has different possible values of the variable we're studying, and the height of the vertical bars at each point show how many times that value occurred in the data.
+
+```{r}
+p <- ggplot(df, aes(age))
+p
+p <- p + stat_count()
+p
+p + theme_minimal()
+table(df$age)
+```
+
+Now let's look at travel times.
+
+```{r}
+ggplot(df, aes(minutes)) + stat_count(width = 10) + theme_minimal()
+```
+
+Unlike *age*, where there are a small number of values and most of them occur many times, there are now many different values and most of them occur only once or a small number of times. Computing a table of occurrences is not a very helpful summary. In this case, we create blocks or *bins* each containing a range of values and aggregate the number of occurrences within each bin. This is what is generally referred to as a **histogram**.
+
+```{r}
+ggplot(df, aes(minutes)) + geom_histogram() + theme_minimal()
+```
+
+Oh no, something awful has happened. The data seems to have an outlier, a travel time over 900 hours. Let's take it out (assuming nobody has to travel more than 100 hours) and see if the plot looks more sensible.
+
+```{r}
+df <- df[df$minutes < 6000,]
+df <- df[!is.na(df$minutes),]
+p <- ggplot(df, aes(minutes))
+p + geom_histogram() + theme_minimal()
+# Histograms can be blocky. A density plot is a smoother version:
+quartiles <- quantile(df$minutes, probs = c(.25, .5, .75))
+p + geom_density() + 
+  geom_vline(xintercept = quartiles) + 
+  scale_x_continuous(breaks = unname(quartiles)) +
+  theme_minimal()
+```
+
+Let's look at an example showing more than one variable in a plot. First, let's talk about the *wide and long formats* for data with multiple variables. Wide format has each variable in its own column, like this:
+
+```{r}
+hours <- df[,c("hours_work", "hours_study", "hours_play")]
+summary(hours)
+head(hours)
+tail(hours)
+```
+
+Long format has one column for values, and another column saying the variable name, like this:
+
+```{r}
+hours <- melt(hours)
+head(hours)
+tail(hours)
+```
+
+The ggplot2 package generally works best with data in long format, allowing us to easily do cool things like this:
+
+```{r}
+p <- ggplot(hours, aes(value, fill = variable))
+p <- p + geom_density(alpha = 0.4) + theme_minimal()
+p
+```
+
+```{r}
+p + facet_grid(variable ~.)
+```
+
+This code was to create a data file for the whole class to use. It's "commented out" now.
+```{r}
+# df$major_finance <- FALSE
+# df$major_finance[grep("finance", df$major, ignore.case = TRUE)] <- TRUE
+# df$major_business <- FALSE
+# df$major_business[grep("business", df$major, ignore.case = TRUE)] <- TRUE
+# df$major_other <- TRUE
+# df$major_other[df$major_finance] <- FALSE
+# df$major_other[df$major_business] <- FALSE
+# df$math_proficiency <- as.numeric(substr(df$math_proficiency, 1, 1))
+# output <- df[,c("age", "major_finance", "major_business", "major_other",
+#                 "stat_relevant", "math_proficiency", "comp_proficiency",
+#                 "hours_study", "hours_work", "hours_play", "minutes")]
+# write.csv(output, file = "survey_response.csv", row.names = FALSE)
+``` 
