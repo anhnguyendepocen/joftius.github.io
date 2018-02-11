@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Joshua Loftus</title>
+    <link>/</link>
+    <description>Recent content on Joshua Loftus</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <managingEditor>lastname at nyu.edu (Joshua Loftus)</managingEditor>
+    <webMaster>lastname at nyu.edu (Joshua Loftus)</webMaster>
+    
+	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>About me</title>
+      <link>/page/about/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <author>lastname at nyu.edu (Joshua Loftus)</author>
+      <guid>/page/about/</guid>
+      <description>I&amp;rsquo;m a statistician and data scientist with a broad range of interests including theory, applications, and teaching with the R statistical programming language. My research focuses on common practices in machine learning and data science pipelines and addressing sources and types of error that have previously been overlooked. This includes, for example:
+ Developing methods for inference after model selection such as p-values adjusted for selection bias Analyzing the social fairness of machine learning algorithms from a causal perspective  My work has been published in the Annals of Statistics and Advances in Neural Information Processing Systems (NIPS).</description>
+    </item>
+    
+    <item>
+      <title>Research</title>
+      <link>/page/research/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <author>lastname at nyu.edu (Joshua Loftus)</author>
+      <guid>/page/research/</guid>
+      <description>Causal inference in fairness This work approaches fair machine learning from a causal inference perspective, arguing that determining what is fair is a similar challenge to determining causality.
+Press Some of this work was covered in the New Scientist and 36Kr.
+Publications  M. J. Kusner, J. R. Loftus, C. Russell, R. Silva. Counterfactual fairness. Advances in Neural Information Processing Systems, 2017. [link]
+ C. Russell, M. J. Kusner, J.</description>
+    </item>
+    
+    <item>
+      <title>Teaching</title>
+      <link>/page/teaching/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <author>lastname at nyu.edu (Joshua Loftus)</author>
+      <guid>/page/teaching/</guid>
+      <description>Course pages  Stat-UB.103: Regression and forecasting (6 credits)
+ Stat-UB.3: Regression and forecasting (2 credits) Stats 390: Statistical Consulting Workshop (at Stanford, old page)  Selected links For the R programming language If you haven&amp;rsquo;t already, you&amp;rsquo;ll need to download and install the R language itself, then download and install the free desktop version of RStudio, finally, you may find this short, free book on the basics of R and RStudio helpful for getting started.</description>
+    </item>
+    
+  </channel>
+</rss>
