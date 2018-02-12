@@ -1,0 +1,132 @@
+---
+title: "Lecture 9 - Probability part 3: random variables, expectation"
+author: "Joshua Loftus"
+date: "January 31, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(ggthemes)
+```
+
+#### Review
+
+- Last time: sums, distribution functions, independence, Binomial random variables, expectation
+- Today: expectation, variance, normal distribution, Binomial approximation
+
+##### Random variables, conceptually
+
+- Mathematical model for uncertainty about numbers
+- Many ways a number can be uncertain: instability, measurement error, predicting something that hasn't been measured yet, etc
+
+- Today we'll see how they can be useful for summarizing data
+- e.g. Make lots of histograms of different kinds of data and you may notice patterns emerging, lots of them having similar shapes (distributions). Give these distributions names and notation, so we can say "Consider $X$" instead of "Consider the number of heads when tossing a coin" 
+- [Galton board](https://en.wikipedia.org/wiki/Bean_machine)
+- As the course continues we'll see more examples of how all this can be useful in various ways
+
+- For now remember this: $X$ refers to random variable, $x$ to a specific number that it might equal, and $X = x$ is an event--"the observed/realized value of $X$ is $x$". The probability of this event depends on $x$, and the function $p_X(x) = P(X = x)$ is the p.d.f. of $X$.
+- e.g. If $X \sim$ Ber($p$), then $p_X(1) = p$ and $p_X(1) = 1 - p$.
+- e.g. If $Y \sim$ Bin($n, 1/2$), then $p_Y(0) = (1/2)^n$ (zero success out of $n$ trials)
+- e.g. Suppose $Z = 42$, i.e., $P(Z = 42) = 1$. $Z$ is a constant. That's ok, constants are a special case of random variables.
+
+- Mathematical functions: for any random variable $X$ and function $f$, $f(X)$ is also a random variable. e.g. $X^2$, $4X-2$, etc. This makes it possible to understand $X$ or $f(X)$ by studying whichever one is easier to work with.
+- (Maybe the data we have doesn't match any of the common distributions, but it does match $f(X)$ for some function $f$ and some random variable $X$ with a known distribution)
+
+##### Expected values
+
+- A way to summarize a random variable with a single number (constant)
+- $E[X]$ is the weighted sum of all possible values of $X$ multiplied by their corresponding probability
+- Average (mean) value of the random variable
+- $E[X] = \sum_{x \in D} x \cdot p_X(x)$
+- If $X \sim$ Ber($p$), $E[X] = 0\cdot(1-p) + 1\cdot p = p$, e.g. if $p = 1/2$ then $E[X] = 1/2$
+- Suppose $P(Y = 10) = p$ and 0 otherwise, e.g. $Y = 10X$. Then $E[Y] = 0(1-p) + 10p = 10p$
+- In these examples if $p = 1/2$ then the expected value is halfway between 0 and the other value
+- If $p \neq 1/2$ then the expected value may be closer to either end, instead of in the middle
+
+###### Linearity
+
+- Suppose we have random variables $X, Y$. Is their sum $X+Y$ also a random variable? (Yes)
+- If we already know $E[X]$ and $E[Y]$, can we use these to get $E[X+Y]$?
+- $E[X+Y] = E[X] + E[Y]$
+- This is called linearity, and it's an important and useful property of expected values
+- Generalizes to more than two: expected value of a sum is the sum of each individual expected value
+
+- Example: Binomial
+- Suppose $X_i \sim$ Ber($p$) for $i = 1, \ldots, n$, and $X = \sum_{i=1}^n X_i$
+- From the definition of expectation:
+$$
+E[X] = \sum_{x=0}^n x \frac{n!}{(n-x)!x!}p^x(1-p)^{n-x}
+$$
+- This seems pretty hard... But try using linearity instead!
+$$
+E[X] = E\left[\sum_{i=1}^nX_i \right] = \sum_{i=1}^n E[X_i] = \sum_{i=1}^n p = np
+$$
+- This formula for the Binomial expectation is nice and intuitive. Suppose $n = 100$ are the number of trials. If each one has $p = 1/10$ probability of success, then the expected number of successes is $np = 10$
+
+- Notation: sometimes use $\mu$ as a shorthand for $E[X]$ (if it's clear from the context)
+- Note $E[X - \mu] = 0$, we say $X - \mu$ is "centered"
+- Does "expected value" mean that the observed value of $X$ will definitely equal $\mu$? (Think about Bernoulli)
+- How close/far might the observed value be from $\mu$?
+
+##### Variance
+
+> It is difficult to understand why statisticians commonly limit their inquiries to Averages, and do not revel in more comprehensive views. Their souls seem as dull to the charm of variety as that of the native of one of our flat English counties, whose retrospect of Switzerland was that, if its mountains could be thrown into its lakes, two nuisances would be got rid of at once. An Average is but a solitary fact, whereas if a single other fact be added to it, an entire Normal Scheme, which nearly corresponds to the observed one, starts potentially into existence. - Sir Francis Galton (1889)
+
+- Galton thought that expected values alone were not enough information to summarize a distribution. All the possible values above and below the average would be lost (mountains thrown into lakes)
+- What single other fact did he want to be included?
+- Remember when we were talking about summarizing data: measures of central tendency and measures of dispersion (spread)
+- Variance: $\text{Var}(X) = E[(X - \mu)^2]$
+- Expected *squared distance* of $X$ from $\mu$, a measure of dispersion
+
+- e.g. For $X \sim$ Ber($p$), $\mu = p$, and $(X - p)^2$ is a random variable which equals $(1-p)^2$ with probability $p$ and equals $(0-p)^2$ with probability $1-p$. To find $\text{Var}(X)$ we compute the expected value of $(X-p)^2$, like this:
+$$
+\text{Var}(X) = (0-p)^2 \cdot (1-p) + (1-p)^2 \cdot p = [p^2 + (1-p)p](1-p) = p(1-p)
+$$
+
+- Notation: sometimes use $\sigma^2$ for $\text{Var}(X)$ (if it's clear from the context)
+
+###### Linearity
+
+- If $X$ and $Y$ are **independent**, then $\text{Var}(X+Y) = \text{Var}(X) + \text{Var}(Y)$
+- Unlike the case for expectation, where there was no requirement, we now need independence
+- Without independence: there is a more complicated formula we won't get into now
+
+###### Chebyshev's inequality
+
+- Let $a > 0$ be any constant.
+- Chebyshev's inequality: $P(|X - \mu| \geq a) \leq \sigma^2/a^2$
+- For example, let $a = 2\sigma$, then $P(|X - \mu| \geq 2\sigma) \leq 1/4$
+- Look familiar? (We'll come back to the 68-95-99 rule again soon)
+
+##### Samples of a random variable
+
+- Suppose $X \sim$ Bin($n,p$), and we want to visualize the distribution function of $X$
+- Since we know the formulas we could use those
+- But if we can *generate* many observed values of $X$, we could also look at the histogram of those values. This will be a histogram of data rather than the "true" distribution function. Much of statistics works by relating these two "worlds""
+
+
+Data world  | Model world
+------------- | -------------
+Observed data $x$  | Random variable $X$
+Histograms         | Distribution functions
+Summaries, $\bar x$, $s$  | Parameters, $\mu, \sigma^2$
+
+
+##### Visualizing mean and variance of binomials
+
+Binomials, success prob 1/2, one with 10 trials, one with 15 trials
+```{r}
+# 10 samples, 10 trials:
+rbinom(10, 10, .5)
+# 10 samples, 15 trials:
+rbinom(10, 20, .5)
+# Plotting 1000 samples
+df <- data.frame(x = c(rbinom(1000, 10, .5), rbinom(1000, 15, .5)),
+                       trials = factor(c(rep(10, 1000), rep(15, 1000))))
+ggplot(df, aes(x, fill = trials)) + stat_count(alpha = .4) + theme_tufte() +
+  geom_vline(xintercept = c(5, 7.5))
+```
+
+
