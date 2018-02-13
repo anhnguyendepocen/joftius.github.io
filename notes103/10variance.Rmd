@@ -1,5 +1,5 @@
 ---
-title: "Lecture 9 - Probability part 3: random variables, expectation"
+title: "Lecture 10 - Probability part 4: expectation and variance"
 author: "Joshua Loftus"
 date: "January 31, 2018"
 output: html_document
@@ -92,6 +92,7 @@ $$
 - If $X$ and $Y$ are **independent**, then $\text{Var}(X+Y) = \text{Var}(X) + \text{Var}(Y)$
 - Unlike the case for expectation, where there was no requirement, we now need independence
 - Without independence: there is a more complicated formula we won't get into now
+- Since Binomial's are sums of *independent* Bernoulli's, can use this to get $\sigma^2 = np(1-p)$
 
 ###### Chebyshev's inequality
 
@@ -107,26 +108,29 @@ $$
 - But if we can *generate* many observed values of $X$, we could also look at the histogram of those values. This will be a histogram of data rather than the "true" distribution function. Much of statistics works by relating these two "worlds""
 
 
-Data world  | Model world
-------------- | -------------
-Observed data $x$  | Random variable $X$
-Histograms         | Distribution functions
-Summaries, $\bar x$, $s$  | Parameters, $\mu, \sigma^2$
+###### Perfect, symmetric, mathematical model world:
 
-
-##### Visualizing mean and variance of binomials
-
-Binomials, success prob 1/2, one with 10 trials, one with 15 trials
 ```{r}
-# 10 samples, 10 trials:
-rbinom(10, 10, .5)
-# 10 samples, 15 trials:
-rbinom(10, 20, .5)
-# Plotting 1000 samples
-df <- data.frame(x = c(rbinom(1000, 10, .5), rbinom(1000, 15, .5)),
-                       trials = factor(c(rep(10, 1000), rep(15, 1000))))
-ggplot(df, aes(x, fill = trials)) + stat_count(alpha = .4) + theme_tufte() +
-  geom_vline(xintercept = c(5, 7.5))
+df <- data.frame(x = 35:65, y = dbinom(35:65, 100, .5))
+ggplot(df, aes(x, y)) + geom_bar(stat = "identity") + theme_tufte()
 ```
 
+###### Noisy, messy, data world:
+
+```{r}
+df <- data.frame(x = rbinom(500, 100, .5))
+ggplot(df, aes(x)) + stat_count() + theme_tufte()
+```
+
+###### Showing both together:
+
+```{r}
+sampledX <- table(rbinom(500, 100, .5))/500
+nbins <- length(sampledX)
+df <- data.frame(x = c(35:65, as.integer(names(sampledX))),
+                 y = c(dbinom(35:65, 100, .5), sampledX),
+                 world = c(rep("model", 31), rep("data", nbins)))
+ggplot(df, aes(x, y, fill = world)) + 
+  geom_bar(stat = "identity", position = "identity", alpha = .4) + theme_tufte()
+```
 

@@ -1,0 +1,142 @@
+---
+title: "Lecture 11 - Probability part 5: more on expectation and variance"
+author: "Joshua Loftus"
+date: "January 31, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(ggthemes)
+```
+
+#### Review
+
+- Study guide, homework solutions
+- Today: variance, Chebyshev's inequality, random samples
+
+##### Expected value of a function of random variable
+
+- Suppose $X$ has distribution $p_X(x)$ with domain $D$ (the set of possible values), and $f$ is some function
+- $f(X)$ is a new random variable. What is its expectation?
+$$E[f(X)] = \sum_{x \in D} f(x) p_X(x)$$
+- e.g. variance calculation $f(x) = (x-\mu)^2$ (see Bernoulli example below)
+
+##### Variance
+
+- Measure of dispersion (spread) of a random variable
+- Variance: $\text{Var}(X) = E[(X - \mu)^2]$
+- Expected *squared distance* of $X$ from $\mu$
+
+- e.g. For $X \sim$ Ber($p$), $\mu = p$, and $(X - p)^2$ is a random variable which equals $(1-p)^2$ with probability $p$ and equals $(0-p)^2$ with probability $1-p$. To find $\text{Var}(X)$ we compute the expected value of $(X-p)^2$, like this:
+$$
+\text{Var}(X) = (0-p)^2 \cdot (1-p) + (1-p)^2 \cdot p = [p^2 + (1-p)p](1-p) = p(1-p)
+$$
+- Notation: sometimes use $\sigma^2$ for $\text{Var}(X)$ (if it's clear from the context)
+- Does this make sense as a measure of the dispersion of a Bernoulli?
+- If $p = 1/2$, then $\sigma^2 = 1/4$. If $p = 9/10$, then $\sigma^2 = 9/100$ -- $p$ close to 1 makes the Bernoulli more "concentrated," it has less variance
+
+###### Linearity
+
+- If $X$ and $Y$ are **independent**, then $\text{Var}(X+Y) = \text{Var}(X) + \text{Var}(Y)$
+- Unlike the case for expectation, where there was no requirement, we now need independence
+- Without independence: there is a more complicated formula we won't get into now
+- Let's look at some Binomial examples
+
+```{r}
+df <- data.frame(x = c(25:55, 45:75),
+                 y = c(dbinom(25:55, 80, .5), dbinom(45:75, 120, .5)),
+                 n = c(rep("80", 31), rep("120", 31)))
+ggplot(df, aes(x, y, fill = n)) + 
+  geom_bar(stat = "identity", position = "identity", alpha = .4) + 
+  theme_tufte() + ggtitle("Binomial distributions with p = 1/2")
+```
+
+```{r}
+df <- data.frame(x = c(-18:18, -18:18),
+                 y = c(dbinom(22:58, 80, .5), dbinom(42:78, 120, .5)),
+                 n = c(rep("80", 37), rep("120", 37)))
+ggplot(df, aes(x, y, fill = n)) + 
+  geom_bar(stat = "identity", position = "identity", alpha = .4) + 
+  theme_tufte() + ggtitle("Binomial distributions with p = 1/2 (centered)")
+```
+
+- Looks like larger $n$ leads to larger variance
+
+###### Chebyshev's inequality
+
+- Let $a > 0$ be any constant.
+- Chebyshev's inequality: $P(|X - \mu| \geq a) \leq \sigma^2/a^2$
+- For example, let $a = 2\sigma$, then $P(|X - \mu| \geq 2\sigma) \leq 1/4$
+- Look familiar? (We'll come back to the 68-95-99 rule again soon)
+- Helps justify use of expectation and variance as summaries of the full probability distribution
+
+##### Samples of a random variable
+
+- Suppose $X \sim$ Bin($n,p$), and we want to visualize the distribution function of $X$
+- Since we know the formulas we could use those as before
+- But if we can *generate* many observed values of $X$, we could also look at the histogram of those values. This will be a histogram of data rather than the "true" distribution function (much of statistics works by relating these two "worlds")
+- Remember the [Galton board](https://en.wikipedia.org/wiki/Galton_board)?
+
+##### Examples from Bin(100, 1/2)
+
+###### Perfect, symmetric, mathematical model world:
+
+```{r}
+df <- data.frame(x = 35:65, y = dbinom(35:65, 100, .5))
+ggplot(df, aes(x, y)) + geom_bar(stat = "identity") + theme_tufte()
+```
+
+###### Noisy, messy, data world:
+
+```{r}
+df <- data.frame(x = rbinom(500, 100, .5))
+ggplot(df, aes(x)) + stat_count() + theme_tufte()
+```
+
+###### Showing both together:
+
+```{r}
+sampledX <- table(rbinom(500, 100, .5))/500
+nbins <- length(sampledX)
+df <- data.frame(x = c(35:65, as.integer(names(sampledX))),
+                 y = c(dbinom(35:65, 100, .5), sampledX),
+                 world = c(rep("model", 31), rep("data", nbins)))
+ggplot(df, aes(x, y, fill = world)) + 
+  geom_bar(stat = "identity", position = "identity", alpha = .4) + theme_tufte()
+```
+
+###### Increasing the sample size:
+
+```{r}
+sampledX <- table(rbinom(5000, 100, .5))/5000
+nbins <- length(sampledX)
+df <- data.frame(x = c(35:65, as.integer(names(sampledX))),
+                 y = c(dbinom(35:65, 100, .5), sampledX),
+                 world = c(rep("model", 31), rep("data", nbins)))
+ggplot(df, aes(x, y, fill = world)) + 
+  geom_bar(stat = "identity", position = "identity", alpha = .4) + theme_tufte()
+```
+
+##### Breaking a key assumption of the Binomial: independence
+
+```{r}
+X <- function(n) sum(sample(c(rep(0,n), rep(1,n)), n, replace = FALSE))
+sampledX <- table(replicate(10000, X(100)))/10000
+nbins <- length(sampledX)
+df <- data.frame(x = c(35:65, as.integer(names(sampledX))),
+                 y = c(dbinom(35:65, 100, .5), sampledX),
+                 distribution = c(rep("Bin", 31), rep("SumCorBer", nbins)))
+ggplot(df, aes(x, y, fill = distribution)) + 
+  geom_bar(stat = "identity", position = "identity", alpha = .4) + theme_tufte()
+```
+
+#### Examples from other distributions
+
+```{r}
+X <- function(n) sum(sample(c(1,2,8), n, replace = TRUE))
+df1 <- data.frame(x = c(replicate(10000, X(20)), replicate(10000, X(200))),
+                  n = c(rep("20", 10000), rep("200", 10000)))
+ggplot(df1, aes(x)) + geom_histogram(bins = 120) + facet_wrap(~n, scales = "free") + theme_tufte()
+```
