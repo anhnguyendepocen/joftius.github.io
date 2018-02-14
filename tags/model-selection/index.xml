@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Model Selection on Joshua Loftus</title>
+    <link>/tags/model-selection/</link>
+    <description>Recent content in Model Selection on Joshua Loftus</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <managingEditor>lastname at nyu.edu (Joshua Loftus)</managingEditor>
+    <webMaster>lastname at nyu.edu (Joshua Loftus)</webMaster>
+    <lastBuildDate>Tue, 13 Feb 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/model-selection/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Model selection bias invalidates significance tests</title>
+      <link>/post/model-selection-bias-invalidates-significance-tests/</link>
+      <pubDate>Tue, 13 Feb 2018 00:00:00 +0000</pubDate>
+      <author>lastname at nyu.edu (Joshua Loftus)</author>
+      <guid>/post/model-selection-bias-invalidates-significance-tests/</guid>
+      <description>Significance tests and the reproducibility crisis Significance testing may be one of the most popular statistical tools in science. Researchers and journals often treat significance–having a \(p\)-value \(&amp;lt; 0.05\)–as indication that a finding is true and perhaps publishable. But the tests used to compute many of the \(p\)-values people still rely on today were developed over a century ago, when “computer” was still a job title. Now that we have digital computers and it’s standard practice to collect and analyze “big data,” the mathematical assumptions underlying many classical significance tests are being pushed beyond their limits.</description>
+    </item>
+    
+  </channel>
+</rss>

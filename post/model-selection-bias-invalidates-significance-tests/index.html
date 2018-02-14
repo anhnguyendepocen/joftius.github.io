@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Model selection bias invalidates significance tests</title>
+  <meta property="og:title" content="Model selection bias invalidates significance tests" />
+  <meta name="twitter:title" content="Model selection bias invalidates significance tests" />
+  <meta name="description" content="People often do regression model selection, either by hand or using algorithms like forward stepwise or the lasso. Sometimes they also report significance tests for the variables in the chosen model. After all, a significant *p*-value means they&#39;ve found something real. But there&#39;s a problem: the reason for that significant *p*-value may just be something called model selection bias. This bias can invalidate inferences done after model selection, and may be one of the contributors to the reproducibility crisis in science. Adjusting inference methods to account for model selection is an area of ongoing [research](page/research/) where I have done some work.">
+  <meta property="og:description" content="People often do regression model selection, either by hand or using algorithms like forward stepwise or the lasso. Sometimes they also report significance tests for the variables in the chosen model. After all, a significant *p*-value means they&#39;ve found something real. But there&#39;s a problem: the reason for that significant *p*-value may just be something called model selection bias. This bias can invalidate inferences done after model selection, and may be one of the contributors to the reproducibility crisis in science. Adjusting inference methods to account for model selection is an area of ongoing [research](page/research/) where I have done some work.">
+  <meta name="twitter:description" content="People often do regression model selection, either by hand or using algorithms like forward stepwise or the lasso. Sometimes they also report significance tests for the variables in the chosen model. …">
+  <meta name="author" content="Joshua Loftus"/>
+  <link href='/img/favicon.ico' rel='icon' type='image/x-icon'/>
+  <meta property="og:image" content="/img/avatar-icon.png" />
+  <meta name="twitter:image" content="/img/avatar-icon.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@joftius" />
+  <meta name="twitter:creator" content="@joftius" />
+  <meta property="og:url" content="/post/model-selection-bias-invalidates-significance-tests/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Joshua Loftus" />
+
+  <meta name="generator" content="Hugo 0.36" />
+  <link rel="canonical" href="/post/model-selection-bias-invalidates-significance-tests/" />
+  <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Joshua Loftus">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
+  <link rel="stylesheet" href="/css/highlight.min.css" /><link rel="stylesheet" href="/css/codeblock.css" />
+
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">Joshua Loftus</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="Blog" href="/">Blog</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Research" href="/page/research/">Research</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Teaching" href="/page/teaching/">Teaching</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="About" href="/page/about/">About</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Tags" href="/tags">Tags</a>
+            </li>
+          
+        
+
+        
+
+        
+      </ul>
+    </div>
+
+    <div class="avatar-container">
+      <div class="avatar-img-border">
+        
+          <a title="Joshua Loftus" href="/">
+            <img class="avatar-img" src="/img/avatar-icon.png" alt="Joshua Loftus" />
+          </a>
+        
+      </div>
+    </div>
+
+  </div>
+</nav>
+
+
+
+
+    
+  
+  
+  
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    <div class="intro-header no-img">
+      
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="post-heading">
+              <h1>Model selection bias invalidates significance tests</h1>
+                
+                
+                  <span class="post-meta">
+  
+  
+  <i class="fa fa-calendar-o"></i>&nbsp;Posted on February 13, 2018
+  
+  
+  &nbsp;|&nbsp;
+  <i class="fa fa-clock-o"></i> 6 minutes (1116 words)
+  
+  
+</span>
+
+
+                
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        <div id="significance-tests-and-the-reproducibility-crisis" class="section level2">
+<h2>Significance tests and the reproducibility crisis</h2>
+<p>Significance testing may be one of the most popular statistical tools in science. Researchers and journals often treat significance–having a <span class="math inline">\(p\)</span>-value <span class="math inline">\(&lt; 0.05\)</span>–as indication that a finding is true and perhaps publishable. But the tests used to compute many of the <span class="math inline">\(p\)</span>-values people still rely on today were developed over a century ago, when “computer” was still a job title. Now that we have digital computers and it’s standard practice to collect and analyze “big data,” the mathematical assumptions underlying many classical significance tests are being pushed beyond their limits.</p>
+<p>The journal Nature surveyed 1,576 scientists, asking them whether there is a <a href="https://www.nature.com/news/1-500-scientists-lift-the-lid-on-reproducibility-1.19970">reproducibility crisis</a>, and found about 90% agreed. Across a range of disciplines, over 40% of respondents had tried and failed to reproduce at least one of <em>their own experiments</em>. What’s going on?</p>
+<p>Andrew Gelman suggested an analogy to describe how data analysis often proceeds in practice: the <a href="https://www.americanscientist.org/article/the-statistical-crisis-in-science">garden of forking paths</a>. Researchers have to make many choices, and each choice represents a turn down a new fork in the path. Out of the many possible paths, how many end in significant, publishable findings, and how many in dead ends? Nobody wants to just give up when they reach a dead end, so maybe they retrace some of their steps and try a different path.</p>
+<p>Model selection might be the most labyrinthine part of this garden.</p>
+</div>
+<div id="what-is-model-selection-bias" class="section level2">
+<h2>What is model selection bias?</h2>
+<p>To illustrate with an example, we’ll consider the <code>candy_rankings</code> data from the <a href="https://cran.r-project.org/web/packages/fivethirtyeight/index.html">fivethirtyeight</a> package. The outcome variable represents how often a given candy won in matchups against other candies, and the predictor variables are indicators for various properties like whether or not the candy has chocolate, whether or not it’s fruit flavored, how sugary it is relative to other candies, and so on. There are 85 candies and 11 predictor variables.</p>
+<p>You can read the original article about this data <a href="http://fivethirtyeight.com/features/the-ultimate-halloween-candy-power-ranking/">here</a>. In the article, they find that chocolate seems to be the most important variable for increasing the win percentage for a candy. We’ll use model selection to pick a subset of the 11 predictor variables, and then look at significance tests for the selected variables. This is a fairly common sequence of steps for analyzing data in linear regression. (Detail: we’re using forward stepwise selection with AIC).</p>
+<pre class="r"><code>model &lt;- step(lm(Y ~ ., candy), k = 2, trace = 0)
+print(summary(model)$coefficients, digits = 2)</code></pre>
+<pre><code>##              Estimate Std. Error t value Pr(&gt;|t|)
+## (Intercept)     -0.19       0.19    -1.0    0.309
+## caramelTRUE     -0.54       0.26    -2.1    0.042
+## sugarpercent     0.79       0.35     2.3    0.026</code></pre>
+<p>As you can see, the model selection algorithm chose a nice interpretable model with only a few variables, and the small <span class="math inline">\(p\)</span>-values for significance tests tell us they are truly important and our model is good…</p>
+<p>Except <em>none of this is true!</em> The reason I didn’t show the code for loading the dataset earlier is that <em>I created the outcome variable</em> with <code>Y = rnorm(n)</code>. Instead of using the actual outcome variable from the data, I generated a random normal variable, totally independent of the predictors. And yet, we found a model with predictor variables that are significant.</p>
+<div id="a-small-simulation-study" class="section level3">
+<h3>A small simulation study</h3>
+<p>Let’s think about this to get some intuition. If we have one predictor variable <span class="math inline">\(X_1\)</span> and we generate <span class="math inline">\(Y\)</span> from <code>rnorm(n)</code>, then the correlation (in absolute value) between <span class="math inline">\(X_1\)</span> and <span class="math inline">\(Y\)</span> will probably be small. Let’s do this many times and look at the distribution of (absolute) observed correlations:</p>
+<pre class="r"><code>X1 &lt;- candy$sugarpercent
+df &lt;- data.frame(abs_cor = abs(cor(X1,matrix(rnorm(n*1000), nrow = n))[1,]))
+ggplot(df, aes(abs_cor)) + geom_histogram(bins = 40) + theme_tufte()</code></pre>
+<p><img src="/post/2018-02-13-model-selection-bias-invalidates-significance-tests_files/figure-html/one_correlation-1.png" width="672" /></p>
+<p>These correlations are pretty small. The bulk of the distribution is less than 0.1. We probably wouldn’t mistake them for signal. But now, what if we have more predictor variables, and we select the <em>best</em> (absolute) correlation each time?</p>
+<pre class="r"><code>X &lt;- candy[,1:11]
+many_correlations &lt;- abs(cor(X, matrix(rnorm(n*1000), nrow = n)))
+df &lt;- data.frame(largest_abs_cor = apply(many_correlations, 2, max))
+ggplot(df, aes(largest_abs_cor)) + geom_histogram(bins = 40) + theme_tufte()</code></pre>
+<p><img src="/post/2018-02-13-model-selection-bias-invalidates-significance-tests_files/figure-html/many_correlations-1.png" width="672" /></p>
+<p>When we have 11 predictor variables and we select the one with the largest correlation, the resulting distribution of correlations is larger. The bulk is now centered around 0.2. We might mistake these larger correlations for signal, when in fact they only reflect the fact that we searched through the garden of forking paths and chose the most impressive path out of 11. Can you imagine how much worse this problem would be if instead of 11 variables we had 100 to choose from, or 1000?</p>
+</div>
+<div id="returning-to-the-broader-topic-of-model-selection" class="section level3">
+<h3>Returning to the broader topic of model selection</h3>
+<p>Model selection works by choosing variables that seem to be the best at predicting the outcome. The more variables we have to choose from, the more likely it is we find one that predicts <span class="math inline">\(Y\)</span> very well, even just by pure randomness, as the plots above show. In general, this model selection bias gets larger as the size of our “search space” increases – meaning not only number of variables, but also the complexity of the fitted relationships (e.g. non-linear). And in general, significance tests for the coefficients in the selected model will be biased toward smaller <span class="math inline">\(p\)</span>-values, potentially causing us to commit more Type 1 errors.</p>
+<p>This is part of the reason why scientists are sometimes unable to reproduce their own experiments. When they got a significant result (<span class="math inline">\(p &lt; 0.05\)</span>) the first time, it may have been due to model selection bias. When they try to reproduce the result, the noise just goes in a different direction, and their original result disappears.</p>
+</div>
+</div>
+<div id="selection-bias-can-make-noise-look-like-signal" class="section level2">
+<h2>Selection bias can make noise look like signal</h2>
+<p>I hope you are convinced of this take home message. I began with a story about the candy dataset, instead of a simulation, because when people are analyzing their own data they never believe it might just be noise. The variables have names and meanings. When we see regression model output our first instinct may be to start interpreting the coefficients, becoming more confident about those that match our preconceptions and rationalizing about those that do not. But as we just saw, model selection makes it possible, and maybe even likely, to get nice looking significance test results even if the outcome variable is just pure noise.</p>
+<p>In the candy example the outcome variable was noise, but that’s not essential. We could have had a real outcome variable but our predictor variables are all noise. Or we could have a mixture of real signals and noise. As long as there’s many variables, searching among them for the best makes the significant test results biased toward small <span class="math inline">\(p\)</span>-values.</p>
+<p>In my next post, I’ll describe three approaches to fixing this problem, including one that I worked on in my own <a href="../../page/research/">research</a>.</p>
+</div>
+
+      </article>
+
+      
+        <ul class="pager blog-pager">
+          
+          
+        </ul>
+      
+
+
+      
+        
+        
+      
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+              <li>
+                <a href="mailto:lastname%20at%20nyu.edu" title="Email me">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://github.com/joftius" title="GitHub">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://twitter.com/joftius" title="Twitter">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://linkedin.com/in/joftius" title="LinkedIn">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+          
+          <li>
+            
+            <a href="/index.xml" title="RSS">
+            
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          
+        </ul>
+        <p class="credits copyright text-muted">
+          
+            
+              <a href="joshualoftus.com">Joshua Loftus</a>
+            
+          
+
+          &nbsp;&bull;&nbsp;
+          2018
+
+          
+            &nbsp;&bull;&nbsp;
+            <a href="/">Joshua Loftus</a>
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+          <a href="http://gohugo.io">Hugo v0.36</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js" integrity="sha384-/y1Nn9+QQAipbNQWU65krzJralCnuOasHncUFXGkdwntGeSvQicrYkiUBwsgUqc1" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js" integrity="sha384-dq1/gEHSxPZQ7DdrM82ID4YVol9BYyU7GbWlIwnwyPzotpoc57wDw/guX8EaYGPx" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="/js/main.js"></script>
+<script src="/js/highlight.min.js"></script>
+<script> hljs.initHighlightingOnLoad(); </script>
+<script> $(document).ready(function() {$("pre.chroma").css("padding","0");}); </script><script> renderMathInElement(document.body); </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script>
+<script src="/js/load-photoswipe.js"></script>
+
+
+
+
+
+
+  </body>
+</html>
+
