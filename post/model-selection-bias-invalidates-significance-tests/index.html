@@ -183,7 +183,7 @@
   
   
   &nbsp;|&nbsp;
-  <i class="fa fa-clock-o"></i> 6 minutes (1116 words)
+  <i class="fa fa-clock-o"></i> 6 minutes (1211 words)
   
   
 </span>
@@ -212,16 +212,21 @@
 </div>
 <div id="what-is-model-selection-bias" class="section level2">
 <h2>What is model selection bias?</h2>
-<p>To illustrate with an example, we’ll consider the <code>candy_rankings</code> data from the <a href="https://cran.r-project.org/web/packages/fivethirtyeight/index.html">fivethirtyeight</a> package. The outcome variable represents how often a given candy won in matchups against other candies, and the predictor variables are indicators for various properties like whether or not the candy has chocolate, whether or not it’s fruit flavored, how sugary it is relative to other candies, and so on. There are 85 candies and 11 predictor variables.</p>
-<p>You can read the original article about this data <a href="http://fivethirtyeight.com/features/the-ultimate-halloween-candy-power-ranking/">here</a>. In the article, they find that chocolate seems to be the most important variable for increasing the win percentage for a candy. We’ll use model selection to pick a subset of the 11 predictor variables, and then look at significance tests for the selected variables. This is a fairly common sequence of steps for analyzing data in linear regression. (Detail: we’re using forward stepwise selection with AIC).</p>
-<pre class="r"><code>model &lt;- step(lm(Y ~ ., candy), k = 2, trace = 0)
+<p>To illustrate with an example, we’ll consider the <code>candy_rankings</code> data from the <a href="https://cran.r-project.org/web/packages/fivethirtyeight/index.html">fivethirtyeight</a> package. The <strong>outcome variable</strong> is how often a given candy won in popularity matchups against other candies, and the <strong>predictor variables</strong> are various properties like whether or not the candy has chocolate, whether or not it’s fruit flavored, how sugary it is relative to other candies, and so on. There are 85 candies and 11 predictor variables in the dataset.</p>
+<p>You can read the original article about this data <a href="http://fivethirtyeight.com/features/the-ultimate-halloween-candy-power-ranking/">here</a>. In the article, they find that chocolate seems to be the most important variable for increasing the win percentage for a candy. We’ll approach the problem a little differently, and use <strong>model selection</strong> to pick a subset of the 11 predictor variables. Then we’ll report significance tests for the selected variables to show they really are important. This is a fairly common sequence of steps for analyzing data in linear regression.</p>
+<blockquote>
+<p>Details for the curious: this particular method is a “greedy” algorithm that adds one predictor variable at a time into the model starting with the variable that has the highest correlation with the outcome, and stopping after choosing the number of variables in a data-driven way. These details are not important for the overall message of this post. Any model selection method can cause selection bias.</p>
+</blockquote>
+<pre class="r"><code># Forward stepwise with AIC
+model &lt;- step(lm(Y ~ ., candy), k = 2, trace = 0)
+# Significance tests for selected model
 print(summary(model)$coefficients, digits = 2)</code></pre>
 <pre><code>##              Estimate Std. Error t value Pr(&gt;|t|)
 ## (Intercept)     -0.19       0.19    -1.0    0.309
 ## caramelTRUE     -0.54       0.26    -2.1    0.042
 ## sugarpercent     0.79       0.35     2.3    0.026</code></pre>
 <p>As you can see, the model selection algorithm chose a nice interpretable model with only a few variables, and the small <span class="math inline">\(p\)</span>-values for significance tests tell us they are truly important and our model is good…</p>
-<p>Except <em>none of this is true!</em> The reason I didn’t show the code for loading the dataset earlier is that <em>I created the outcome variable</em> with <code>Y = rnorm(n)</code>. Instead of using the actual outcome variable from the data, I generated a random normal variable, totally independent of the predictors. And yet, we found a model with predictor variables that are significant.</p>
+<p>Except <strong>none of this is true!</strong> The reason I didn’t show the code for loading the dataset earlier is that <em>I created the outcome variable</em> with <code>Y = rnorm(n)</code> (this function in <code>R</code> generates <span class="math inline">\(n\)</span> random numbers following the normal distribution). Instead of using the actual outcome variable from the data, I generated a random normal variable, <em>totally independent</em> of the predictors. And yet, we found a model with predictor variables that are significant.</p>
 <div id="a-small-simulation-study" class="section level3">
 <h3>A small simulation study</h3>
 <p>Let’s think about this to get some intuition. If we have one predictor variable <span class="math inline">\(X_1\)</span> and we generate <span class="math inline">\(Y\)</span> from <code>rnorm(n)</code>, then the correlation (in absolute value) between <span class="math inline">\(X_1\)</span> and <span class="math inline">\(Y\)</span> will probably be small. Let’s do this many times and look at the distribution of (absolute) observed correlations:</p>
