@@ -7,10 +7,20 @@
     <generator>Hugo -- gohugo.io</generator>
     <managingEditor>lastname at nyu.edu (Joshua Loftus)</managingEditor>
     <webMaster>lastname at nyu.edu (Joshua Loftus)</webMaster>
-    <lastBuildDate>Tue, 13 Feb 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 23 Feb 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Algorithmic fairness is as hard as causation</title>
+      <link>/post/algorithmic-fairness-is-as-hard-as-causation/</link>
+      <pubDate>Fri, 23 Feb 2018 00:00:00 +0000</pubDate>
+      <author>lastname at nyu.edu (Joshua Loftus)</author>
+      <guid>/post/algorithmic-fairness-is-as-hard-as-causation/</guid>
+      <description>What is algorithmic fairness? (Feel free to skip this section if you’re already familiar with the topic.)
+Algorithmic fairness is an interdisciplinary research field concerned with the various ways that algorithms may perpetuate or reinforce unfair legacies of our history, and how we might modify the alorithms or systems they are used in to prevent this. For example, if the training data used in a machine learning methods contains patterns caused by things like racism, sexism, ableism, or other types of injustice, then the model may learn those patterns and use them to make predictions and decisions that are unfair.</description>
+    </item>
     
     <item>
       <title>Model selection bias invalidates significance tests</title>
