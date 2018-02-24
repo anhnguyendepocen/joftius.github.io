@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Algorithmic fairness is as hard as causation</title>
+  <meta property="og:title" content="Algorithmic fairness is as hard as causation" />
+  <meta name="twitter:title" content="Algorithmic fairness is as hard as causation" />
+  <meta name="description" content="This post describes a simple example that illustrates why algorithmic fairness is a hard problem. I claim it is at least as hard as doing causal inference from observational data, i.e. distinguishing between mere association and actual causation. In the process, we will also see that SCOTUS Chief Justice Roberts has a mathematically incorrect theory on how to stop discrimination. Unfortunately, that theory persists as one of the most common constraints on fairness.">
+  <meta property="og:description" content="This post describes a simple example that illustrates why algorithmic fairness is a hard problem. I claim it is at least as hard as doing causal inference from observational data, i.e. distinguishing between mere association and actual causation. In the process, we will also see that SCOTUS Chief Justice Roberts has a mathematically incorrect theory on how to stop discrimination. Unfortunately, that theory persists as one of the most common constraints on fairness.">
+  <meta name="twitter:description" content="This post describes a simple example that illustrates why algorithmic fairness is a hard problem. I claim it is at least as hard as doing causal inference from observational data, i.e. distinguishing …">
+  <meta name="author" content="Joshua Loftus"/>
+  <link href='/img/favicon.ico' rel='icon' type='image/x-icon'/>
+  <meta property="og:image" content="/img/avatar-icon.png" />
+  <meta name="twitter:image" content="/img/avatar-icon.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@joftius" />
+  <meta name="twitter:creator" content="@joftius" />
+  <meta property="og:url" content="/post/algorithmic-fairness-is-as-hard-as-causation/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Joshua Loftus" />
+
+  <meta name="generator" content="Hugo 0.36" />
+  <link rel="canonical" href="/post/algorithmic-fairness-is-as-hard-as-causation/" />
+  <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Joshua Loftus">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
+  <link rel="stylesheet" href="/css/highlight.min.css" /><link rel="stylesheet" href="/css/codeblock.css" />
+
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-114292497-1', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">Joshua Loftus</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="Blog" href="/">Blog</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Research" href="/page/research/">Research</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Teaching" href="/page/teaching/">Teaching</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="About" href="/page/about/">About</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Tags" href="/tags">Tags</a>
+            </li>
+          
+        
+
+        
+
+        
+      </ul>
+    </div>
+
+    <div class="avatar-container">
+      <div class="avatar-img-border">
+        
+          <a title="Joshua Loftus" href="/">
+            <img class="avatar-img" src="/img/avatar-icon.png" alt="Joshua Loftus" />
+          </a>
+        
+      </div>
+    </div>
+
+  </div>
+</nav>
+
+
+
+
+    
+  
+  
+  
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    <div class="intro-header no-img">
+      
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="post-heading">
+              <h1>Algorithmic fairness is as hard as causation</h1>
+                
+                
+                  <span class="post-meta">
+  
+  
+  <i class="fa fa-calendar-o"></i>&nbsp;Posted on February 23, 2018
+  
+  
+  &nbsp;|&nbsp;
+  <i class="fa fa-clock-o"></i> 8 minutes (1626 words)
+  
+  
+</span>
+
+
+                
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        <script src="/rmarkdown-libs/htmlwidgets/htmlwidgets.js"></script>
+<script src="/rmarkdown-libs/d3/d3.min.js"></script>
+<script src="/rmarkdown-libs/dagre/dagre-d3.min.js"></script>
+<link href="/rmarkdown-libs/mermaid/dist/mermaid.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/mermaid/dist/mermaid.slim.min.js"></script>
+<link href="/rmarkdown-libs/DiagrammeR-styles/styles.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/chromatography/chromatography.js"></script>
+<script src="/rmarkdown-libs/DiagrammeR-binding/DiagrammeR.js"></script>
+
+
+<div id="what-is-algorithmic-fairness" class="section level3">
+<h3>What is algorithmic fairness?</h3>
+<p>(Feel free to skip this section if you’re already familiar with the topic.)</p>
+<p>Algorithmic fairness is an interdisciplinary research field concerned with the various ways that algorithms may perpetuate or reinforce unfair legacies of our history, and how we might modify the alorithms or systems they are used in to prevent this. For example, if the training data used in a machine learning methods contains patterns caused by things like racism, sexism, ableism, or other types of injustice, then the model may learn those patterns and use them to make predictions and decisions that are unfair. There are many ways that technology can have unintended consequences, and this is just one of them.</p>
+</div>
+<div id="chief-justice-roberts-theory-of-fairness" class="section level3">
+<h3>Chief Justice Roberts’ theory of fairness</h3>
+<p>The Chief Justice of the US Supreme Court <a href="https://en.wikipedia.org/wiki/Parents_Involved_in_Community_Schools_v._Seattle_School_District_No._1#Plurality_opinion_by_Chief_Justice_Roberts">wrote in 2007</a> that</p>
+<blockquote>
+<p>The way to stop discrimination on the basis of race is to stop discriminating on the basis of race.</p>
+</blockquote>
+<p>He wasn’t just trying to be cute, he was arguing in favor of a specific definition of fairness: one where a person’s race is not allowed to be taken into consideration when making decisions about them. For decisions made by humans, it’s hard to imagine how such a rule could ever be enforced. But for algorithms, there is a formal way that <em>may seem at first</em> to be a rigorous version of Roberts’ maxim. We need just a little background/notation for variables in an automated decision-making setting:</p>
+<ul>
+<li><span class="math inline">\(A\)</span> represents a sensitive attribute, like race or gender, which is the basis of potential unfairness</li>
+<li><span class="math inline">\(X\)</span> represents other attributes, like education test scores, or criminal record, which are considered informative for the decision</li>
+<li><span class="math inline">\(Y\)</span> is an outcome variable to be predicted or classified, like GPA, risk of recidivism, or lifetime value of a loan, etc.</li>
+</ul>
+<p>The algorithm uses this data to learn a function <span class="math inline">\(f\)</span> which is used to predict <span class="math inline">\(Y\)</span> from the input variables, with the hope that <span class="math inline">\(Y \approx f(X,A)\)</span>. Now, while it’s hard to imagine how a human might be “race blind” when making a decision–attaining a superhuman level of objectivity and freedom from implicit bias–many people believe that computers can do this easily. Just delete the variable <span class="math inline">\(A\)</span> from the data, and make the function <span class="math inline">\(f\)</span> a function of only <span class="math inline">\(X\)</span>, i.e., require that <span class="math inline">\(Y \approx f(X)\)</span>.</p>
+<p>This definition of fairness has the advantages of being enshrined in <a href="https://en.wikipedia.org/wiki/Disparate_treatment">US labor law</a> and, if you survey the public, it’s widely popular (see Table 1 of <a href="http://www.mlandthelaw.org/papers/grgic.pdf">this paper</a>). Unfortunately, it is fundamentally flawed, as the next example shows.</p>
+</div>
+<div id="the-red-car-example" class="section level3">
+<h3>The red car example</h3>
+<p>Consider a car insurance company that wants to predict the risk of insuring potential customers using the predictor variables gender <span class="math inline">\(A\)</span> and whether or not the car to be insured is red <span class="math inline">\(X\)</span>. Using the driving records <span class="math inline">\(Y\)</span> and data of their existing customers, they want to learn a function <span class="math inline">\(f(X,A)\)</span> to predict <span class="math inline">\(Y\)</span>. Then when a new customer applies for insurance, they collect the data <span class="math inline">\(X, A\)</span> and apply the function <span class="math inline">\(f\)</span> to predict the risk of the policy for a new customer.</p>
+<p>Is it fair to fit a function <span class="math inline">\(f(X) \approx Y\)</span>? It depends on the underlying causal structure of the world. Suppose women are more likely to drive red cars, and independently of that people with aggressive personalities <span class="math inline">\(U\)</span> are also more likely to drive red cars. Further, suppose that the most aggressive people are the only ones who have high car insurance risk. In this world, there is no direct relationship between gender and aggression or high risk. The big problem here is that aggression is unobserved, it is a unmeasured confounding variable. The possibility of unobserved confounding like this is the same phenomenon that makes causal inference so difficult.</p>
+<p>Let’s generate some data in this idealized world:</p>
+<pre class="r"><code>A &lt;- rbinom(1000, 1, .5)
+U &lt;- rnorm(1000)
+X &lt;- A + U &gt; 1
+Y &lt;- U &gt; 1/2
+world &lt;- data.frame(Gender = factor(c(&quot;Other&quot;, &quot;Woman&quot;)[as.numeric(A)+1]),
+                    CarColor = factor(c(&quot;Silver&quot;, &quot;Red&quot;)[as.numeric(X)+1]),
+                    Aggressiveness = U,
+                    HighRisk = Y)
+head(world)</code></pre>
+<pre><code>##   Gender CarColor Aggressiveness HighRisk
+## 1  Other   Silver     0.07730312    FALSE
+## 2  Other   Silver    -0.29686864    FALSE
+## 3  Woman   Silver    -1.18324224    FALSE
+## 4  Woman      Red     0.01129269    FALSE
+## 5  Other   Silver     0.99160104     TRUE
+## 6  Woman      Red     1.59396745     TRUE</code></pre>
+<p>You can see there’s no relationship between gender and aggressiveness in this data:</p>
+<pre class="r"><code>ggplot(world, aes(Gender, Aggressiveness)) + geom_boxplot() + theme_tufte()</code></pre>
+<p><img src="/post/2018-02-23-algorithmic-fairness-is-as-hard-as-causation_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>We can summarize the causal relationships between these variables in a graph, where there is a directed arrow from variable 1 to variable 2 if and only if variable 1 is a cause of variable 2.</p>
+<pre class="r"><code>mermaid(
+  &quot;graph TB;
+  A(Gender)--&gt;X(Car Color)
+  U(Aggression)--&gt;X
+  U--&gt;Y(Risk)&quot;
+)</code></pre>
+<div id="htmlwidget-1" style="width:672px;height:480px;" class="DiagrammeR html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"diagram":"graph TB;\n  A(Gender)-->X(Car Color)\n  U(Aggression)-->X\n  U-->Y(Risk)"},"evals":[],"jsHooks":[]}</script>
+<p>Now we get to the problem. If the car company bases its decisions on <span class="math inline">\(X\)</span> only, and not <span class="math inline">\(A\)</span>, <strong>it will end up charging higher costs to people with red cars</strong>:</p>
+<pre class="r"><code>ggplot(world, aes(CarColor, Aggressiveness)) + geom_boxplot() + theme_tufte()</code></pre>
+<p><img src="/post/2018-02-23-algorithmic-fairness-is-as-hard-as-causation_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>Furthermore, <strong>this policy would have <a href="https://en.wikipedia.org/wiki/Disparate_impact">disparate impact</a> on women</strong> since more of them drive red cars. To see this, let’s look at predicted risk scores for logistic regression models using either <span class="math inline">\(X\)</span> alone (Roberts’ model) or using both <span class="math inline">\(X\)</span> and <span class="math inline">\(A\)</span> (full model).</p>
+<pre class="r"><code>full_model &lt;- glm(HighRisk ~ CarColor + Gender, family = binomial, world)
+roberts_model &lt;- glm(HighRisk ~ CarColor, family = binomial, world)
+world$full &lt;- predict(full_model, type = &quot;response&quot;)
+world$roberts &lt;- predict(roberts_model, type = &quot;response&quot;)
+output &lt;- melt(world, measure.vars = 5:6, variable.name = &quot;Model&quot;, value.name = &quot;Prediction&quot;)
+output %&gt;% group_by(Model, Gender, CarColor) %&gt;% 
+  summarise(Predicted = mean(Prediction))</code></pre>
+<pre><code>## # A tibble: 8 x 4
+## # Groups:   Model, Gender [?]
+##   Model   Gender CarColor     Predicted
+##   &lt;fct&gt;   &lt;fct&gt;  &lt;fct&gt;            &lt;dbl&gt;
+## 1 full    Other  Red      1.000        
+## 2 full    Other  Silver   0.199        
+## 3 full    Woman  Red      0.582        
+## 4 full    Woman  Silver   0.00000000223
+## 5 roberts Other  Red      0.697        
+## 6 roberts Other  Silver   0.126        
+## 7 roberts Woman  Red      0.697        
+## 8 roberts Woman  Silver   0.126</code></pre>
+<p>The Roberts model predicts high risk based on red car only. But there are many more women with red cars than men, independently of aggression.</p>
+<pre class="r"><code>table(world$Gender, world$CarColor)</code></pre>
+<pre><code>##        
+##         Red Silver
+##   Other  88    432
+##   Woman 232    248</code></pre>
+<p>The full model distinguishes between women with red cars and men with red cars. Since men in this world don’t have a preference for red, they only drive red cars if they are aggressive, so those men receive very high risk predictions. Women who drive red cars receive a medium risk score, indicating the uncertainty over the reason for their preference for red between the two possible causes.</p>
+<p>To summarize: we started with an ideal world where there is no actual unfairness on the basis of gender, but by <em>ignoring</em> gender in our predictions we can actually <em>create</em> unfairness. Enforcing Roberts’ definition of fairness leads to unfair predictions because the underlying causal structure of the world was not properly integrated into the predictive model.</p>
+</div>
+<div id="conclusion" class="section level3">
+<h3>Conclusion</h3>
+<p>Roberts’ notion of fairness, or the simplistic or possibly unrealistic nature of the red car example, are not the root problems here. Any definition of fairness that does not incorporate the causal structure of the world may break down and possibly increase the amount of unfairness rather than decrease it.</p>
+<div id="unobserved-confounders-are-a-fundamental-limitation-on-both-causal-inference-and-fairness" class="section level4">
+<h4>Unobserved confounders are a fundamental limitation on both causal inference and fairness</h4>
+<p>In causal inference, unobserved confounders can invalidate whatever conclusions we make based on the data we do observe. Similarly in fairness, missing variables that have important information related to the protected attributes can cause any definition of fairness to break down. In the red car example it was the insurance company’s inability to directly measure aggressiveness that makes the problem difficult. These sorts of problems are ubiquitous in machine learning and data science: proxies are used in place of the outcome variables we’re really interested in, the data is often just whatever happened to be available rather than a carefully collected set of variables directed by a specific scientific question, and so on.</p>
+</div>
+<div id="feedback-is-a-fundamental-limitation-on-both-causal-inference-and-fairness" class="section level4">
+<h4>Feedback is a fundamental limitation on both causal inference and fairness</h4>
+<p>In the red car example there was no direct relationship between <span class="math inline">\(A\)</span> and <span class="math inline">\(Y\)</span>, but in many fairness examples there is such a causal link (probably with other unmeasured variables in between them). In policing, for example, individual arrest records or geographic reported crime rates may be used as outcomes or predictors for models trying to predict future criminal activity. But if more police are sent to patrol neighborhoods where there were higher arrest rates, the increase in police can cause the number of arrests to go even higher. The resulting <a href="http://proceedings.mlr.press/v81/ensign18a.html">feedback loops</a> can lead to overpolicing some areas and underpolicing others. It’s hard to determine whether arrest rates in one area are high because of actual high crime rates or because of more policing. Similarly, this kind of feedback can also make causal inference <a href="https://www.jstor.org/stable/270880">difficult or impossible</a>.</p>
+</div>
+<div id="takeaways-for-all-even-skeptics-of-causal-definitions-of-fairness" class="section level4">
+<h4>Takeaways for all, even skeptics of causal definitions of fairness</h4>
+<p>Similar strategies seem necessary for overcoming the fundamental challenges of both causal inference and fairness. It’s important to involve domain experts and <a href="https://twitter.com/KLdivergence/status/967229716389400577">stakeholders</a>, think about how the data was generated or gathered, relationships between predictors, and the possibility of confounding by unobserved variables. We can also gain insight by thinking about how we would conduct a randomized, controlled study, to the extent that it’s feasible or even imaginable. We must at least <em>try</em> to understand the variety of sources of error or unfairness, or how our modeling assumptions might be wrong, and which of these are the most dangerous to our conclusions.</p>
+<p>If you are interested in further reading, the red car example appears in our 2017 NIPS oral paper on <a href="http://papers.nips.cc/paper/6995-counterfactual-fairness">counterfactual fairness</a>, and there are several other papers and links on causal inference (and other topics!) on Moritz Hardt’s <a href="https://fairmlclass.github.io/">course page</a> on fairness in machine learning.</p>
+</div>
+</div>
+
+      </article>
+
+      
+        <ul class="pager blog-pager">
+          
+            <li class="previous">
+              <a href="/post/model-selection-bias-invalidates-significance-tests/" data-toggle="tooltip" data-placement="top" title="Model selection bias invalidates significance tests">&larr; Previous Post</a>
+            </li>
+          
+          
+        </ul>
+      
+
+
+      
+        
+        
+      
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+              <li>
+                <a href="mailto:lastname%20at%20nyu.edu" title="Email me">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://github.com/joftius" title="GitHub">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://twitter.com/joftius" title="Twitter">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://linkedin.com/in/joftius" title="LinkedIn">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+          
+          <li>
+            
+            <a href="/index.xml" title="RSS">
+            
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          
+        </ul>
+        <p class="credits copyright text-muted">
+          
+            
+              <a href="joshualoftus.com">Joshua Loftus</a>
+            
+          
+
+          &nbsp;&bull;&nbsp;
+          2018
+
+          
+            &nbsp;&bull;&nbsp;
+            <a href="/">Joshua Loftus</a>
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+          <a href="http://gohugo.io">Hugo v0.36</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js" integrity="sha384-/y1Nn9+QQAipbNQWU65krzJralCnuOasHncUFXGkdwntGeSvQicrYkiUBwsgUqc1" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js" integrity="sha384-dq1/gEHSxPZQ7DdrM82ID4YVol9BYyU7GbWlIwnwyPzotpoc57wDw/guX8EaYGPx" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="/js/main.js"></script>
+<script src="/js/highlight.min.js"></script>
+<script> hljs.initHighlightingOnLoad(); </script>
+<script> $(document).ready(function() {$("pre.chroma").css("padding","0");}); </script><script> renderMathInElement(document.body); </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script>
+<script src="/js/load-photoswipe.js"></script>
+
+
+
+
+
+
+  </body>
+</html>
+
