@@ -267,12 +267,12 @@ head(world)</code></pre>
 <p>We can summarize the causal relationships between these variables in a graph, where there is a directed arrow from variable 1 to variable 2 if and only if variable 1 is a cause of variable 2.</p>
 <pre class="r"><code>mermaid(
   &quot;graph TB;
-  A(Gender)--&gt;X(Car Color)
+  A[Gender]--&gt;X[Car Color]
   U(Aggression)--&gt;X
-  U--&gt;Y(Risk)&quot;
+  U--&gt;Y[Risk]&quot;
 )</code></pre>
 <div id="htmlwidget-1" style="width:672px;height:480px;" class="DiagrammeR html-widget"></div>
-<script type="application/json" data-for="htmlwidget-1">{"x":{"diagram":"graph TB;\n  A(Gender)-->X(Car Color)\n  U(Aggression)-->X\n  U-->Y(Risk)"},"evals":[],"jsHooks":[]}</script>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"diagram":"graph TB;\n  A[Gender]-->X[Car Color]\n  U(Aggression)-->X\n  U-->Y[Risk]"},"evals":[],"jsHooks":[]}</script>
 <p>Now we get to the problem. If the car company bases its decisions on <span class="math inline">\(X\)</span> only, and not <span class="math inline">\(A\)</span>, <strong>it will end up charging higher costs to people with red cars</strong>:</p>
 <pre class="r"><code>ggplot(world, aes(CarColor, Aggressiveness)) + geom_boxplot() + theme_tufte()</code></pre>
 <p><img src="/post/2018-02-23-algorithmic-fairness-is-as-hard-as-causation_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
