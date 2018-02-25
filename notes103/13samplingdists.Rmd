@@ -1,0 +1,113 @@
+---
+title: "Lecture 13 - Sampling distributions"
+author: "Joshua Loftus"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(ggthemes)
+```
+
+#### Announcements
+
+- Homework 4 is posted, due on Thursday
+- Exam study guide, homework solution guides are posted
+- Today: sampling distributions
+
+#### Recap
+
+- Data is cool and stuff, but to really use it and learn from it we also need mathematical models
+- Probability is the area of math studying "randomness" -- meaning things like games of chance, repeated experiments
+- Random variables provide a sophisticated language to use probability for modeling many different kinds of data
+- Sampling is the bridge between the world of data and the world of models models
+- Starting with a model, can generate data by drawing **independent samples** from it
+- Starting with data, can create a probability model called the **empirical distribution**
+
+- Empirical distributions provide one path to answering probabilistic questions about data. A whole field of "nonparametric statistics" takes this path. We may see a few examples later in the course.
+- For now, we focus on parametric methods: ones where the probability distributions involved come from families of random variables like Binomials that can be described through their parameters (e.g $n$ and $p$ for the Binomial)
+
+#### Parameters as "truth" or "population" values
+
+- Think of a probability model as a representation of some underlying truth of the world that we cannot measure directly
+- For example, a model could represent the whole population: what would the restaurant's rating be if everyone in the city reviewed it (or country, or world--whichever population is relevant for the question) 
+- Parameters are the important constants that describe the distribution, for example they might be the mean $\mu$ and variance $\sigma^2$, or $n$ and $p$ for the Binomial family
+- We think of the parameters as "**true**" values, for example $\mu$ may be the mean of the entire population, or $p$ may be the true underlying success probability
+- We usually also think of the parameters as **unknown**
+- Finally, by thinking of data as representing a sample from the model (or population), we **estimate** the parameters using the data
+
+- Since we could not measure $\mu$ directly, we **estimate** it from the sample mean $\bar x$
+- Since we don't know the true distribution of $X$, we use the sample histogram
+- And so on. This is sometimes called the "plug-in principle"
+
+#### Statistics
+
+- Now that we're acquainted with both of the parallel worlds, and we've got the main idea of how to connect them, we're ready to see many more interesting examples and start addressing important questions
+- For example: is the plug-in principle any good? How well does it work? Is $\bar x$ close to $\mu$? How close?
+- Are we actually gaining anything by thinking of data as independent samples from a model?
+
+#### Interlude: normal distribution
+
+- One of the most important families of random variables. Sometimes called Gaussian, or "bell curve" because of its shape
+- All examples we've seen so far are discrete, but this one is **continuous**, its outcome can be any real number
+- We'll talk about this in more detail later, but for now we'll just use it as an example
+
+```{r include=FALSE}
+true_mu <- sqrt(2)
+```
+
+```{r}
+n <- 20
+Z <- rnorm(n, mean = true_mu) # I've hidden true_mu from you, it's an unknown parameter
+Z
+mean(Z)
+```
+
+- This would be our guess for $\mu$ based on the plug-in principle. But how good of a guess is it?
+- Do we gain anything by having 20 samples instead of 1? 
+- Do we lose anything by focusing on one number, the sample mean, when we started with 20 individual samples?
+- In what sense is a restaurant rating more trustworthy if it has many reviews?
+
+- The sample mean is data... what do we use to understand data? (Models!) 
+
+##### Sampling distributions
+
+- The sample mean, or other summary statistics, are forms of data
+- When we model them as random variables, the resulting distributions are called sampling distributions
+- We have data $x_1, x_2, \ldots, x_n$ and a sample mean $\bar x$
+- We assume the model $X_1, X_2, \ldots, X_n$ are independent samples of a random variable called $X$, and write $\mu = E[X]$ and $\sigma^2 = \text{Var}(X)$.
+- Now consider the *random variable*
+$$
+\bar X = \frac{1}{n} \sum_{i=1}^n X_i
+$$
+
+- The distribution of $\bar X$ is called the **sampling distribution of the mean**
+- Exercise: compute $E[X]$ (what property of expectation makes this easy?)
+- Next, use this fact: $\text{Var}(cX) = c^2 \text{Var}(X)$ and compute $\text{Var}(\bar X)$
+- This is where the magic happens!
+$$
+\text{Var}(\bar X) = \frac{1}{n^2} \text{Var}\left(\sum_{i=1}^n X_i\right) =
+\frac{1}{n^2} \sum_{i=1}^n \text{Var}(X_i) = \frac{1}{n^2} \sum_{i=1}^n \sigma^2 = \frac{\sigma^2}{n}
+$$
+- The first equality uses the fact from the previous point, the second one uses linearity of variance for sums of *independent* random variables, the third one uses the fact that the $X_i$ all have the same distribution (hence same variance)
+- **The sample mean has less variance (or dispersion) than an individual measurement**
+
+- Example: if $Z_1, \ldots, Z_n \sim N(\mu, \sigma^2)$ are **independent and identically distributed** (iid) then $\bar Z \sim N(\mu, \sigma^2/n)$
+
+
+```{r}
+Zbar <- function(n) mean(rnorm(n, mean = true_mu, sd = 2))
+df <- data.frame(Z = c(rnorm(5000, mean = true_mu, sd = 2),
+                       replicate(5000, Zbar(10)),
+                       replicate(5000, Zbar(30))),
+                 Samples = factor(c(rep(1, 5000), rep(10, 5000), rep(30, 5000))))
+ggplot(df, aes(Z, fill = Samples, linetype = Samples)) + geom_density(alpha = .2) + theme_tufte()
+```
+
+- Intuition: think of each individual sample as a noisy measurement of $\mu$, the underlying truth. Sometimes the noise makes the sample larger than $\mu$, and sometimes it makes it smaller. When we average many samples, the noise "cancels out"
+- By the way:
+
+```{r}
+true_mu
+```

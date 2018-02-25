@@ -1,0 +1,158 @@
+---
+title: "Lecture 12 - Random samples: a bridge between two worlds"
+author: "Joshua Loftus"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(ggthemes)
+```
+
+#### Review
+
+- Homework 4 to be posted
+- Exam study guide, homework solution guides -- to be posted
+- Today: random samples
+
+##### Preview
+
+- We've talked about Bernoulli and Binomial distributions, but there are many more useful ones
+- Here's just a quick preview of a few of them
+
+```{r}
+df <- data.frame(x = c(25:75),
+                 y = dhyper(25:75, 100, 100, 100))
+ggplot(df, aes(x, y)) + 
+  geom_bar(stat = "identity", position = "identity") + 
+  theme_tufte() + ggtitle("Hypergeometric distribution with 50 trials, 100 successes and 100 failures")
+```
+
+```{r}
+df <- data.frame(x = c(0:50),
+                 y = dgeom(0:50, .1))
+ggplot(df, aes(x, y)) + 
+  geom_bar(stat = "identity", position = "identity") + 
+  theme_tufte() + ggtitle("Geometric distribution with p = 1/10")
+```
+
+```{r}
+df <- data.frame(x = c(0:80),
+                 y = dnbinom(0:80, 5, 1/5))
+ggplot(df, aes(x, y)) + 
+  geom_bar(stat = "identity", position = "identity") + 
+  theme_tufte() + ggtitle("Negative Binomial distribution with p = 1/5, x = 5")
+```
+
+```{r}
+df <- data.frame(x = c(0:25),
+                 y = dpois(0:25, 10))
+ggplot(df, aes(x, y)) + 
+  geom_bar(stat = "identity", position = "identity") + 
+  theme_tufte() + ggtitle(expression(paste("Poisson distribution with ", lambda, " = 10")))
+```
+
+##### When should you trust a number?
+
+- Suppose you're looking for a restaurant nearby, and checking the ratings on your favorite app
+- The ratings are on a scale of 1 to 5 stars
+- Restaurant $A$ opened recently. It only has one rating, but it's 5 stars
+- Restaurant $B$'s rating is 4.8, based on 5 reviews
+- Restaurant $C$ is rated 4.7, but has 40 reviews
+- So, Restaurant $A$ is clearly the best, right? (Discuss)
+
+- Without making any assumptions or leaps of intuition, what *specifically* does data tell you? It only tells you about itself, nothing more
+- A single 5 star rating just means that whoever wrote that 1 review thought Restaurant $A$ was really good
+- Even if a restaurant has many 5 star reviews, that doesn't necessarily mean *you* will like it
+- When we interpret data like this, we intuitively make assumptions, generalizations, and predictions, maybe not even consciously
+- Sometimes it's just because we're being lazy, like when we use stereotypes or make unnecessary assumptions to avoid having to think about things more carefully
+- Other times it's unavoidable, because we don't have access to any more information and we must make a decision based on the data we have
+
+- Statistical methods using the kind of probability models we've been talking about give us a systematic, rigorous way of interpreting data and drawing useful conclusions from it
+
+- Example ratings:
+
+```{r}
+restaurantB <- c(5,4,5,5,5)
+restaurantC <- sample(c(rep(5,31), rep(4,8), 1))
+restaurantB
+restaurantC
+mean(restaurantB)
+mean(restaurantC)
+table(restaurantC)
+```
+
+- Imagine Restaurant $C$ only had 5 ratings. Which 5 might they be?
+- Let's draw a random sample of the 50 ratings that it has
+- In fact, why not do that many times? 
+- We can see how often its rating based on a random sample of 5 reviews is at least as good as Restaurant $B$
+
+```{r}
+sample(restaurantC, 5, replace = TRUE)
+rand_first5 <- data.frame(rating = replicate(1000, mean(sample(restaurantC, 5, replace = TRUE))))
+ggplot(rand_first5, aes(rating)) + stat_count() + theme_tufte()
+mean(rand_first5$rating >= mean(restaurantB))
+```
+
+- Restaurant $C$ is at least as good as Restaurant $B$, *probably*
+- What do I mean by "probably"?
+
+##### What kind of probability distribution could we use here?
+
+- Assume a probability model for the ratings of Restaurant $C$
+
+```{r}
+table(restaurantC)/40
+```
+
+- Define a random variable $X_i$ for $i = 1, \ldots, 5$
+- $P(X_i = 5) = 0.775$, $P(X_i = 4) = 0.2$, $P(X_i = 1) = 0.025$
+- Assume these are independent (sampling *with* replacement)
+
+- Define a random variable $X = \frac{1}{5}(X_1 + X_2 + \cdots + X_5)$
+- (Does this look familiar?)
+
+##### Expected value of $X$
+
+- $X$ is a sum, so we can always use linearity
+
+$$
+E[X] = E\left[ \frac{1}{5} \sum_{i=1}^5 X_i \right] = \frac{1}{5} \sum_{i=1}^5 E[X_i]
+$$
+- What's $E[X_i]$? Use the definition: $E[X_i] = 1(0.025) + 4(0.2) + 5(0.775) = 4.7$
+
+- So $E[X] = \frac{1}{5}(4.7 + 4.7 + 4.7 + 4.7 + 4.7) = 4.7$
+
+- The expected value of $X$ is the same as the sample mean of the reviews of Restaurant $C$: $\bar x =$ `r mean(restaurantC)`
+- Sampling with replacement from the reviews of Restaurant $C$ is the same as sampling from the random variable $X$
+- This isn't magic, we constructed $X$ this way
+- The distribution of a random variable $X$ which, like this, was constructed from the data, is called the *empirical distribution* 
+
+##### Asking the right questions
+
+- Why go through all this trouble?
+- Because it's meaningful to ask "What is $P(X \geq 4.8)$?"
+- Without the probability model, we have no rigorous basis to formulate questions like this about whether Restaurant $C$ is really worse than Restaurant $B$ simply because the rating in the existing data was a bit lower
+- And anyway, what's so special about the specific data we had? Isn't it a bit random which people happen to go to a restaurant and end up leaving a review?
+- Restaurant $C$'s current rating of 4.7 isn't exactly one of the universal constants of physics, after all
+- Maybe the person who left a 1 star review was just having a bad day, and without that review Restaurant $C$'s rating would have been `r mean(restaurantC[which(restaurantC > 1)])`
+
+##### Connecting the two worlds
+
+- Think of a probability model as a representation of some underlying truth of the world that we cannot measure directly
+- This includes the distributional assumption of that model (what kind of random variable it is, Binomial or otherwise), and the specific values of the parameters (like $p$ or $\mu$)
+- For example, a model could represent the whole population: what would the restaurant's rating be if everyone in the city reviewed it (or country, or world--whichever population is relevant for the question) 
+- Then we think of data as representing a sample from that probability model
+
+- Now we have a bridge that connects the two worlds
+- Since we could not measure $\mu$ directly, we **estimate** it from the sample mean $\bar x$
+- Since we don't know the true distribution of $X$, we use the sample histogram
+- And so on. This is sometimes called the "plug-in principle"
+
+##### Statistics
+
+- Now that we're acquainted with both of the parallel worlds, and we've got the main idea of how to connect them, we're ready to see many more interesting examples and start addressing important questions
+- For example: is the plug-in principle any good? How well does it work? Is $\bar x$ close to $\mu$? How close?
+- Suppose $X_i$, for $i = 1, \ldots, n$ are random variables with $E[X_i] = \mu$ for all $i$.
+- What is $E\left[ \frac{1}{n}\sum_{i=1}^n X_i - \mu \right]$?
