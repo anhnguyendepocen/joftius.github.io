@@ -190,7 +190,7 @@ ga('send', 'pageview');
   
   
   &nbsp;|&nbsp;
-  <i class="fa fa-clock-o"></i> 6 minutes (1211 words)
+  <i class="fa fa-clock-o"></i> 6 minutes (1210 words)
   
   
 </span>
@@ -259,7 +259,7 @@ ggplot(df, aes(largest_abs_cor)) + geom_histogram(bins = 40) + theme_tufte()</co
 <h2>Selection bias can make noise look like signal</h2>
 <p>I hope you are convinced of this take home message. I began with a story about the candy dataset, instead of a simulation, because when people are analyzing their own data they never believe it might just be noise. The variables have names and meanings. When we see regression model output our first instinct may be to start interpreting the coefficients, becoming more confident about those that match our preconceptions and rationalizing about those that do not. But as we just saw, model selection makes it possible, and maybe even likely, to get nice looking significance test results even if the outcome variable is just pure noise.</p>
 <p>In the candy example the outcome variable was noise, but that’s not essential. We could have had a real outcome variable but our predictor variables are all noise. Or we could have a mixture of real signals and noise. As long as there’s many variables, searching among them for the best makes the significant test results biased toward small <span class="math inline">\(p\)</span>-values.</p>
-<p>In my next post, I’ll describe three approaches to fixing this problem, including one that I worked on in my own <a href="../../page/research/">research</a>.</p>
+<p>In future posts, I’ll describe three approaches to fixing this problem, including one that I’ve worked on in my own <a href="../../page/research/">research</a>.</p>
 </div>
 
       </article>

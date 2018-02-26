@@ -24,7 +24,7 @@
     <item>
       <title>Model Selection</title>
       <link>/tags/model-selection/</link>
-      <pubDate>Tue, 13 Feb 2018 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 26 Feb 2018 00:00:00 +0000</pubDate>
       <author>lastname at nyu.edu (Joshua Loftus)</author>
       <guid>/tags/model-selection/</guid>
       <description></description>
@@ -33,7 +33,7 @@
     <item>
       <title>P Values</title>
       <link>/tags/p-values/</link>
-      <pubDate>Tue, 13 Feb 2018 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 26 Feb 2018 00:00:00 +0000</pubDate>
       <author>lastname at nyu.edu (Joshua Loftus)</author>
       <guid>/tags/p-values/</guid>
       <description></description>
@@ -42,7 +42,7 @@
     <item>
       <title>R</title>
       <link>/tags/r/</link>
-      <pubDate>Fri, 23 Feb 2018 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 26 Feb 2018 00:00:00 +0000</pubDate>
       <author>lastname at nyu.edu (Joshua Loftus)</author>
       <guid>/tags/r/</guid>
       <description></description>
@@ -51,7 +51,7 @@
     <item>
       <title>Reproducibility Crisis</title>
       <link>/tags/reproducibility-crisis/</link>
-      <pubDate>Tue, 13 Feb 2018 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 26 Feb 2018 00:00:00 +0000</pubDate>
       <author>lastname at nyu.edu (Joshua Loftus)</author>
       <guid>/tags/reproducibility-crisis/</guid>
       <description></description>
@@ -60,16 +60,25 @@
     <item>
       <title>Selection Bias</title>
       <link>/tags/selection-bias/</link>
-      <pubDate>Tue, 13 Feb 2018 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 26 Feb 2018 00:00:00 +0000</pubDate>
       <author>lastname at nyu.edu (Joshua Loftus)</author>
       <guid>/tags/selection-bias/</guid>
       <description></description>
     </item>
     
     <item>
+      <title>Selective Inference</title>
+      <link>/tags/selective-inference/</link>
+      <pubDate>Mon, 26 Feb 2018 00:00:00 +0000</pubDate>
+      <author>lastname at nyu.edu (Joshua Loftus)</author>
+      <guid>/tags/selective-inference/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Significance Tests</title>
       <link>/tags/significance-tests/</link>
-      <pubDate>Tue, 13 Feb 2018 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 26 Feb 2018 00:00:00 +0000</pubDate>
       <author>lastname at nyu.edu (Joshua Loftus)</author>
       <guid>/tags/significance-tests/</guid>
       <description></description>

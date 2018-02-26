@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>A conditional approach to inference after model selection</title>
+  <meta property="og:title" content="A conditional approach to inference after model selection" />
+  <meta name="twitter:title" content="A conditional approach to inference after model selection" />
+  <meta name="description" content="Model selection can invalidate inference, such as significance tests, but statisticians have recently made progress developing methods to adjust for this bias. One approach uses conditional probability, adjusting inferences by conditioning on selecting the chosen model. This post motivates the conditional approach with a simple screening rule example and introduces the `selectiveInference` R package that can compute adjusted significance tests after popular model selection methods like forward stepwise and LASSO.">
+  <meta property="og:description" content="Model selection can invalidate inference, such as significance tests, but statisticians have recently made progress developing methods to adjust for this bias. One approach uses conditional probability, adjusting inferences by conditioning on selecting the chosen model. This post motivates the conditional approach with a simple screening rule example and introduces the `selectiveInference` R package that can compute adjusted significance tests after popular model selection methods like forward stepwise and LASSO.">
+  <meta name="twitter:description" content="Model selection can invalidate inference, such as significance tests, but statisticians have recently made progress developing methods to adjust for this bias. One approach uses conditional …">
+  <meta name="author" content="Joshua Loftus"/>
+  <link href='/img/favicon.ico' rel='icon' type='image/x-icon'/>
+  <meta property="og:image" content="/img/avatar-icon.png" />
+  <meta name="twitter:image" content="/img/avatar-icon.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@joftius" />
+  <meta name="twitter:creator" content="@joftius" />
+  <meta property="og:url" content="/post/conditional-approach-to-inference-after-model-selection/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Joshua Loftus" />
+
+  <meta name="generator" content="Hugo 0.36" />
+  <link rel="canonical" href="/post/conditional-approach-to-inference-after-model-selection/" />
+  <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Joshua Loftus">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
+  <link rel="stylesheet" href="/css/highlight.min.css" /><link rel="stylesheet" href="/css/codeblock.css" />
+
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-114292497-1', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">Joshua Loftus</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="Blog" href="/">Blog</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Research" href="/page/research/">Research</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Teaching" href="/page/teaching/">Teaching</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="About" href="/page/about/">About</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Tags" href="/tags">Tags</a>
+            </li>
+          
+        
+
+        
+
+        
+      </ul>
+    </div>
+
+    <div class="avatar-container">
+      <div class="avatar-img-border">
+        
+          <a title="Joshua Loftus" href="/">
+            <img class="avatar-img" src="/img/avatar-icon.png" alt="Joshua Loftus" />
+          </a>
+        
+      </div>
+    </div>
+
+  </div>
+</nav>
+
+
+
+
+    
+  
+  
+  
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    <div class="intro-header no-img">
+      
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="post-heading">
+              <h1>A conditional approach to inference after model selection</h1>
+                
+                
+                  <span class="post-meta">
+  
+  
+  <i class="fa fa-calendar-o"></i>&nbsp;Posted on February 26, 2018
+  
+  
+  &nbsp;|&nbsp;
+  <i class="fa fa-clock-o"></i> 7 minutes (1451 words)
+  
+  
+</span>
+
+
+                
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        <div id="overly-honest-research-methods" class="section level2">
+<h2>Overly honest research methods?</h2>
+<p>A high profile case of a scientist retracting multiple papers due to <a href="https://xkcd.com/882/">p-hacking</a> is recently gaining new attention due to a <a href="https://www.buzzfeed.com/stephaniemlee/brian-wansink-cornell-p-hacking">BuzzFeed article</a>. Hopefully this will raise awareness and convince some that “keep hammering away at your data until you find want you were expecting” is a poor way to do science. But it’s possible to get things wrong, for the same reason, no matter how well-intentioned we may be. Even if we aren’t specifically seeking significant <span class="math inline">\(p\)</span>-values, we can end up with biased results due to model selection. To see why, check out this earlier post on <a href="../model-selection-bias-invalidates-significance-tests/">model selection bias</a>. In this post I will describe a method to protect ourselves from this bias and compute <em>adjusted</em> <span class="math inline">\(p\)</span>-values that are valid even though we’ve done model selection.</p>
+</div>
+<div id="model-selection-with-forward-stepwise" class="section level2">
+<h2>Model selection with forward stepwise</h2>
+<p>We’ll pick up on the same example from a previous post:</p>
+<blockquote>
+<p>[…] consider the <code>candy_rankings</code> data from the <a href="https://cran.r-project.org/web/packages/fivethirtyeight/index.html">fivethirtyeight</a> package. The <strong>outcome variable</strong> is how often a given candy won in popularity matchups against other candies, and the <strong>predictor variables</strong> are various properties like whether or not the candy has chocolate, whether or not it’s fruit flavored, how sugary it is relative to other candies, and so on. There are 85 candies and 11 predictor variables in the dataset.</p>
+</blockquote>
+<p>This time we’ll use the actual response variable, and run forward stepwise with AIC to pick a subset of the predictors that are highly predictive of the outcome (win percent). The resulting model, along with the biased <span class="math inline">\(p\)</span>-values that popular software computes by default, is given below.</p>
+<pre class="r"><code># Forward stepwise with AIC
+model &lt;- step(lm(winpercent ~ ., candy), k = 2, trace = 0)
+# Significance tests for selected model
+print(summary(model)$coefficients[-1,], digits = 2)</code></pre>
+<pre><code>##                      Estimate Std. Error t value  Pr(&gt;|t|)
+## chocolateTRUE            19.1        3.6     5.3 0.0000009
+## fruityTRUE                8.9        3.6     2.5 0.0147319
+## peanutyalmondyTRUE        9.5        3.4     2.8 0.0073720
+## crispedricewaferTRUE      8.4        4.5     1.9 0.0652527
+## hardTRUE                 -5.7        3.3    -1.7 0.0887116
+## sugarpercent              8.0        4.1     1.9 0.0569311</code></pre>
+<p>These <span class="math inline">\(p\)</span>-values are probably too small. The model selection method chose variables that seemed to be predictive of the outcome. The way <span class="math inline">\(p\)</span>-values are computed is to consider how extreme the test statistic <span class="math inline">\(T\)</span> is under the null hypothesis: <span class="math inline">\(P(T &gt; |t|)\)</span>. But the model selection procedure picks variables that tend to have large observed values of <span class="math inline">\(|t|\)</span>, whether or not the null hypothesis for any one of them is true. How can we correct this? By the end of this post we’ll have adjusted <span class="math inline">\(p\)</span>-values for this example, but first we need to understand how that adjustment works.</p>
+</div>
+<div id="adjusted-inference-by-conditionional-probability" class="section level2">
+<h2>Adjusted inference by conditionional probability</h2>
+<p>One approach, often referred to as <a href="http://www.pnas.org/content/112/25/7629.short">selective inference</a>, is to use <em>conditional</em> probabilities when computing <span class="math inline">\(p\)</span>-values. Consider a random variable <span class="math inline">\(M\)</span> representing which model is chosen by the model selection method, and let <span class="math inline">\(m\)</span> be the observed value of <span class="math inline">\(M\)</span> after running the algorithm (e.g. forward stepwise) on our data and getting a specific model. To compute conditionally adjusted <span class="math inline">\(p\)</span>-values, we use <span class="math display">\[
+P(T &gt; |t| \mid M = m)
+\]</span> This conditional probability law usually has a simple form. For example, if the test statistic has a <span class="math inline">\(t\)</span>-distribution, then the conditional law is usually a truncated <span class="math inline">\(t\)</span>. The specifics depend on the kind of model selection algorithm being used, and working them out is an area of ongoing research in statistics. During my PhD, I worked on a few cases (<a href="https://arxiv.org/abs/1511.01478">groups of variables</a>, <a href="https://arxiv.org/abs/1511.08866">cross-validation</a>) as part of my dissertation. To understand how/why the conditional law works, let’s consider an example that’s simpler than forward stepwise.</p>
+</div>
+<div id="marginal-screening-example" class="section level2">
+<h2>Marginal screening example</h2>
+<p>Suppose that instead of regression, we are solving a many-means problem where we want to select the largest effects. (Regression is similar to this when the design matrix is orthogonal). That is, we have many effects <span class="math inline">\(z_i\)</span> for <span class="math inline">\(i = 1, \ldots, p\)</span> and the selection rule we use is to choose <span class="math inline">\(z_i\)</span> if <span class="math inline">\(z_i &gt; 1\)</span>. Then we want to do a one-sided test to see if those <span class="math inline">\(z_i\)</span> are significantly large. We can think of this procedure as first screening away the majority of the data which we think is just noise, and then testing what made it through the screening procedure. I’ll generate data under the global null hypothesis where every effect is actually zero, and then plot some results.</p>
+<pre class="r"><code>Z &lt;- rnorm(10000)
+selected_Z &lt;- data.frame(Z = Z[Z &gt; 1])
+maxZ &lt;- max(Z) + .1
+truncated_Z_pdf &lt;- function(z) dnorm(z)/pnorm(1, lower.tail = F)
+ggplot(selected_Z) + geom_histogram(bins = 50, aes(x = Z, y = ..density..)) + xlim(0, maxZ) +
+  stat_function(fun = truncated_Z_pdf, xlim = c(1, maxZ), linetype  = 2) +
+  stat_function(fun = dnorm, linetype  = 1) +
+  theme_tufte()</code></pre>
+<p><img src="/post/2018-02-26-conditional-approach-to-inference-after-model-selection_files/figure-html/unnamed-chunk-2-1.png" width="672" /> This plot shows three things:</p>
+<ul>
+<li>A <strong>histogram</strong> of the selected effects.</li>
+<li>The <strong>solid line</strong> shows the <strong>standard</strong> normal distribution. The upper tail areas of this distribution would be used for standard, unadjusted <span class="math inline">\(p\)</span>-values.</li>
+<li>The <strong>dashed line</strong> shows the truncated, <strong>conditional</strong> distribution <span class="math inline">\(Z | Z &gt; 1\)</span> for a standard normal <span class="math inline">\(Z\)</span>.</li>
+</ul>
+<p>If we used the tail areas of the standard normal to compute <span class="math inline">\(p\)</span>-values, these would be very small, even though the data was all generated under a global null hypothesis. This shows that the selection effect can invalidate inference, leading to a high type 1 error rate. But it’s pretty clear from the plot that the conditional distribution fits the data very well: if “significant” means extreme according to <em>this</em> distribution, then type 1 error rate would be small, it would match whatever nominal threshold <span class="math inline">\(\alpha\)</span> we decided.</p>
+</div>
+<div id="the-selectiveinference-r-package" class="section level2">
+<h2>The selectiveInference R package</h2>
+<p>Let’s return to our first example about forward stepwise.</p>
+<p>The details for computing <span class="math inline">\(p\)</span>-values with conditional probability when model selection is more complicated–like using forward stepwise with AIC, or the LASSO with cross-validation, etc–are harder than the marginal screening case. But fortunately, there is an R package for it: the <code>selectiveInference</code> package available on <a href="https://cran.r-project.org/web/packages/selectiveInference/index.html">CRAN</a>! This package is still under development, and its authors include Ryan Tibshirani, Rob Tibshirani, Jonathan Taylor, Stephen Reid and some other guy. The package currently does not support R formulas, so first we need to create a <code>model.matrix</code>, then we’ll run forward stepwise again with the <code>fs</code> function, then we’ll compute adjusted inference for the fitted model using <code>fsInf</code>. These last two functions are among several others in the <code>selectiveInference</code> package, including ones for doing all of this with the <a href="https://en.wikipedia.org/wiki/Lasso_(statistics)">LASSO</a> instead of forward stepwise.</p>
+<pre class="r"><code>suppressMessages(library(selectiveInference)) # suppress loading messages
+# Convert factor variables to indicators
+candy_dummies &lt;- model.matrix(~ ., data = candy[,2:10])
+# Create design matrix
+x &lt;- as.matrix(cbind(candy_dummies[,-1], candy[,11:12]))
+y &lt;- candy$winpercent
+# Run forward stepwise
+fit &lt;- fs(x, y)
+# Compute conditionally adjusted p-values for selected variables
+fit_inf &lt;- fsInf(fit, type = &quot;aic&quot;, ntimes = 1)
+# Look at the output
+fit_inf</code></pre>
+<pre><code>## 
+## Call:
+## fsInf(obj = fit, type = &quot;aic&quot;, ntimes = 1)
+## 
+## Standard deviation of noise (specified or estimated) sigma = 10.703
+## 
+## Testing results at step = 6, with alpha = 0.100
+##  Var   Coef Z-score P-value LowConfPt UpConfPt LowTailArea UpTailArea
+##    1 19.147   5.233   0.097   -11.238  105.248        0.00       0.05
+##    4  9.483   2.697   0.559   -43.440   13.021        0.05       0.05
+##    2  8.881   2.445   0.378   -35.393   46.808        0.05       0.05
+##    6  8.385   1.833   0.722  -146.980   39.067        0.05       0.05
+##   10  7.979   1.894   0.740  -225.234   58.060        0.05       0.05
+##    7 -5.669  -1.690   0.481   -46.933   50.356        0.05       0.05
+## 
+## Estimated stopping point from AIC rule = 6</code></pre>
+<p>There’s a lot of output here, but let’s focus on the adjusted <span class="math inline">\(p\)</span>-values. We’ll put them together in a readout with the unadjusted ones:</p>
+<pre class="r"><code>output &lt;- cbind(summary(model)$coefficients[-1,c(1,4)][order(fit_inf$vars),],
+                fit_inf$pv)
+colnames(output)[3] &lt;- &quot;Adj.Pr(&gt;|t|)&quot;
+print(output, digits = 3)</code></pre>
+<pre><code>##                      Estimate    Pr(&gt;|t|) Adj.Pr(&gt;|t|)
+## chocolateTRUE           19.15 0.000000898       0.0972
+## peanutyalmondyTRUE       9.48 0.007372014       0.5592
+## fruityTRUE               8.88 0.014731896       0.3783
+## crispedricewaferTRUE     8.39 0.065252715       0.7223
+## sugarpercent             7.98 0.056931100       0.7397
+## hardTRUE                -5.67 0.088711566       0.4815</code></pre>
+<p>The adjusted <span class="math inline">\(p\)</span>-values in the right column are all much larger than the unadjusted ones. In general, adjusted <span class="math inline">\(p\)</span>-values will be larger, but by how much depends on a lot of specifics. In this case, and at the usual <span class="math inline">\(\alpha = 0.05\)</span> level, we went from 3 significant effects without adjusting for selection bias to zero. This reflects a fundamental tradeoff: <strong>the more we use the data to search for interesting things, the less surprised we must be about what we find</strong>. Otherwise, we may just be fooling ourselves, and maybe even end up needing to retract lots of papers…</p>
+<p>I hope this post was a useful introduction to the basic idea of using conditional probability to adjust for model selection, and makes more people aware of the <code>selectiveInference</code> package. This project is also on <a href="https://github.com/selective-inference">github</a>. In future posts I will describe more examples, including other approaches to adjusting inference for model selection bias.</p>
+</div>
+
+      </article>
+
+      
+        <ul class="pager blog-pager">
+          
+            <li class="previous">
+              <a href="/post/algorithmic-fairness-is-as-hard-as-causation/" data-toggle="tooltip" data-placement="top" title="Algorithmic fairness is as hard as causation">&larr; Previous Post</a>
+            </li>
+          
+          
+        </ul>
+      
+
+
+      
+        
+        
+      
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+              <li>
+                <a href="mailto:lastname%20at%20nyu.edu" title="Email me">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://github.com/joftius" title="GitHub">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://twitter.com/joftius" title="Twitter">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://linkedin.com/in/joftius" title="LinkedIn">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+          
+          <li>
+            
+            <a href="/index.xml" title="RSS">
+            
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          
+        </ul>
+        <p class="credits copyright text-muted">
+          
+            
+              <a href="joshualoftus.com">Joshua Loftus</a>
+            
+          
+
+          &nbsp;&bull;&nbsp;
+          2018
+
+          
+            &nbsp;&bull;&nbsp;
+            <a href="/">Joshua Loftus</a>
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+          <a href="http://gohugo.io">Hugo v0.36</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js" integrity="sha384-/y1Nn9+QQAipbNQWU65krzJralCnuOasHncUFXGkdwntGeSvQicrYkiUBwsgUqc1" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js" integrity="sha384-dq1/gEHSxPZQ7DdrM82ID4YVol9BYyU7GbWlIwnwyPzotpoc57wDw/guX8EaYGPx" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="/js/main.js"></script>
+<script src="/js/highlight.min.js"></script>
+<script> hljs.initHighlightingOnLoad(); </script>
+<script> $(document).ready(function() {$("pre.chroma").css("padding","0");}); </script><script> renderMathInElement(document.body); </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script>
+<script src="/js/load-photoswipe.js"></script>
+
+
+
+
+
+
+  </body>
+</html>
+

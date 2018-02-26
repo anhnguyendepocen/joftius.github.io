@@ -3,6 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>/post/conditional-approach-to-inference-after-model-selection/</loc>
+    <lastmod>2018-02-26T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/post/algorithmic-fairness-is-as-hard-as-causation/</loc>
     <lastmod>2018-02-23T00:00:00+00:00</lastmod>
   </url>
@@ -14,7 +19,7 @@
   
   <url>
     <loc>/</loc>
-    <lastmod>2018-02-23T00:00:00+00:00</lastmod>
+    <lastmod>2018-02-26T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -42,13 +47,13 @@
   
   <url>
     <loc>/tags/model-selection/</loc>
-    <lastmod>2018-02-13T00:00:00+00:00</lastmod>
+    <lastmod>2018-02-26T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>/tags/p-values/</loc>
-    <lastmod>2018-02-13T00:00:00+00:00</lastmod>
+    <lastmod>2018-02-26T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -65,19 +70,19 @@
   
   <url>
     <loc>/post/</loc>
-    <lastmod>2018-02-23T00:00:00+00:00</lastmod>
+    <lastmod>2018-02-26T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>/tags/r/</loc>
-    <lastmod>2018-02-23T00:00:00+00:00</lastmod>
+    <lastmod>2018-02-26T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>/tags/reproducibility-crisis/</loc>
-    <lastmod>2018-02-13T00:00:00+00:00</lastmod>
+    <lastmod>2018-02-26T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -87,25 +92,31 @@
   
   <url>
     <loc>/categories/science/</loc>
-    <lastmod>2018-02-13T00:00:00+00:00</lastmod>
+    <lastmod>2018-02-26T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>/tags/selection-bias/</loc>
-    <lastmod>2018-02-13T00:00:00+00:00</lastmod>
+    <lastmod>2018-02-26T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/tags/selective-inference/</loc>
+    <lastmod>2018-02-26T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>/tags/significance-tests/</loc>
-    <lastmod>2018-02-13T00:00:00+00:00</lastmod>
+    <lastmod>2018-02-26T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>/categories/statistics/</loc>
-    <lastmod>2018-02-23T00:00:00+00:00</lastmod>
+    <lastmod>2018-02-26T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   

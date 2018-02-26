@@ -1,0 +1,51 @@
+<div id="significance-tests-and-the-reproducibility-crisis" class="section level2">
+<h2>Significance tests and the reproducibility crisis</h2>
+<p>Significance testing may be one of the most popular statistical tools in science. Researchers and journals often treat significance–having a <span class="math inline">\(p\)</span>-value <span class="math inline">\(&lt; 0.05\)</span>–as indication that a finding is true and perhaps publishable. But the tests used to compute many of the <span class="math inline">\(p\)</span>-values people still rely on today were developed over a century ago, when “computer” was still a job title. Now that we have digital computers and it’s standard practice to collect and analyze “big data,” the mathematical assumptions underlying many classical significance tests are being pushed beyond their limits.</p>
+<p>The journal Nature surveyed 1,576 scientists, asking them whether there is a <a href="https://www.nature.com/news/1-500-scientists-lift-the-lid-on-reproducibility-1.19970">reproducibility crisis</a>, and found about 90% agreed. Across a range of disciplines, over 40% of respondents had tried and failed to reproduce at least one of <em>their own experiments</em>. What’s going on?</p>
+<p>Andrew Gelman suggested an analogy to describe how data analysis often proceeds in practice: the <a href="https://www.americanscientist.org/article/the-statistical-crisis-in-science">garden of forking paths</a>. Researchers have to make many choices, and each choice represents a turn down a new fork in the path. Out of the many possible paths, how many end in significant, publishable findings, and how many in dead ends? Nobody wants to just give up when they reach a dead end, so maybe they retrace some of their steps and try a different path.</p>
+<p>Model selection might be the most labyrinthine part of this garden.</p>
+</div>
+<div id="what-is-model-selection-bias" class="section level2">
+<h2>What is model selection bias?</h2>
+<p>To illustrate with an example, we’ll consider the <code>candy_rankings</code> data from the <a href="https://cran.r-project.org/web/packages/fivethirtyeight/index.html">fivethirtyeight</a> package. The <strong>outcome variable</strong> is how often a given candy won in popularity matchups against other candies, and the <strong>predictor variables</strong> are various properties like whether or not the candy has chocolate, whether or not it’s fruit flavored, how sugary it is relative to other candies, and so on. There are 85 candies and 11 predictor variables in the dataset.</p>
+<p>You can read the original article about this data <a href="http://fivethirtyeight.com/features/the-ultimate-halloween-candy-power-ranking/">here</a>. In the article, they find that chocolate seems to be the most important variable for increasing the win percentage for a candy. We’ll approach the problem a little differently, and use <strong>model selection</strong> to pick a subset of the 11 predictor variables. Then we’ll report significance tests for the selected variables to show they really are important. This is a fairly common sequence of steps for analyzing data in linear regression.</p>
+<blockquote>
+<p>Details for the curious: this particular method is a “greedy” algorithm that adds one predictor variable at a time into the model starting with the variable that has the highest correlation with the outcome, and stopping after choosing the number of variables in a data-driven way. These details are not important for the overall message of this post. Any model selection method can cause selection bias.</p>
+</blockquote>
+<pre class="r"><code># Forward stepwise with AIC
+model &lt;- step(lm(Y ~ ., candy), k = 2, trace = 0)
+# Significance tests for selected model
+print(summary(model)$coefficients, digits = 2)</code></pre>
+<pre><code>##              Estimate Std. Error t value Pr(&gt;|t|)
+## (Intercept)     -0.19       0.19    -1.0    0.309
+## caramelTRUE     -0.54       0.26    -2.1    0.042
+## sugarpercent     0.79       0.35     2.3    0.026</code></pre>
+<p>As you can see, the model selection algorithm chose a nice interpretable model with only a few variables, and the small <span class="math inline">\(p\)</span>-values for significance tests tell us they are truly important and our model is good…</p>
+<p>Except <strong>none of this is true!</strong> The reason I didn’t show the code for loading the dataset earlier is that <em>I created the outcome variable</em> with <code>Y = rnorm(n)</code> (this function in <code>R</code> generates <span class="math inline">\(n\)</span> random numbers following the normal distribution). Instead of using the actual outcome variable from the data, I generated a random normal variable, <em>totally independent</em> of the predictors. And yet, we found a model with predictor variables that are significant.</p>
+<div id="a-small-simulation-study" class="section level3">
+<h3>A small simulation study</h3>
+<p>Let’s think about this to get some intuition. If we have one predictor variable <span class="math inline">\(X_1\)</span> and we generate <span class="math inline">\(Y\)</span> from <code>rnorm(n)</code>, then the correlation (in absolute value) between <span class="math inline">\(X_1\)</span> and <span class="math inline">\(Y\)</span> will probably be small. Let’s do this many times and look at the distribution of (absolute) observed correlations:</p>
+<pre class="r"><code>X1 &lt;- candy$sugarpercent
+df &lt;- data.frame(abs_cor = abs(cor(X1,matrix(rnorm(n*1000), nrow = n))[1,]))
+ggplot(df, aes(abs_cor)) + geom_histogram(bins = 40) + theme_tufte()</code></pre>
+<p><img src="2018-02-13-model-selection-bias-invalidates-significance-tests_files/figure-html/one_correlation-1.png" width="672" /></p>
+<p>These correlations are pretty small. The bulk of the distribution is less than 0.1. We probably wouldn’t mistake them for signal. But now, what if we have more predictor variables, and we select the <em>best</em> (absolute) correlation each time?</p>
+<pre class="r"><code>X &lt;- candy[,1:11]
+many_correlations &lt;- abs(cor(X, matrix(rnorm(n*1000), nrow = n)))
+df &lt;- data.frame(largest_abs_cor = apply(many_correlations, 2, max))
+ggplot(df, aes(largest_abs_cor)) + geom_histogram(bins = 40) + theme_tufte()</code></pre>
+<p><img src="2018-02-13-model-selection-bias-invalidates-significance-tests_files/figure-html/many_correlations-1.png" width="672" /></p>
+<p>When we have 11 predictor variables and we select the one with the largest correlation, the resulting distribution of correlations is larger. The bulk is now centered around 0.2. We might mistake these larger correlations for signal, when in fact they only reflect the fact that we searched through the garden of forking paths and chose the most impressive path out of 11. Can you imagine how much worse this problem would be if instead of 11 variables we had 100 to choose from, or 1000?</p>
+</div>
+<div id="returning-to-the-broader-topic-of-model-selection" class="section level3">
+<h3>Returning to the broader topic of model selection</h3>
+<p>Model selection works by choosing variables that seem to be the best at predicting the outcome. The more variables we have to choose from, the more likely it is we find one that predicts <span class="math inline">\(Y\)</span> very well, even just by pure randomness, as the plots above show. In general, this model selection bias gets larger as the size of our “search space” increases – meaning not only number of variables, but also the complexity of the fitted relationships (e.g. non-linear). And in general, significance tests for the coefficients in the selected model will be biased toward smaller <span class="math inline">\(p\)</span>-values, potentially causing us to commit more Type 1 errors.</p>
+<p>This is part of the reason why scientists are sometimes unable to reproduce their own experiments. When they got a significant result (<span class="math inline">\(p &lt; 0.05\)</span>) the first time, it may have been due to model selection bias. When they try to reproduce the result, the noise just goes in a different direction, and their original result disappears.</p>
+</div>
+</div>
+<div id="selection-bias-can-make-noise-look-like-signal" class="section level2">
+<h2>Selection bias can make noise look like signal</h2>
+<p>I hope you are convinced of this take home message. I began with a story about the candy dataset, instead of a simulation, because when people are analyzing their own data they never believe it might just be noise. The variables have names and meanings. When we see regression model output our first instinct may be to start interpreting the coefficients, becoming more confident about those that match our preconceptions and rationalizing about those that do not. But as we just saw, model selection makes it possible, and maybe even likely, to get nice looking significance test results even if the outcome variable is just pure noise.</p>
+<p>In the candy example the outcome variable was noise, but that’s not essential. We could have had a real outcome variable but our predictor variables are all noise. Or we could have a mixture of real signals and noise. As long as there’s many variables, searching among them for the best makes the significant test results biased toward small <span class="math inline">\(p\)</span>-values.</p>
+<p>In future posts, I’ll describe three approaches to fixing this problem, including one that I’ve worked on in my own <a href="../../page/research/">research</a>.</p>
+</div>
