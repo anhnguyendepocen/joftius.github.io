@@ -1,0 +1,150 @@
+---
+title: "Lecture 14 - Parameter estimation"
+author: "Joshua Loftus"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(ggthemes)
+library(datasets)
+```
+
+#### Announcements
+
+- Will start posting suggested reading on course page
+- Midterms returned tomorrow
+- Homework 5 will be posted soon
+- Today: parameter estimation, bias
+
+#### Motivating example
+
+Albert Michelson, physicist, conducted experiments to measure the speed of light. Here is a dataset of 100 measurements:
+
+```{r}
+morley$Speed
+ggplot(morley, aes(Speed + 299000)) + geom_histogram(bins = 16) + theme_tufte()
+```
+
+To deal with fewer digits, we look just at the part without the 299,000, i.e. the last 3 digits. These have mean and variance:
+
+```{r}
+Xbar = mean(morley$Speed)
+sigma2 = var(morley$Speed)
+Xbar
+sigma2
+Xbar - 2*sqrt(sigma2/100)
+Xbar + 2*sqrt(sigma2/100)
+```
+
+- This means that if Michelson redid the same experiments and collected 100 measurements again, his new $\bar X$ will probably be within the range above
+- But does it mean the true speed of light is somewhere in that range?...
+
+#### Estimates of parameters
+
+- As we start thinking about parameters in general, rather than specifically the mean ($\mu$), we'll use $\theta$ to denote the unknown parameter, a representation of the underlying truth
+- We can't measure $\theta$ perfectly, there is some variability or randomness causing us to get different answers each time we take the measurement
+- We collect data and use the plug-in principle, constructing an **estimate** $\hat \theta$ from the data
+- Is $\hat \theta$ close to the true $\theta$? How close? And how sure can we be about it?
+
+- Last time we considered the specific example of estimating the mean $\mu$
+- We take $n$ measurements and use the mean of that sample, $\bar x$, as an **estimate** of $\mu$
+- To gain insight about how well this works, we need a mathematical model
+- Think of the individual measurements as being samples of a random variable $X$, and the mean of $n$ of these as a random variable denoted $\bar X$
+- We assume the individual measurements are independent and identically distributed (iid)
+- In that case, $E[\bar X] = E[X]$ and $\text{Var}( \bar X) = \text{Var}(X)/n$
+- If we repeated the experiment many times and plotted a histogram of all the estimates, they would be centered at $E[X]$ and their dispersion would be smaller than the dispersion of $X$ -- how much smaller depends on the sample size
+
+- In general, if we have an estimator $\hat \theta$ we might wonder what would happen if we repeated the experiment many times and plotted a histogram of the values of $\hat \theta$ we got each time
+- We learned about the *sampling distribution of the mean* but what about the sampling distribution of another estimator?
+- And if $\theta$ is a different parameter other than the population mean $\mu$, how can we choose a good $\hat \theta$ to estimate it?
+
+#### Uniform example
+
+- The uniform distribution $U[0,\theta]$ from 0 to $\theta$ is a probability distribution where every real number between 0 and $\theta$ has equal probability of being the outcome
+- Evenly distributed, flat, not like a bell curve or binomial
+- The maximum possible value that it can take on is $\theta$, this is the parameter we want to estimate
+- Does it make sense to use the mean of a sample to estimate $\theta$?...
+- (No, the mean will be near the center, not near the maximum!)
+
+```{r include=FALSE}
+theta <- 1 + sqrt(5)/2
+```
+
+```{r}
+n <- 100
+X <- runif(n, min = 0, max = theta)
+qplot(X, bins = 10) + theme_tufte()
+```
+
+- Use the maximum value of the sample! $x_{(n)} = \text{max} \{ x_1, \ldots, x_n \}$
+
+```{r}
+max(X)
+```
+
+- Does this work? Well, we need a mathematical model to answer that question
+- Sampling distribution of the maximum $X_{(n)} = \text{max} \{ X_1, \ldots, X_n \}$
+- Can think of this as a random variable representing the variability that would happen if we took a new sample and found its maximum, and then repeated that many times
+
+```{r}
+Xn <- replicate(1000, max(runif(n, min = 0, max = theta)))
+qplot(Xn, bins = 40) + theme_tufte()
+```
+
+- Interesting! This is not shaped like a bell curve at all, is it?
+
+- Is it centered at the true value $\theta$?...
+
+```{r}
+qplot(Xn - theta, bins = 40) + theme_tufte()
+```
+
+- Seems like it's always smaller than $\theta$... 
+
+#### Biased/unbiased estimators
+
+- We say that $\hat \theta$ is an **unbiased** estimate of $\theta$ if $E[\hat \theta] = \theta$
+- For the $U[0,\theta]$ example, it turns out (need some calculus to show)
+$$
+E[X_{(n)}] = \frac{n}{n+1} \theta
+$$
+- This is not unbiased. We say it's a biased estimate.
+- But we know how to fix it! Consider $\hat \theta = \frac{n+1}{n} X_{(n)}$
+
+```{r}
+qplot(Xn*(n+1)/n - theta, bins = 40) + theme_tufte()
+mean(Xn) - theta
+mean(Xn*(n+1)/n) - theta
+```
+
+- We were able to fix this example, but in general it is not always possible to remove bias
+- Bias can be a very serious problem!
+
+- Consider the sample mean example again
+- We know $E[\bar X] = E[X]$, and $\text{Var}(\bar X) = \text{Var}(X)/n$
+- The fact that the variance decreases in $n$ is what makes gathering more data useful! It means $\bar X$ will be concentrated around $E[X]$...
+- But what if $E[X] \neq \mu$?!
+- How could this happen? Think of some examples. Usually it means there is a tendency to either overestimate or underestimate.
+
+#### Sample variance / standard deviation
+
+- Suppose that instead of the mean, the parameter we want to estimate is the variance $\theta = \sigma^2$
+- Remember the sample standard deviation formula? It has a fraction with $n-1$ instead of $n$ in the denominator. Why is that?
+- With some algebra, it can be shown
+$$
+E\left[\frac{1}{n} \sum_{i=1}^n (X_i - \bar X)^2 \right] = \frac{n-1}{n} \sigma^2
+$$
+- This is $< \sigma^2$, it underestimates the variance
+
+#### Perils of big data
+
+- Around the 2010's, the "big data" trend was really taking off
+- People believe the size of datasets used by modern internet companies is so large that, basically, data = truth
+- No need for a model, no need to worry about variability or error, just assume $\bar x = \mu$ because the sample is the whole population
+- Not true!
+- Always remember this: even if the *variance* of an estimator decreases as the sample size $n$ increases, **bias is a separate issue**
+- No sample size is large enough to remove bias, it requires understanding *why* the estimate is not centered at the truth.
+- e.g. why does it tend to overestimate, and by how much?
+
