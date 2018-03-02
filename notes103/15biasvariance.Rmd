@@ -1,5 +1,5 @@
 ---
-title: "Lecture 14 - Parameter estimation"
+title: "Lecture 15 - Bias-variance tradeoff"
 author: "Joshua Loftus"
 output: html_document
 ---

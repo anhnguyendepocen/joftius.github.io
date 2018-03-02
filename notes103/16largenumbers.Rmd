@@ -1,0 +1,72 @@
+---
+title: "Lecture 16 - Law of large numbers"
+author: "Joshua Loftus"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggthemes)
+```
+
+#### Announcements
+
+- Homework 5 due Thursday, but HW6 will be posted soon so don't leave it off
+- Mid-course survey also coming soon
+- Today: `R` markdown, law of large numbers
+
+#### Means of i.i.d. samples
+
+- We've introduced some ideas about general parameter estimation, but we'll now get back to means for a few lectures.
+- In particular, we'll be considering the mean $\bar X$ of **i.i.d. random variables** $X_1, \ldots, X_n$.
+- Let $\mu = E[X]$, and $\sigma^2 = \text{Var}(X)$, so $E[\bar X] = \mu$ and $\text{Var}(\bar X) = \sigma^2/n$.
+- Recall this from the lecture about the sampling distribution of the mean:
+
+```{r cache=TRUE}
+Zbar <- function(n) mean(rnorm(n, mean = true_mu, sd = 2))
+df <- data.frame(Z = c(rnorm(5000, mean = true_mu, sd = 2),
+                       replicate(5000, Zbar(10)),
+                       replicate(5000, Zbar(30))),
+                 Samples = factor(c(rep(1, 5000), rep(10, 5000), rep(30, 5000))))
+ggplot(df, aes(Z, fill = Samples, linetype = Samples)) + geom_density(alpha = .2) + theme_tufte()
+```
+
+- The distribution of the sample mean becomes more and more concentrated (or less dispersed) as $n$ gets larger.
+- Today we'll discuss some other interesting mathematical results and ways of thinking about this phenomenon.
+
+#### Limits of sequences
+
+- A sequence of numbers indexed by $n$, denoted $a_n$, is a list of numbers: $a_1, a_2, \ldots$ -- potentially infinite
+- e.g. Even numbers: $a_n = 2n$, so $a_1 = 2, a_2 = 4, a_3 = 6, \ldots$
+- e.g. Reciprocals: $a_n = 1/n$, so $a_1 = 1, a_2 = 1/2, a_3 = 1/3, \ldots$
+- e.g. $a_n = (1/2)^n$, so $a_1 = 1/2, a_2 = 1/4, a_3 = 1/8, \ldots$
+
+- We say the sequence $a_n$ has a limit $a$, in symbols:
+$$
+\lim_{n \to \infty} a_n = a \quad \text{ or } \quad a_n \to a \text{ as } n \to \infty
+$$
+if $a_n$ gets arbitrarily close to $a$ as $n$ gets larger.
+- In math, this means that for any constant $c > 0$, no matter how small, it's possible to find a large enough value $N$ so that $|a_n - a| < c$ for all $n \geq N$.
+- This is a technical definition, in a calculus or probability class there would be lots of exercises and results about limits. We won't really use this definition, but you should know it exists.
+
+- **Notation**: for the rest of this lecture we're going to emphasize that the sample mean depends on the sample size by giving it a subscript: $\bar X_n$.
+- We're now going to do a thought experiment: what happens to $\bar X_n$ if we keep increasing the sample size $n$?
+
+#### Weak law of large numbers
+
+- The weak law of large numbers says that, for any constant $c > 0$, no matter how small,
+$$
+P(|\bar X_n - \mu| > c) \to 0 \quad \text{as} \quad n \to \infty
+$$
+- If you fix a small distance from the mean, the probability that $\bar X_n$ is outside that distance from the mean goes to 0 as $n$ becomes large enough
+- Can use Chebyshev's inequality to show this.
+
+#### Strong law of large numbers
+
+- The strong law of large numbers says
+$$
+\bar X_n \to \mu \quad \text{as} \quad n \to \infty
+$$
+- 
+
