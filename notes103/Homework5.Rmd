@@ -6,23 +6,23 @@ output: pdf_document
 
 ### Question 1
 
-This question is about the sampling distribution of the mean, and using $\bar X$ as an estimator for the parameter $\mu$. Suppose $X_1, \ldots, X_n$ are independent and identically distributed (i.i.d.) with the same distribution as $X$, where $\text{Var}(X) = \sigma^2$.
+This question is about the sampling distribution of the mean, and using $\bar X$ as an estimator for the parameter $\mu$. Suppose $X_1, \ldots, X_n$ are independent and identically distributed (i.i.d.) with the same distribution as $X$.
 
-#### a. Recall that $E[\bar X] = E[X]$ and $\text{Var}(\bar X) = \frac{\sigma^2}{n}$. Do we need to assume anything more about $X$ for $\bar X$ to be an unbiased estimate of $\mu$, and if so, what?
-
-\ 
-
-\ 
-
-#### b. One way to write Chebyshev's inequality is $P(|Y - E[Y]| \geq k \sqrt{\text{Var}(Y)}) \leq 1/k^2$. Let $Y = \bar X$ and write this inequality out in terms of $\bar X, E[X], k, \sigma$, and $n$.
+#### a. Recall that $E[\bar X] = E[X]$ and $\text{Var}(\bar X) = \frac{\text{Var}(X)}{n}$. Do we need to assume anything more about $X$ for $\bar X$ to be an unbiased estimate of $\mu$, and if so, what?
 
 \ 
 
 \ 
 
+#### b. One way to write Chebyshev's inequality is $P(|Y - E[Y]| \geq k \sqrt{\text{Var}(Y)}) \leq 1/k^2$. Let $Y = \bar X$ and write this inequality out in terms of $\bar X, E[X], k, \text{Var}(X)$, and $n$.
+
 \ 
 
-#### c. If we let $k = \sqrt{n}$, the answer from the previous part should simplify to $P(|\bar X - E[X]| \geq \sigma) \leq 1/n$. If we want 99\% probability that the sample mean is *within one standard deviation* of $X$ away from $E[X]$, how large of a sample do we need?
+\ 
+
+\ 
+
+#### c. If we let $k = \sqrt{n}$, the answer from the previous part should simplify to $P(|\bar X - E[X]| \geq \sqrt{\text{Var}(X)}) \leq 1/n$. If we want 99\% probability that the sample mean is *within one standard deviation* of $X$ away from $E[X]$, how large of a sample do we need?
 
 \ 
 
