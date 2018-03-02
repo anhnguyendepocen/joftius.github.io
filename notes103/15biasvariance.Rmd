@@ -1,0 +1,97 @@
+---
+title: "Lecture 14 - Parameter estimation"
+author: "Joshua Loftus"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(ggthemes)
+library(datasets)
+```
+
+#### Announcements
+
+- Suggested reading on course page
+- Homework 5 will be posted soon
+- Mid-course survey also coming soon
+- Today: bias variance tradeoff
+
+#### Bias
+
+- Using an estimator $\hat \theta$ of the parameter $\theta$. Is this a good idea?
+- The bias of $\hat \theta$ is
+$$
+\text{Bias}(\hat \theta) = E[\hat \theta - \theta] = E[\hat \theta] - \theta
+$$
+- We say $\hat \theta$ is **unbiased** for $\theta$ if $\text{Bias}(\hat \theta) = 0$.
+- Last time we considered $U_1, \ldots U_n \sim U[0,\theta]$ and using the maximum $U_{(n)}$ as an estimate of $\theta$
+- For that example we found $E[U_{(n)}] = \frac{n-1}{n}\theta < \theta$, the sample maximum *underestimated* the true maximum.
+
+#### Mean squared error
+
+- How good is an estimator? One way to quantify this is the mean squard error
+$$
+\text{MSE}(\hat \theta) = E[(\hat \theta - \theta)^2]
+$$
+- If we *imagine* repeating the data collection many times and computing $\hat \theta$ repeatedly, then MSE is the average squared distance of $\hat \theta$ from the true value.
+- Exercise: what is the MSE of $\bar X$ as an estimator of $\mu = E[X]$?
+- Solving an earlier mystery: why is $n-1$ the denominator in the sample standard deviation, instead of $n$?
+$$
+E\left[\frac{1}{n} \sum_{i=1}^n (X_i - \bar X)^2\right] = \frac{n-1}{n} \text{Var}(X)
+$$
+- Using $n-1$ gives an *unbiased* estimate of the variance.
+
+#### Bias-variance tradeoff
+
+- With a bit of algebra (maybe do this on the board), we can show
+$$
+\text{MSE}(\hat \theta) = \text{Bias}(\hat \theta)^2 + \text{Var}(\hat \theta)
+$$
+- To make MSE small, we want to make bias small and also make variance small...
+- Unfortunately it is not always possible to do both. There are limits.
+- Consider using the constant $c$ as an estimator. $\text{Bias}(c) = c - \theta$, $\text{Var}(c) = 0$. Low variance, but high bias (remember $\theta$ is unknown so $c = \theta$ is not an *estimator*)
+- See the dartboard figure [here](http://scott.fortmann-roe.com/docs/BiasVariance.html) (maybe draw on board)
+
+#### Multiple parameters
+
+- Probability models don't always have just one parameter, complicated situations may require more. Modern statistics often deals with *high dimensional* problems with many parameters.
+- Suppose we have $p$ parameters to estimate, $\theta_1, \theta_2, \ldots, \theta_p$.
+- e.g. [Normal](https://en.wikipedia.org/wiki/Normal_distribution) $N(\mu, \sigma^2)$. Then $\theta = (\mu, \sigma^2)$ and $\hat \theta = (\bar X, S^2)$.
+- e.g. Multivariate normal, [multinomial](https://en.wikipedia.org/wiki/Multinomial_distribution)
+- e.g. volatility parameters (e.g. $\beta$) for $p$ different investments
+- e.g. genetic effects for $p$ genes on a given phenotype of interest, such as risk for a certain disease
+- Can think of these as a point in $p$-dimensional space, called a vector $\theta = (\theta_1, \ldots, \theta_p)$.
+- MSE still makes sense:
+$$
+MSE(\hat \theta) = \sum_{j=1}^p E[(\hat \theta_i - \theta_i)^2]
+$$
+- Just add up the MSEs for each one.
+
+
+#### Normal means and Stein's paradox
+
+- Suppose the parameters of interest are the mean of a multivariate normal $\theta = \mu = (\mu_1, \ldots, \mu_p)$
+- Suppose $X$ is multivariate normal with mean $\mu$. So $E[X] = \mu$ is unbiased. What about MSE?
+- If $p = 1$ or 2, then $X$ has lowest MSE...
+- If $p \geq 3$, then $X$ no longer has the lowest MSE!
+- This is sometimes called [Stein's paradox](https://en.wikipedia.org/wiki/Stein%27s_example) after Charles Stein.
+- In **high dimensions**, it's usually **better to be biased**
+- If you find this very interesting there is a classic example about baseball you can [read about](http://statweb.stanford.edu/~ckirby/brad/other/Article1977.pdf). Summary: when estimating many players' batting averages in the next season, instead of using *each* players' average from this season as their *own* estimate it's better to make *all* the estimates *biased* toward the *overall average* of the players.
+
+```{r}
+p = 100
+JS <- function(x) max((1 - (p-2)/sum(x^2)),0) * x
+mu = sample(c(1:5), p, replace = TRUE)
+mu
+SEs <- replicate(10000, sum(((rnorm(p) + mu) - mu)^2))
+JSSEs <- replicate(10000, sum(((JS(rnorm(p) + mu)) - mu)^2))
+mean(SEs)
+mean(JSSEs)
+```
+
+- The theme of trading off between bias and variance is something we'll come back to later in the course.
+
+
+
