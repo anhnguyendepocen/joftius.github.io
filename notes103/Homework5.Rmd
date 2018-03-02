@@ -30,7 +30,7 @@ This question is about the sampling distribution of the mean, and using $\bar X$
 
 \ 
 
-#### d. Suppose $\bar X$ is unbiased: $E[\bar X] = \mu$. Compute the mean squared error of this estimate, $\text{MSE}(\bar X)$.
+#### d. Suppose $\bar X$ is unbiased: $E[\bar X] = \mu$. What is the mean squared error of this estimate, $\text{MSE}(\bar X)$? Simplify as much as you can.
 
 \ 
 
