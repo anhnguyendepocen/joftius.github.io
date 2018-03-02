@@ -22,7 +22,7 @@ This question is about the sampling distribution of the mean, and using $\bar X$
 
 \ 
 
-#### c. If we let $k = \sqrt{n}$, the answer from the previous part should simplify to $P(|\bar X - E[X]| \geq \sqrt{\text{Var}(X)}) \leq 1/n$. If we want 99\% probability that the sample mean is *within one standard deviation* of $X$ away from $E[X]$, how large of a sample do we need?
+#### c. If we let $k = \sqrt{n}$, the answer from the previous part should simplify to $P(|\bar X - E[X]| \geq \sqrt{\text{Var}(X)}) \leq 1/n$. If we want 99\% probability that the sample mean is *within one standard deviation* of $X$ away from $E[X]$, how large of a sample do we need, according to this formula?
 
 \ 
 
