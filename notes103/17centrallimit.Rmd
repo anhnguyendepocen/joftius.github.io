@@ -15,6 +15,9 @@ library(tidyverse)
 - LLN lab printouts due now
 - Homework 6 will be posted soon
 - Today: Central limit theorem, more `R` experiments
+- Optional additional reading:
+- Proofs of the CLT (requires calculus): [here](http://www.cs.toronto.edu/~yuvalf/CLT.pdf)
+
 
 #### Means of i.i.d. samples
 
@@ -44,11 +47,11 @@ $$
 
 #### Central limit theorem
 
-- It turns out that if blow up the errors by a factor of $\sqrt{n}$, then $\bar X_n$ no longer converges to a specific number. Multiplying the errors by $\sqrt{n}$ is enough to make them large enough that the variability never goes to 0.
-- Instead of the limit being a specific number ($\mu$), the limit is a *random variable*.
-- The **central limit theorem** says:
+- If we blow up the errors, increasing the dispersion, by a factor of $\sqrt{n}$, then $\bar X_n$ no longer converges to a specific number. Multiplying the errors by $\sqrt{n}$ is enough to make them large enough that the variability never goes to 0.
+- Instead of the limit being a specific number ($\mu$), the limit is now a *random variable*.
+- The **central limit theorem** says, for any constants $a < b$ (possibly infinite),
 $$
-\sqrt{n}\left( \bar X_n - \mu \right) \to Z \quad \text{where} \quad Z \sim N(0, \sigma^2)
+P\left( a \leq \sqrt{n}\left( \bar X_n - \mu \right) \leq b \right) \to P(a \leq Z \leq b) \quad \text{where} \quad Z \sim N(0, \sigma^2)
 $$
 - Notice that we did *not* assume the $X_i$ are normal!
 - This is sometimes referred to as a "universality" theorem because it says $Z$ is a universal distribution for the *error of the mean*.
