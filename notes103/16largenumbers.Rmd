@@ -7,7 +7,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
-library(ggthemes)
+#library(ggthemes)
 ```
 
 #### Announcements
@@ -20,35 +20,28 @@ library(ggthemes)
 
 - We've introduced some ideas about general parameter estimation, but we'll now get back to means for a few lectures.
 - In particular, we'll be considering the mean $\bar X$ of **i.i.d. random variables** $X_1, \ldots, X_n$.
-- Let $\mu = E[X]$, and $\sigma^2 = \text{Var}(X)$, so $E[\bar X] = \mu$ and $\text{Var}(\bar X) = \sigma^2/n$.
-- Recall this from the lecture about the sampling distribution of the mean:
-
-```{r cache=TRUE}
-Zbar <- function(n) mean(rnorm(n, mean = true_mu, sd = 2))
-df <- data.frame(Z = c(rnorm(5000, mean = true_mu, sd = 2),
-                       replicate(5000, Zbar(10)),
-                       replicate(5000, Zbar(30))),
-                 Samples = factor(c(rep(1, 5000), rep(10, 5000), rep(30, 5000))))
-ggplot(df, aes(Z, fill = Samples, linetype = Samples)) + geom_density(alpha = .2) + theme_tufte()
-```
-
-- The distribution of the sample mean becomes more and more concentrated (or less dispersed) as $n$ gets larger.
-- Today we'll discuss some other interesting mathematical results and ways of thinking about this phenomenon.
+- Let $\mu = E[X_i]$, and $\sigma^2 = \text{Var}(X_i)$, so $E[\bar X] = \mu$ and $\text{Var}(\bar X) = \sigma^2/n$.
+- Today we'll discuss some mathematical results about what happens to $\bar X_n$ as $n$ increases.
+- In real life, it is often the case that $n$ is not increasing--there is just one fixed sample, and no opportunity to collect more data.
+- The results we see today still give us useful ways of thinking of $\bar X_n$, provided $n$ is "sufficiently large"
+- History: Cardano noticed the phenomenon in 1500's but didn't prove anything about it, Jacob Bernoulli in 1713 (the Ber(p) case), extended as recently as 1929 by Khinchin
+- We need a mathematical concept before we can state two version of the LLN
 
 #### Limits of sequences
 
-- A sequence of numbers indexed by $n$, denoted $a_n$, is a list of numbers: $a_1, a_2, \ldots$ -- potentially infinite
+- A sequence of numbers indexed by $n$, denoted for example as $a_n$, is a list of numbers: $a_1, a_2, \ldots$ -- which is *potentially infinite*
 - e.g. Even numbers: $a_n = 2n$, so $a_1 = 2, a_2 = 4, a_3 = 6, \ldots$
 - e.g. Reciprocals: $a_n = 1/n$, so $a_1 = 1, a_2 = 1/2, a_3 = 1/3, \ldots$
-- e.g. $a_n = (1/2)^n$, so $a_1 = 1/2, a_2 = 1/4, a_3 = 1/8, \ldots$
+- e.g. $a_n = (2/3)^n$, so $a_1 = 2/3, a_2 = 4/9, a_3 = 8/27, \ldots$
 
-- We say the sequence $a_n$ has a limit $a$, in symbols:
+- We say the sequence $a_n$ has a limit $a$, or in symbols:
 $$
 \lim_{n \to \infty} a_n = a \quad \text{ or } \quad a_n \to a \text{ as } n \to \infty
 $$
 if $a_n$ gets arbitrarily close to $a$ as $n$ gets larger.
 - In math, this means that for any constant $c > 0$, no matter how small, it's possible to find a large enough value $N$ so that $|a_n - a| < c$ for all $n \geq N$.
-- This is a technical definition, in a calculus or probability class there would be lots of exercises and results about limits. We won't really use this definition, but you should know it exists.
+- e.g. $1/n \to 0$, why? For any $c > 0$, no matter how small, pick $N > 1/c$, so $1/N < c$. then for any $n \geq N$ we have $|1/n - 0| < c$.
+- This is a technical definition, in a calculus or probability class there would be lots of exercises and results about limits. We won't really use this definition, but you should know it exists. It is a mathematical foundation.
 
 - **Notation**: for the rest of this lecture we're going to emphasize that the sample mean depends on the sample size by giving it a subscript: $\bar X_n$.
 - We're now going to do a thought experiment: what happens to $\bar X_n$ if we keep increasing the sample size $n$?
@@ -59,7 +52,7 @@ if $a_n$ gets arbitrarily close to $a$ as $n$ gets larger.
 $$
 P(|\bar X_n - \mu| > c) \to 0 \quad \text{as} \quad n \to \infty
 $$
-- If you fix a small distance from the mean, the probability that $\bar X_n$ is outside that distance from the mean goes to 0 as $n$ becomes large enough
+- If you fix a small distance from the mean (a bit of "wiggle room"), the probability that $\bar X_n$ is outside that distance from the mean goes to 0 as $n$ becomes large enough
 - Can use Chebyshev's inequality to show this.
 
 #### Strong law of large numbers
@@ -68,5 +61,66 @@ $$
 $$
 \bar X_n \to \mu \quad \text{as} \quad n \to \infty
 $$
-- 
+- Don't need any fixed "wiggle room," hence the names strong vs weak
 
+#### How to think about laws of large numbers
+
+- The main point is that the sample mean becomes closer and closer to its expected value as the sample size increases
+- The sample mean is "random" -- collect a different sample and you'll get a different number
+- But that randomness or variability is decreasing as $n$ becomes larger
+- Remember the restaurant ratings example: each new observation is between 1 and 5 (stars)
+- Suppose Restaurant $D$ has 9 ratings and an average of 3 stars.
+- If the 10th rating is 1, the new average will be 2.8.
+- If the 10th rating is 5, the new average will be 3.2
+- Suppose Restaurant $E$ has 99 ratings and an average of 3 stars
+- New rating can change it to 2.98-3.02, much smaller range.
+- Starting with 999 ratings, the change from 1 new rating is so small it won't show up in the first 2 decimal places.
+
+```{r}
+# Largest sample size
+max_n <- 20001
+# True mean
+true_mu <- (1 + sqrt(5))/2
+# Generate a large sample
+X <- rnorm(max_n, mean = true_mu, sd = 1) 
+# Make a list of sample sizes
+n <- seq(from = 5, to = max_n, by = 100)
+# Compute sample means for each sample size
+Xbar_n <- sapply(n, function(first_n) mean(X[1:first_n]))
+# Create a data frame for plotting
+lln <- data.frame(n = n, Xbar_n = Xbar_n)
+# Plot the sample sizes
+ggplot(lln, aes(n, Xbar_n)) + geom_point() + geom_hline(yintercept = true_mu) +
+  ylab("Sample mean") + theme_minimal() + ylim(c(min(1.4, min(Xbar_n)), max(2, max(Xbar_n))))
+```
+
+#### Square-root convergence
+
+- At first the sample size increase makes a dramatic change, rapidly bringing the mean *somewhat* close to the truth.
+- But then it takes longer and longer for the mean to keep getting closer to the truth by the same amount.
+- Law of diminishing information.
+- Remember from the sampling distribution: $\text{Var}(\bar X) = \sigma^2/n$.
+- Hence, $\text{SD}(\bar X) = \sigma/\sqrt{n}$ -- the dispersion decreases like 1 over the *square root* of the sample size.
+- This is also referred to as a *square root convergence rate*.
+- **Very important** rule of thumb to keep in mind, useful for interpreting data in real life.
+
+#### "In the long run we are all dead" - Keynes
+
+- Several warnings about misuse of the laws of large numbers...
+- **First**, remember: it applies *in the long run*, it does *not* suggest that anything has to happen in the short run to make the sample mean move toward the true mean.
+- If I toss a fair coin 10 times and it lands on heads all 10 times, the law of large numbers does *not* imply that the next toss should be a tails! This error is called the [Gambler's fallacy](https://en.wikipedia.org/wiki/Gambler%27s_fallacy) because it is a common form of wishful thinking for gamblers to believe, if they have lost several games, that they are "due" to have a win soon.
+- **Second**, it is possible to break the laws of large numbers if the random variables themselves are so dispersed that they *don't have an expected value*.
+- These are sometimes called "heavy-tailed" distributions. e.g. Cauchy distribution.
+
+```{r}
+set.seed(43)
+X <- rcauchy(max_n) 
+Xbar_n <- sapply(n, function(first_n) mean(X[1:first_n]))
+lln <- data.frame(n = n, Xbar_n = Xbar_n)
+ggplot(lln, aes(n, Xbar_n)) + geom_point() + ylab("Sample mean") + theme_minimal() +
+  ylim(c(min(1.4, min(Xbar_n)), max(2, max(Xbar_n)))) + ggtitle("Heavy tails break the LLN")
+```
+
+#### R markdown lab
+
+- Download the `LLNlab.Rmd` file from the course page and open it in Rstudio.

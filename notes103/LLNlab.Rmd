@@ -1,0 +1,192 @@
+---
+title: "Lab - Law of large numbers"
+author: "MY NAME HERE - I agree to the Stern Code of Conduct"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+### Background
+
+- See the lecture notes on laws of large numbers for background
+- Summary: considering samples of i.i.d. random variables
+- As the sample size increases, the sample mean converges to its true expected value
+
+### Experiments
+
+Try out the law of large numbers for different kinds of random variables.
+
+#### Binomial
+
+Shape of the underlying random variable distribution
+
+```{r}
+# True parameters, try changing them
+size = 50
+true_prob = 2/3
+# Don't change this
+true_mu <- size*true_prob
+ggplot(data.frame(Successes=0:50, Probability=dbinom(0:size, size, true_prob)), aes(Successes, Probability)) + 
+  geom_bar(stat = "identity") + theme_minimal() + ggtitle("Binomial: model world")
+```
+
+Mean of samples with increasing sample size
+
+```{r}
+# Largest sample size
+max_n <- 5000
+# Generate a large sample
+X <- rbinom(max_n, size, true_prob) 
+# Look at a few data points
+head(X)
+```
+
+Plot the sample mean, as the sample size increases
+
+```{r}
+# Make a list of sample sizes up to the maximum one
+n <- seq(from = 5, to = max_n, by = 20)
+# Compute sample means for each sample size
+Xbar_n <- sapply(n, function(first_n) mean(X[1:first_n]))
+# Create a data frame for plotting
+lln <- data.frame(n = n, Xbar_n = Xbar_n)
+# Plot the sample sizes
+ggplot(lln, aes(n, Xbar_n)) + geom_point() + geom_hline(yintercept = true_mu) +
+  ylab("Sample mean") + xlab("Sample size") + theme_minimal() + ggtitle("Binomial: data world")
+```
+
+#### Normal
+
+Shape of the underlying random variable distribution
+
+```{r}
+# True parameters, try changing them
+sd = 2
+true_mu = sqrt(5)
+# Don't change this
+X <- seq(from = true_mu - 3*sd, to = true_mu + 3*sd, length.out = 100)
+ggplot(data.frame(x=X, Probability=dnorm(X, true_mu, sd)), aes(x, Probability)) + 
+  geom_line() + theme_minimal() + ggtitle("Normal: model world")
+```
+
+Mean of samples with increasing sample size
+
+```{r}
+# Largest sample size
+max_n <- 5000
+# Generate a large sample
+X <- rnorm(max_n, true_mu, sd) 
+# Look at a few data points
+head(X)
+```
+
+Plot the sample mean, as the sample size increases
+
+```{r}
+# Make a list of sample sizes up to the maximum one
+n <- seq(from = 5, to = max_n, by = 20)
+# Compute sample means for each sample size
+Xbar_n <- sapply(n, function(first_n) mean(X[1:first_n]))
+# Create a data frame for plotting
+lln <- data.frame(n = n, Xbar_n = Xbar_n)
+# Plot the sample sizes
+ggplot(lln, aes(n, Xbar_n)) + geom_point() + geom_hline(yintercept = true_mu) +
+  ylab("Sample mean") + xlab("Sample size") + theme_minimal() + ggtitle("Normal: data world")
+```
+
+
+#### Beta
+
+Shape of the underlying random variable distribution
+
+```{r}
+# True parameters, try changing them
+shape1 = 2
+shape2 = 10
+# Don't change this
+true_mu <- shape1/(shape1+shape2)
+X <- seq(from = 0, to = 1, length.out = 100)
+ggplot(data.frame(x=X, Probability=dbeta(X, shape1, shape2)), aes(x, Probability)) + 
+  geom_line() + theme_minimal() + ggtitle("Beta: model world")
+```
+
+Generate random samples
+
+```{r}
+# Largest sample size
+max_n <- 5000
+# Generate a large sample
+X <- rbeta(max_n, shape1, shape2) 
+# Look at a few data points
+head(X)
+```
+
+Plot the sample mean, as the sample size increases
+
+```{r}
+# Make a list of sample sizes up to the maximum one
+n <- seq(from = 5, to = max_n, by = 20)
+# Compute sample means for each sample size
+Xbar_n <- sapply(n, function(first_n) mean(X[1:first_n]))
+# Create a data frame for plotting
+lln <- data.frame(n = n, Xbar_n = Xbar_n)
+# Plot the sample sizes
+ggplot(lln, aes(n, Xbar_n)) + geom_point() + geom_hline(yintercept = true_mu) +
+  ylab("Sample mean") + xlab("Sample size") + theme_minimal() + ggtitle("Beta: data world")
+```
+
+
+#### Poisson
+
+Shape of the underlying random variable distribution
+
+```{r}
+# True parameters, try changing them
+lambda = 12
+# Don't change this
+true_mu <- lambda
+X <- seq(from = 0, to = ceiling(lambda + 4*sqrt(lambda)))
+ggplot(data.frame(x=X, Probability=dpois(X, lambda)), aes(x, Probability)) + 
+  geom_bar(stat = "identity") + theme_minimal() + ggtitle("Poisson: model world")
+```
+
+Generate random samples
+
+```{r}
+# Largest sample size
+max_n <- 5000
+# Generate a large sample
+X <- rpois(max_n, lambda) 
+# Look at a few data points
+head(X)
+```
+
+Plot the sample mean, as the sample size increases
+
+```{r}
+# Make a list of sample sizes up to the maximum one
+n <- seq(from = 5, to = max_n, by = 20)
+# Compute sample means for each sample size
+Xbar_n <- sapply(n, function(first_n) mean(X[1:first_n]))
+# Create a data frame for plotting
+lln <- data.frame(n = n, Xbar_n = Xbar_n)
+# Plot the sample sizes
+ggplot(lln, aes(n, Xbar_n)) + geom_point() + geom_hline(yintercept = true_mu) +
+  ylab("Sample mean") + xlab("Sample size") + theme_minimal() + ggtitle("Poisson: data world")
+```
+
+### Uniform
+
+Exercise: copy and paste the Beta section here, then change:
+
+- `dbeta` to `dunif`
+- `shape1` to `min = 0`
+- `shape2` to `max = ` some positive number
+- `true_mu` to `max/2`
+- `rbeta` to `runif`
+- `ggtitle("Beta: ...")` to `ggtitle("Unif: etc")` (for both plots)
+
+Once you finish this, delete all the previous text between the Uniform section and the first chunk of code, the one that says `library(tidyverse)`. Save your file, knit it, print the output, and turn it in **tomorrow**.

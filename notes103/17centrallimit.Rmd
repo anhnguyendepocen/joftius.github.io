@@ -1,0 +1,101 @@
+---
+title: "Lecture 17 - The central limit theorem"
+author: "Joshua Loftus"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+#library(ggthemes)
+```
+
+#### Announcements
+
+- LLN lab printouts due now
+- Homework 6 will be posted soon
+- Today: Central limit theorem, more `R` experiments
+
+#### Means of i.i.d. samples
+
+- We are still considering the mean $\bar X_n$ of **i.i.d. random variables** $X_1, \ldots, X_n$.
+- **Notation**: we are still emphasizing that the sample mean depends on the sample size by the subscript $n$
+- Let $\mu = E[X_i]$, and $\sigma^2 = \text{Var}(X_i)$, so $E[\bar X_n] = \mu$ and $\text{Var}(\bar X_n) = \sigma^2/n$.
+- Recall this from the lecture about the sampling distribution of the mean:
+
+```{r cache=TRUE}
+true_mu <- 42
+Zbar <- function(n) mean(rnorm(n, mean = true_mu, sd = 2))
+df <- data.frame(Z = c(rnorm(5000, mean = true_mu, sd = 2),
+                       replicate(5000, Zbar(10)),
+                       replicate(5000, Zbar(30))),
+                 Samples = factor(c(rep(1, 5000), rep(10, 5000), rep(30, 5000))))
+ggplot(df, aes(Z, fill = Samples, linetype = Samples)) + geom_density(alpha = .2) + theme_minimal()
+```
+
+- **Square root convergence**: the dispersion of the sampling distribution of the mean decreases like $1/\sqrt{n}$
+- One way to see this is with Chebyshev's inequality applied to the mean:
+$$
+P\left(\left|\bar X_n - \mu\right| > k \frac{\sigma}{\sqrt{n}} \right) \leq 1/k^2
+$$
+- The (strong) law of large numbers says $\bar X_n \to \mu$ as $n \to \infty$, the errors get smaller and smaller.
+- But what happens if we zoom in fast enough to keep the errors from going to zero? i.e. scale by $\sqrt{n}$
+- Does $\sqrt{n}(\bar X_n - \mu)$ converge to a limit?
+
+#### Central limit theorem
+
+- It turns out that if blow up the errors by a factor of $\sqrt{n}$, then $\bar X_n$ no longer converges to a specific number. Multiplying the errors by $\sqrt{n}$ is enough to make them large enough that the variability never goes to 0.
+- Instead of the limit being a specific number ($\mu$), the limit is a *random variable*.
+- The **central limit theorem** says:
+$$
+\sqrt{n}\left( \bar X_n - \mu \right) \to Z \quad \text{where} \quad Z \sim N(0, \sigma^2)
+$$
+- Notice that we did *not* assume the $X_i$ are normal!
+- This is sometimes referred to as a "universality" theorem because it says $Z$ is a universal distribution for the *error of the mean*.
+- The $X_i$ can even be discrete, like Binomial, but this limit will still be the continuous $Z$.
+- Note that the *variance* of $Z$ is $\text{Var}(X_i) = \sigma^2$.
+
+#### How to think about the central limit theorem
+
+- For large enough $n$, $\bar X_n \sim N(\mu, \sigma^2/n)$ (approximately)
+- But for any real sample with $n$ observations, $\bar x_n$ is just a specific number, so $\sqrt{n}(\bar x_n - \mu)$ is also just one number.
+- It is unknown, because $\mu$ is unknown.
+- Thought experiment: imagine collecting another sample with the same size and computing $\bar x_n$ again. Plot it.
+- After repeating many times, the histogram of the plotted $\bar x_n$ values should be centered at $\mu$, have variance $\sigma^2/n$, and have the shape of a normal distribution.
+- For large enough $n$, the **sampling distribution of the mean** is **approximately normal**
+
+#### Example: Exponential distribution
+
+Shape of the underlying random variable distribution is *not* normal:
+
+```{r}
+# True parameters, try changing them
+rate = 1.8
+# Don't change this
+true_mu = 1/rate
+true_var = 1/rate^2
+X <- seq(from = 0, to = 2*rate, length.out = 100)
+ggplot(data.frame(x=X, Probability=dexp(X, rate)), aes(x, Probability)) + 
+  geom_line() + theme_minimal() + ggtitle("Exp: model world")
+```
+
+Plot the sampling distribution of the mean, as the sample size increases
+
+```{r}
+Xbar <- function(n) sqrt(n) * (mean(rexp(n, rate)) - true_mu)
+df <- data.frame(X = c(replicate(5000, Xbar(20)),
+                       replicate(5000, Xbar(50)),
+                       replicate(5000, Xbar(100))),
+                 Samples = factor(c(rep(20, 5000), rep(50, 5000), rep(100, 5000))))
+ggplot(df, aes(X, fill = Samples)) + 
+  geom_bar(alpha = .2, stat = "density", position = "identity") + 
+  theme_minimal() + ylab("Sample dist. of the mean") + theme_minimal() +
+  stat_function(fun = dnorm, args = list(sd = sqrt(true_var))) +
+  facet_grid(Samples~.) + ggtitle("Exp: CLT") 
+```
+
+
+
+#### R markdown lab
+
+- Download the `CLTlab.Rmd` file from the course page and open it in Rstudio.
