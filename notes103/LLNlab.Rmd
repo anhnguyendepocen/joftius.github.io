@@ -33,7 +33,7 @@ ggplot(data.frame(Successes=0:50, Probability=dbinom(0:size, size, true_prob)), 
   geom_bar(stat = "identity") + theme_minimal() + ggtitle("Binomial: model world")
 ```
 
-Mean of samples with increasing sample size
+Generate a random sample
 
 ```{r}
 # Largest sample size
@@ -72,7 +72,7 @@ ggplot(data.frame(x=X, Probability=dnorm(X, true_mu, sd)), aes(x, Probability)) 
   geom_line() + theme_minimal() + ggtitle("Normal: model world")
 ```
 
-Mean of samples with increasing sample size
+Generate a random sample
 
 ```{r}
 # Largest sample size
@@ -97,6 +97,83 @@ ggplot(lln, aes(n, Xbar_n)) + geom_point() + geom_hline(yintercept = true_mu) +
   ylab("Sample mean") + xlab("Sample size") + theme_minimal() + ggtitle("Normal: data world")
 ```
 
+#### Exponential
+
+Shape of the underlying random variable distribution
+
+```{r}
+# True parameters, try changing them
+rate = 1.2
+# Don't change this
+true_mu <- 1/rate
+X <- seq(from = 0, to = true_mu + 2*sqrt(true_mu), length.out = 100)
+ggplot(data.frame(x=X, Probability=dexp(X, rate)), aes(x, Probability)) + 
+  geom_line() + theme_minimal() + ggtitle("Exponential: model world")
+```
+
+Generate a random sample
+
+```{r}
+# Largest sample size
+max_n <- 5000
+# Generate a large sample
+X <- rexp(max_n, rate) 
+# Look at a few data points
+head(X)
+```
+
+Plot the sample mean, as the sample size increases
+
+```{r}
+# Make a list of sample sizes up to the maximum one
+n <- seq(from = 10, to = max_n, by = 20)
+# Compute sample means for each sample size
+Xbar_n <- sapply(n, function(first_n) mean(X[1:first_n]))
+# Create a data frame for plotting
+lln <- data.frame(n = n, Xbar_n = Xbar_n)
+# Plot the sample sizes
+ggplot(lln, aes(n, Xbar_n)) + geom_point() + geom_hline(yintercept = true_mu) +
+  ylab("Sample mean") + xlab("Sample size") + theme_minimal() + ggtitle("Exponential: data world")
+```
+
+#### Poisson
+
+Shape of the underlying random variable distribution
+
+```{r}
+# True parameters, try changing them
+lambda = 12
+# Don't change this
+true_mu <- lambda
+X <- seq(from = 0, to = ceiling(lambda + 4*sqrt(lambda)))
+ggplot(data.frame(x=X, Probability=dpois(X, lambda)), aes(x, Probability)) + 
+  geom_bar(stat = "identity") + theme_minimal() + ggtitle("Poisson: model world")
+```
+
+Generate a random sample
+
+```{r}
+# Largest sample size
+max_n <- 5000
+# Generate a large sample
+X <- rpois(max_n, lambda) 
+# Look at a few data points
+head(X)
+```
+
+Plot the sample mean, as the sample size increases
+
+```{r}
+# Make a list of sample sizes up to the maximum one
+n <- seq(from = 5, to = max_n, by = 20)
+# Compute sample means for each sample size
+Xbar_n <- sapply(n, function(first_n) mean(X[1:first_n]))
+# Create a data frame for plotting
+lln <- data.frame(n = n, Xbar_n = Xbar_n)
+# Plot the sample sizes
+ggplot(lln, aes(n, Xbar_n)) + geom_point() + geom_hline(yintercept = true_mu) +
+  ylab("Sample mean") + xlab("Sample size") + theme_minimal() + ggtitle("Poisson: data world")
+```
 
 #### Beta
 
@@ -109,11 +186,11 @@ shape2 = 10
 # Don't change this
 true_mu <- shape1/(shape1+shape2)
 X <- seq(from = 0, to = 1, length.out = 100)
-ggplot(data.frame(x=X, Probability=dbeta(X, shape1, shape2)), aes(x, Probability)) + 
+ggplot(data.frame(x = X, Probability = dbeta(X, shape1, shape2)), aes(x, Probability)) + 
   geom_line() + theme_minimal() + ggtitle("Beta: model world")
 ```
 
-Generate random samples
+Generate a random sample
 
 ```{r}
 # Largest sample size
@@ -139,54 +216,28 @@ ggplot(lln, aes(n, Xbar_n)) + geom_point() + geom_hline(yintercept = true_mu) +
 ```
 
 
-#### Poisson
-
-Shape of the underlying random variable distribution
-
-```{r}
-# True parameters, try changing them
-lambda = 12
-# Don't change this
-true_mu <- lambda
-X <- seq(from = 0, to = ceiling(lambda + 4*sqrt(lambda)))
-ggplot(data.frame(x=X, Probability=dpois(X, lambda)), aes(x, Probability)) + 
-  geom_bar(stat = "identity") + theme_minimal() + ggtitle("Poisson: model world")
-```
-
-Generate random samples
-
-```{r}
-# Largest sample size
-max_n <- 5000
-# Generate a large sample
-X <- rpois(max_n, lambda) 
-# Look at a few data points
-head(X)
-```
-
-Plot the sample mean, as the sample size increases
-
-```{r}
-# Make a list of sample sizes up to the maximum one
-n <- seq(from = 5, to = max_n, by = 20)
-# Compute sample means for each sample size
-Xbar_n <- sapply(n, function(first_n) mean(X[1:first_n]))
-# Create a data frame for plotting
-lln <- data.frame(n = n, Xbar_n = Xbar_n)
-# Plot the sample sizes
-ggplot(lln, aes(n, Xbar_n)) + geom_point() + geom_hline(yintercept = true_mu) +
-  ylab("Sample mean") + xlab("Sample size") + theme_minimal() + ggtitle("Poisson: data world")
-```
-
 ### Uniform
 
-Exercise: copy and paste the Beta section here, then change:
+Exercise: copy and paste the Beta section here, then make the following changes.
 
-- `dbeta` to `dunif`
-- `shape1` to `min = 0`
-- `shape2` to `max = ` some positive number
-- `true_mu` to `max/2`
-- `rbeta` to `runif`
-- `ggtitle("Beta: ...")` to `ggtitle("Unif: etc")` (for both plots)
+In the first section of code, where it says `# True parameters...`
 
-Once you finish this, delete all the previous text between the Uniform section and the first chunk of code, the one that says `library(tidyverse)`. Save your file, knit it, print the output, and turn it in **tomorrow**.
+- Change `shape1 = ...` to `min_u = 0`
+- Change `shape2 = ...` to `max_u = ` some positive number, you choose it (in class we called this $\theta$)
+- Change `true_mu = ...` to `true_mu = max_u/2` (the middle point is the average)
+
+In the second section of code, which begins `# Largest sample size`
+
+- Change `dbeta` to `dunif`
+- Change the "arguments" of `dunif` from `(max_n, shape1, shape2)` to `(max_n, min, max)`
+
+In the last section of code, which creates the plot
+
+- Change `rbeta` to `runif`
+- Also change the arguments to this function the same way as in the previous section for `dunif`
+
+In the first and last sections of code
+
+- Change `ggtitle("Beta: ...")` to `ggtitle("Uniform: ...")` 
+
+Once you finish this, delete all the previous text starting right above your new Uniform section up to the first chunk of code, the one that says `library(tidyverse)`. Also delete these instructions. Save your edited .Rmd file, knit it (click the knit button), and email me the result (from your Stern or NYU email).
