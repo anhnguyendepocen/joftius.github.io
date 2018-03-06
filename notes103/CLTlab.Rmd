@@ -1,0 +1,52 @@
+---
+title: "Lecture 17 - The central limit theorem"
+author: "Joshua Loftus"
+output: html_document
+---
+
+---
+title: "Lab: central limit theorem"
+author: "MY NAME HERE - I agree to the Stern Code of Conduct"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+#library(ggthemes)
+```
+
+#### Example: Exponential distribution
+
+Shape of the underlying random variable distribution.
+
+```{r}
+rate = 1.8
+true_mu = 1/rate
+true_var = 1/rate^2
+X <- seq(from = 0, to = 2*rate, length.out = 100)
+ggplot(data.frame(x=X, Probability=dexp(X, rate)), aes(x, Probability)) + 
+  geom_line() + theme_minimal() + ggtitle("Exponential: model world")
+```
+
+Plot the sampling distribution of the mean, as the sample size increases
+
+```{r}
+Xbar <- function(n) sqrt(n) * (mean(rexp(n, rate)) - true_mu)
+df <- data.frame(X = c(replicate(2000, Xbar(20)),
+                       replicate(2000, Xbar(50)),
+                       replicate(2000, Xbar(100)),
+                       replicate(2000, Xbar(1000))),
+                 Sample_size = factor(c(rep(20, 2000),
+                                        rep(50, 2000),
+                                        rep(100, 2000),
+                                        rep(1000, 2000))))
+# Change d____ accordingly
+ggplot(df, aes(X, fill = Sample_size)) + 
+  geom_bar(alpha = .2, stat = "density", position = "identity") + 
+  theme_minimal() + ylab("Sample dist. of the mean") + theme_minimal() +
+  stat_function(fun = dnorm, args = list(sd = sqrt(true_var))) +
+  facet_grid(Sample_size~.) + ggtitle("Exponential: CLT") 
+```
+
+
