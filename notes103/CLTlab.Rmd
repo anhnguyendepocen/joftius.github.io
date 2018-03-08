@@ -17,15 +17,98 @@ library(nycflights13)
 #library(ggthemes)
 ```
 
-### Using the central limit theorem to compute probabilities
+### Numbers, random variables, samples, repeated experiments, and simulations in R
+
+**Numbers**: nothing random about them.
+
+```{r}
+n <- 20
+p <- 0.4
+n*p
+c((n*p-2):(n*p+2))
+```
+
+**Random variables**: every time you run this line of code you get a different observation. The *function* `rbinom(1, ...)` is the random variable $X$ (upper case). When you run it, you get a specific number $x$ (lower case)
+
+```{r}
+rbinom(1, n, p)
+```
+
+**Samples**: same as above, but now each time there is more than one outcome. The *function* `rbinom(10, ...)` represents an independent and identically distributed random sample $X_1, X_2, \ldots, X_{10}$. When you run the code you get a data set $x_1, x_2, \ldots, x_{10}$.
+
+```{r}
+rbinom(10, n, p)
+```
+
+**Repeated experiments**: when you use statistical imagination to think about repeating the whole process many times. We usually do this using the `replicate` function. Suppose we compute the mean of a sample of 10 i.i.d. Binomials, and we want to imagine repeating that experiment to see how the mean varies randomly each time.
+
+```{r}
+replicate(10, mean(rbinom(10, n, p)))
+```
+
+**Simulations**: this refers to using computer programs to study how well something works by conducting repeated experiments and evaluating the performance. This is a very general and powerful idea that we have already used many times in this class. It usually works by doing something to the `data`, like applying a function to it, or plotting it in a certain way. Then we repeat the experiment with `replicate` and apply the function every time and record the results to evaluate their average performance or plot them.
+
+Examples of some fairly simple but interesting functions that we could study with simulations
+
+- `mean`: study the sampling distribution of the mean of different kinds of random variables
+- `sd`, `max`, `min`, `median`, `quantile`
+- `mean(X <= 2 & X >= 1)` proportion of data points between 1 and 2
+- `mean(data$X > 0 & data$Y > 0)` proportion of two-dimensional points with both coordinates bigger than 0 (upper right quadrant)
+
+### Revisiting the 68-95-99 rule
+
+The 68-95-99 rule comes from the normal distribution. These numbers are the probability of a normal random variable being close to its mean, where "close" is one, two, or three standard deviations, respectively. To be more precise, consider the case of 3 standard deviations:
+
+```{r}
+pnorm(3) - pnorm(-3)
+```
+It's actually about 99.7\%. I rounded down to 99 just to make the rule easier to remember, and also because in practice we use this rule to *approximate* probabilities for other, potentially non-normal distributions. Since it's only an approximation, it would be misleading to include many digits of accuracy.
+
+#### NYC flights example
+
+Now we'll try to use this on real data where we do not know anything the underlying distribution and its true parameters. 
+
+```{r}
+X <- flights %>% filter(carrier == "HA") %>% pull(air_time)
+mu <- mean(X)
+s <- sd(X)
+c(mu, s)
+```
+
+Use the normal approximation (which is justified by the central limit theorem) to estimate the portion of flights within one, two, and three standard deviations of the mean.
+
+```{r}
+# Complete the function below
+# Then you can use e.g. normal_approximation(mu, s, mu - s, mu + s) to answer the question
+normal_approximation <- function(mu, s, lower, upper) {
+  # Hint: pnorm( something ) - pnorm( something else )
+}
+```
+
+Check the approximate answers from above using all the data.
+
+```{r}
+# Hint: mean(abs(X - mean(X)) <= 1*sd(X)) etc
+```
+
+
+#### Difference between normal approximation to data and CLT for sample mean
+
+- The normal approximation to data is about *summarizing the distribution* of the entire *data set* by saying it's similar to $N(\mu, \sigma^2)$ when we set $\mu$ to `mean(x)` and $\sigma$ to `sd(x)`
+- The central limit theorem applies to the *sample average*, not the entire distribution. The interesting thing about the CLT is that even if the normal approximation doesn't work for the whole distribution, taking the sample average *cancels out* many of the underlying problems.
+
+
+### Using the normal distribution to compute probabilities
 
 When $\bar X_n$ is the mean $n$ of i.i.d. samples of a random variable with true expected value $\mu$ and variance $\sigma^2$, the central limit theorem says
 $$
 P\left( a \leq \sqrt{n}\left( \bar X_n - \mu \right) \leq b \right) \to P(a \leq Z \leq b) \quad \text{where} \quad Z \sim N(0, \sigma^2)
 $$
-- In practice, this often means we can compute probabilities for normal random variables as estimates of probabilities for whatever (possibly non-normal) random variable we started out with.
+- In practice, this often means we can compute probabilities for normal random variables as estimates of probabilities for whatever (possibly non-normal) random variable we started out with. If the original distribution is not too different from a normal, then we can approximate the whole distribution of the data with a normal distribution. But even if the original distribution is not normal, the CLT allows us to compute probabilities *for the sample mean* (rather than the whole distribution) using the normal distribution.
 
-- Solving problems usually involves figuring out what to plug in for $a, b$, and $\sigma^2$, so we'll do some examples today. In the past, people would get probabilities for normal random variables out of tables often printed in the back of a textbook. We'll use `R` for that instead.
+- Solving problems usually involves figuring out what to plug in for $a, b, \mu$, and $\sigma^2$, so we'll do some examples today. In the past, people would get probabilities for normal random variables out of tables often printed in the back of a textbook. We'll use `R` for that instead.
+
+- Finding the right place to center the normal distribution is called **centering**, and finding the right amount of dispersion is called **scaling**. We have to get both of these right to make the answers from the normal distribution work for our given problem.
 
 - For example, if $\sigma = 1$, then the function `pnorm(z)` gives $P(Z \leq z)$ for the standard normal $Z \sim N(0, 1)$. To compute $P(-1 \leq Z \leq 1)$ we would use `pnorm(1)` to get $P(Z \leq 1)$, and then *subtract* `pnorm(-1)` to take away $P(Z \leq -1)$. What's left over is $P(-1 \leq Z \leq 1)$.
 
@@ -83,32 +166,6 @@ Repeat the simulation using $n = 200$ to check your previous answer based on the
 
 Does it seem like the central limit theorem is working well to answer these questions?
 
-#### NYC flights example
-
-Now we'll try to use this on real data where we do not know anything the underlying distribution and its true parameters. 
-
-```{r}
-X <- flights %>% filter(carrier == "HA") %>% pull(air_time)
-mu <- mean(X)
-s <- sd(X)
-c(mu, s)
-```
-
-Use the normal approximation (which is justified by the central limit theorem) to estimate the portion of flights within one, two, and three standard deviations of the mean.
-
-```{r}
-# Complete the function below
-# Then you can use e.g. normal_approximation(mu, s, mu - s, mu + s) to answer the question
-normal_approximation <- function(mu, s, lower, upper) {
-  # Hint: pnorm( something ) - pnorm( something else )
-}
-```
-
-Check the approximate answers from above using all the data.
-
-```{r}
-# Hint: mean(abs(X - mean(X)) <= 1*sd(X)) etc
-```
 
 ### Checking the central limit theorem for different shapes of distrbutions
 
@@ -159,7 +216,40 @@ Exercise: copy and paste the code above, then change everything you need to chan
 
 ### Breaking the central limit theorem or normal approximations
 
-#### Example: heavy tails
+#### Breaking the CLT: functions other than the average
+
+Shape of the underlying random variable distribution.
+
+```{r}
+rate = 1.8
+true_mu = 1/rate
+true_var = 1/rate^2
+X <- seq(from = 0, to = 2*rate, length.out = 100)
+ggplot(data.frame(x=X, Probability=dexp(X, rate)), aes(x, Probability)) + 
+  geom_line() + theme_minimal() + ggtitle("Exponential: model world")
+```
+
+Plot the sampling distribution of the mean, as the sample size increases
+
+```{r}
+Xbar <- function(n) (prod(rexp(n, rate)))
+df <- data.frame(X = c(replicate(2000, Xbar(20)),
+                       replicate(2000, Xbar(50)),
+                       replicate(2000, Xbar(100)),
+                       replicate(2000, Xbar(1000))),
+                 Sample_size = factor(c(rep(20, 2000),
+                                        rep(50, 2000),
+                                        rep(100, 2000),
+                                        rep(1000, 2000))))
+# Change d____ accordingly
+ggplot(df, aes(X)) + 
+  geom_bar(alpha = .8, stat = "density", position = "identity") + 
+  theme_minimal() + ylab("Sample dist. of the mean") + theme_minimal() +
+  stat_function(fun = dnorm, args = list(sd = sqrt(true_var))) +
+  facet_grid(Sample_size~.) + ggtitle("Exponential: product instead of mean breaks CLT") 
+```
+
+#### Breaking CLT: heavy tails
 
 Shape of the underlying random variable distribution.
 
@@ -176,8 +266,8 @@ Plot the sampling distribution of the mean, as the sample size increases
 # Throw away extreme outliers before calculating sample mean
 Xbar <- function(n) {
   cauchy_sample <- rcauchy(n, scale = scale)
-  # Try changing this 100 to 1000 and then run the code a few times
-  sqrt(n) * (mean(cauchy_sample[abs(cauchy_sample) < 100])) 
+  # Try changing this 200 to 500 or larger and then run the code a few more times
+  sqrt(n) * (mean(cauchy_sample[abs(cauchy_sample) < 200])) 
 }
 df <- data.frame(X = c(replicate(1000, Xbar(20)),
                        replicate(1000, Xbar(50)),
@@ -196,9 +286,25 @@ ggplot(df, aes(X)) +
 ```
 
 
-#### Example: bimodal or multimodal distributions
+#### Breaking normal approximation: skewed distributions 
 
-Shape of the underlying random variable distribution.
+Shape of the underlying data.
+
+```{r}
+rskew_samp <- rexp(1000)
+s <- 1
+qplot(rskew_samp, geom = "density") + theme_minimal() + ggtitle("Skewed data: density plot")
+```
+
+Is the normal approximation (i.e. 68-95-99 rule) good for this kind of data?
+
+```{r}
+c(mean(abs(rskew_samp) <= 1*s), mean(abs(rskew_samp) <= 2*s), mean(abs(rskew_samp) <= 3*s))
+```
+
+#### Breaking normal approximation: bimodal or multimodal distributions
+
+Shape of the underlying data.
 
 ```{r}
 # See what happens if you change the first 2 below to a larger number
@@ -206,7 +312,7 @@ rbimodal <- function(n) rnorm(n) + 2*(2*rbinom(n, 1, .5) - 1)
 rb_samp <- rbimodal(10000)
 true_mu <- 0
 s <- sd(rb_samp)
-qplot(rb_samp, geom = "density") + theme_minimal() + ggtitle("Bimodal: density plot")
+qplot(rb_samp, geom = "density") + theme_minimal() + ggtitle("Bimodal data: density plot")
 ```
 
 Is the normal approximation (i.e. 68-95-99 rule) good for this kind of data?
@@ -214,3 +320,7 @@ Is the normal approximation (i.e. 68-95-99 rule) good for this kind of data?
 ```{r}
 c(mean(abs(rb_samp) <= 1*s), mean(abs(rb_samp) <= 2*s), mean(abs(rb_samp) <= 3*s))
 ```
+
+### Revisiting the difference between CLT and normal approximation to data
+
+- The normal approximation to data only works well if the distribution of the data has a similar shape to a normal distribution
