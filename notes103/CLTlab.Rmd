@@ -1,6 +1,6 @@
 ---
-title: "Lecture 17 - The central limit theorem"
-author: "Joshua Loftus"
+title: "Lab: central limit theorem"
+author: "MY NAME HERE - I agree to the Stern Code of Conduct"
 output: html_document
 ---
 
@@ -13,8 +13,104 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
+library(nycflights13)
 #library(ggthemes)
 ```
+
+### Using the central limit theorem to compute probabilities
+
+When $\bar X_n$ is the mean $n$ of i.i.d. samples of a random variable with true expected value $\mu$ and variance $\sigma^2$, the central limit theorem says
+$$
+P\left( a \leq \sqrt{n}\left( \bar X_n - \mu \right) \leq b \right) \to P(a \leq Z \leq b) \quad \text{where} \quad Z \sim N(0, \sigma^2)
+$$
+- In practice, this often means we can compute probabilities for normal random variables as estimates of probabilities for whatever (possibly non-normal) random variable we started out with.
+
+- Solving problems usually involves figuring out what to plug in for $a, b$, and $\sigma^2$, so we'll do some examples today. In the past, people would get probabilities for normal random variables out of tables often printed in the back of a textbook. We'll use `R` for that instead.
+
+- For example, if $\sigma = 1$, then the function `pnorm(z)` gives $P(Z \leq z)$ for the standard normal $Z \sim N(0, 1)$. To compute $P(-1 \leq Z \leq 1)$ we would use `pnorm(1)` to get $P(Z \leq 1)$, and then *subtract* `pnorm(-1)` to take away $P(Z \leq -1)$. What's left over is $P(-1 \leq Z \leq 1)$.
+
+- Exercise: how would we find $P(Z > 1)$?
+
+#### Dice example 
+
+First we will start with a random variable whose distribution we know. There are no unknown parameters to estimate. In this case, the normal distribution and CLT are useful as a shortcut to calculating probabilities that might otherwise be harder to calculate.
+
+A 20-sided dice has faces labeled 1 through 20, each has equal probability when the die is rolled. Let $X$ denote the number that comes up when the dice is rolled. Let $\mu = E[X]$, $\sigma^2 = \text{Var}(X)$. What exact numbers are $\mu, \sigma$?
+
+```{r}
+# Code to answer this here
+```
+
+Suppose there are 60 people in the classroom, and we all roll 20-sided die. Let $\bar X$ denote the average of our sample of dice rolls. What is $\text{Var}(\bar X)$?
+
+```{r}
+# Code here
+```
+
+According to the central limit theorem, $\bar X$ *approximately* has the distribution $N(E[X], \text{Var}(X)/n)$. Use this fact, the numbers you got from the previous answers, and the function `pnorm` to compute the probability that $\bar X$ is less or equal to 11, and the probability that it is less or equal to 10.
+
+```{r}
+# Hint: the command ?pnorm will bring up documentation for that function
+# (Be sure to set the mean and sd properly)
+```
+
+What is the probability that $\bar X$ is between 10 and 11? Between 9 and 12?
+
+```{r}
+# Hint: P(a <= X <= b) = P(X <= b) - P(X <= a)  [draw a picture] 
+```
+
+Suppose that instead of 60, there were 200 people rolling dice. Then what's the probability that $\bar X$ is between 10 and 11?
+
+```{r}
+# Copy/paste and change only the part of the code you need to change
+```
+
+Without using the central limit theorem, we can do a simulation to replicate the experiment many times and estimate the above probability from that data.
+
+```{r}
+experiment <- function(n, lower, upper) {
+  Xbar <- mean(sample(1:20, n, replace = TRUE))
+  return(lower <= Xbar & Xbar <= upper)
+}
+mean(replicate(10000, experiment(n = 60, lower = 10, upper = 11)))
+```
+Repeat the simulation using $n = 200$ to check your previous answer based on the CLT.
+
+```{r}
+# Copy and paste only one line of code here, then change what you need to change
+```
+
+Does it seem like the central limit theorem is working well to answer these questions?
+
+#### NYC flights example
+
+Now we'll try to use this on real data where we do not know anything the underlying distribution and its true parameters. 
+
+```{r}
+X <- flights %>% filter(carrier == "HA") %>% pull(air_time)
+mu <- mean(X)
+s <- sd(X)
+c(mu, s)
+```
+
+Use the normal approximation (which is justified by the central limit theorem) to estimate the portion of flights within one, two, and three standard deviations of the mean.
+
+```{r}
+# Complete the function below
+# Then you can use e.g. normal_approximation(mu, s, mu - s, mu + s) to answer the question
+normal_approximation <- function(mu, s, lower, upper) {
+  # Hint: pnorm( something ) - pnorm( something else )
+}
+```
+
+Check the approximate answers from above using all the data.
+
+```{r}
+# Hint: mean(abs(X - mean(X)) <= 1*sd(X)) etc
+```
+
+### Checking the central limit theorem for different shapes of distrbutions
 
 #### Example: Exponential distribution
 
@@ -42,11 +138,79 @@ df <- data.frame(X = c(replicate(2000, Xbar(20)),
                                         rep(100, 2000),
                                         rep(1000, 2000))))
 # Change d____ accordingly
-ggplot(df, aes(X, fill = Sample_size)) + 
-  geom_bar(alpha = .2, stat = "density", position = "identity") + 
+ggplot(df, aes(X)) + 
+  geom_bar(alpha = .8, stat = "density", position = "identity") + 
   theme_minimal() + ylab("Sample dist. of the mean") + theme_minimal() +
   stat_function(fun = dnorm, args = list(sd = sqrt(true_var))) +
   facet_grid(Sample_size~.) + ggtitle("Exponential: CLT") 
 ```
 
+#### Example: $\chi^2$ distribution
 
+Exercise: copy and paste the code above, then change everything you need to change to make it work.
+
+- Hint: `?rchisq` to see the documentation on this function
+- Hint: Instead of `rate`, you should have one parameter called `df`
+- Hint: Look up the mean and sd on [wikipedia](https://en.wikipedia.org/wiki/Chi-squared_distribution) and change `true_mu` and `true_var` accordingly
+
+#### Optional extra credit: repeat this for another distribution
+
+- `?distributions` brings up a list of all the available ones
+
+### Breaking the central limit theorem or normal approximations
+
+#### Example: heavy tails
+
+Shape of the underlying random variable distribution.
+
+```{r}
+scale = 2
+X <- seq(from = -3*scale, to = 3*scale, length.out = 100)
+ggplot(data.frame(x=X, Probability=dcauchy(X, scale = scale)), aes(x, Probability)) + 
+  geom_line() + theme_minimal() + ggtitle("Cauchy: model world")
+```
+
+Plot the sampling distribution of the mean, as the sample size increases
+
+```{r}
+# Throw away extreme outliers before calculating sample mean
+Xbar <- function(n) {
+  cauchy_sample <- rcauchy(n, scale = scale)
+  # Try changing this 100 to 1000 and then run the code a few times
+  sqrt(n) * (mean(cauchy_sample[abs(cauchy_sample) < 100])) 
+}
+df <- data.frame(X = c(replicate(1000, Xbar(20)),
+                       replicate(1000, Xbar(50)),
+                       replicate(1000, Xbar(100)),
+                       replicate(1000, Xbar(1000))),
+                 Sample_size = factor(c(rep(20, 1000),
+                                        rep(50, 1000),
+                                        rep(100, 1000),
+                                        rep(1000, 1000))))
+# Change d____ accordingly
+ggplot(df, aes(X)) + 
+  geom_bar(alpha = .8, stat = "density", position = "identity") + 
+  theme_minimal() + ylab("Sample dist. of the mean") + theme_minimal() +
+  stat_function(fun = dnorm, args = list(sd = sd(df$X))) +
+  facet_grid(Sample_size~.) + ggtitle("Cauchy: heavy tails break CLT") 
+```
+
+
+#### Example: bimodal or multimodal distributions
+
+Shape of the underlying random variable distribution.
+
+```{r}
+# See what happens if you change the first 2 below to a larger number
+rbimodal <- function(n) rnorm(n) + 2*(2*rbinom(n, 1, .5) - 1)
+rb_samp <- rbimodal(10000)
+true_mu <- 0
+s <- sd(rb_samp)
+qplot(rb_samp, geom = "density") + theme_minimal() + ggtitle("Bimodal: density plot")
+```
+
+Is the normal approximation (i.e. 68-95-99 rule) good for this kind of data?
+
+```{r}
+c(mean(abs(rb_samp) <= 1*s), mean(abs(rb_samp) <= 2*s), mean(abs(rb_samp) <= 3*s))
+```

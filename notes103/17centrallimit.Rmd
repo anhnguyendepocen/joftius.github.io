@@ -12,8 +12,7 @@ library(tidyverse)
 
 #### Announcements
 
-- LLN lab printouts due now
-- Homework 6 will be posted soon
+- Homework 6 will be posted soon, class survey as well
 - Today: Central limit theorem, more `R` experiments
 - Optional additional reading:
 - Proofs of the CLT (requires calculus): [here](http://www.cs.toronto.edu/~yuvalf/CLT.pdf)
@@ -89,12 +88,14 @@ Xbar <- function(n) sqrt(n) * (mean(rexp(n, rate)) - true_mu)
 df <- data.frame(X = c(replicate(5000, Xbar(20)),
                        replicate(5000, Xbar(50)),
                        replicate(5000, Xbar(100))),
-                 Samples = factor(c(rep(20, 5000), rep(50, 5000), rep(100, 5000))))
-ggplot(df, aes(X, fill = Samples)) + 
-  geom_bar(alpha = .2, stat = "density", position = "identity") + 
+                 Sample_size = factor(c(rep(20, 5000),
+                                        rep(50, 5000),
+                                        rep(100, 5000))))
+ggplot(df, aes(X, fill = Sample_size)) + 
+  geom_bar(alpha = .8, stat = "density", position = "identity") + 
   theme_minimal() + ylab("Sample dist. of the mean") + theme_minimal() +
   stat_function(fun = dnorm, args = list(sd = sqrt(true_var))) +
-  facet_grid(Samples~.) + ggtitle("Exp: CLT") 
+  facet_grid(Sample_size~.) + ggtitle("Exp: CLT") 
 ```
 
 
