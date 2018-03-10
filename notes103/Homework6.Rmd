@@ -142,7 +142,7 @@ According to a Marketplace/Edison survey in April of 2017, about 23.4\% of surve
 # here
 ```
 
-### c. Now let $n = 1000$, $p = 0.234$, $a = 0.250, b = 0.239$ and compute the desired probability with both methods.
+### c. Now let $n = 1000$, $p = 0.234$, $b = 0.250, a = 0.239$ and compute the desired probability with both methods.
 
 ```{r}
 # write
