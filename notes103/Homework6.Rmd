@@ -10,7 +10,7 @@ library(ggplot2)
 
 ### Question 1
 
-Suppose $X_1, \ldots, X_n$ are independent and identically distributed (i.i.d.) with the same distribution as $X$. Let $S_n = \sum_{i=1}^n X_i$, so $\bar X_n = \frac{1}{n} S_n$, this shorthand will be useful for parts (b) through (e).
+Suppose $X_1, \ldots, X_n$ are independent and identically distributed (i.i.d.) with the same distribution as $X$. Let $S_n = \sum_{i=1}^n X_i$, so $\bar X_n = \frac{1}{n} S_n$, this shorthand will be useful for parts (b) through (c).
 
 #### a. What do we need to know or assume about $E[X]$ to conclude that $\bar X_n \to \mu$ as $n \to \infty$?
 
@@ -59,7 +59,7 @@ Suppose $X_1, \ldots, X_n$ are independent and identically distributed (i.i.d.) 
 
 \ 
 
-#### c. Next, your roommate suggests a small change in the rules: keep track of the average of the dice $\bar D_n = \sum_{i = 1}^n D_i$, and then you only need to do the chores whenever this average is higher than 3. Based on this system, in the long run what proportion of the time will you be doing the chores?
+#### c. Next, your roommate suggests a small change in the rules: keep track of the average of the dice $\bar D_n = \frac{1}{n} \sum_{i = 1}^n D_i$, and then you only need to do the chores whenever this average is higher than 3. Based on this system, in the long run what proportion of the time will you be doing the chores?
 
 \ 
 
@@ -108,7 +108,7 @@ This question is about the normal approximation to the Binomial distribution. Yo
 # here
 ```
 
-#### d. Using `pbinom` again, compute $P(4 < X \leq 7)$ and $P(4.5 \leq Z \leq 7.5)$. Note: there is a plot on the last page illustrating graphically the numbers you are computing here (you don't need to print this plot).
+#### d. Compute $P(4 < X \leq 7)$ and $P(4.5 \leq Z \leq 7.5)$. Note: there is a plot on the last page illustrating graphically the numbers you are computing here (you don't need to print this plot).
 
 ```{r}
 # code
@@ -128,12 +128,16 @@ According to a Marketplace/Edison survey in April of 2017, about 23.4\% of surve
 
 \ 
 
+\ 
+
 ```
 # code
 # here
 ```
 
 ### b. Instead of the Binomial distribution, how would we use the central limit theorem to calculate the same probabilities? Hint: your answer should use `pnorm` and involve $\sqrt{n}$ (and $a, b$, and $p$).
+
+\ 
 
 \ 
 
@@ -144,6 +148,8 @@ According to a Marketplace/Edison survey in April of 2017, about 23.4\% of surve
 
 ### c. Now let $n = 1000$, $p = 0.234$, $b = 0.250, a = 0.239$ and compute the desired probability with both methods.
 
+\ 
+
 ```{r}
 # write
 # your
@@ -153,12 +159,21 @@ According to a Marketplace/Edison survey in April of 2017, about 23.4\% of surve
 
 ### d. And last, repeat (c) but with $p = 0.3$.
 
+\ 
+
 ```{r}
 # code
+# goes
 # here
 ```
 
 \newpage
+
+### Plot showing the probabilities computed in Problem 3(d)
+
+No coding problem here, just a plot to help with understanding what's happening in Problem 3.
+
+\ 
 
 ```{r}
 df <- data.frame(x = 0:14, y = dbinom(0:14, size = 20, prob = .4))
