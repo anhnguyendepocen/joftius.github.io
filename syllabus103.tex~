@@ -1,0 +1,158 @@
+\documentclass[11pt]{article}
+\usepackage{fullpage}
+\usepackage[left=1in,top=1in,right=1in,bottom=1in,headheight=3ex,headsep=3ex]{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+
+\newcommand{\blankline}{\quad\pagebreak[2]}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Modify Course title, instructor name, semester here %%%%%%%%
+
+\title{Syllabus: Stats UB-103}
+\author{Instructor: Joshua Loftus}
+\date{Spring 2018}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Don't touch this %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[sc]{mathpazo}
+\linespread{1.05} % Palatino needs more leading (space between lines)
+\usepackage[T1]{fontenc}
+\usepackage[mmddyyyy]{datetime}% http://ctan.org/pkg/datetime
+\usepackage{advdate}% http://ctan.org/pkg/advdate
+\newdateformat{syldate}{\twodigit{\THEMONTH}/\twodigit{\THEDAY}}
+\newsavebox{\MONDAY}\savebox{\MONDAY}{Mon}% Mon
+\newcommand{\week}[1]{%
+%  \cleardate{mydate}% Clear date
+% \newdate{mydate}{\the\day}{\the\month}{\the\year}% Store date
+  \paragraph*{\kern-2ex\quad #1, \syldate{\today} - \AdvanceDate[4]\syldate{\today}:}% Set heading  \quad #1
+%  \setbox1=\hbox{\shortdayofweekname{\getdateday{mydate}}{\getdatemonth{mydate}}{\getdateyear{mydate}}}%
+  \ifdim\wd1=\wd\MONDAY
+    \AdvanceDate[7]
+  \else
+    \AdvanceDate[7]
+  \fi%
+}
+\usepackage{setspace}
+\usepackage{multicol}
+%\usepackage{indentfirst}
+\usepackage{fancyhdr,lastpage}
+\usepackage{url}
+\pagestyle{fancy}
+\usepackage{hyperref}
+\usepackage{lastpage}
+\usepackage{amsmath}
+\usepackage{layout}
+
+\lhead{}
+\chead{}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Modify header here %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\rhead{\footnotesize Text in header}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Don't touch this %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\lfoot{}
+%\cfoot{\small \thepage/\pageref*{LastPage}}
+\rfoot{}
+
+\usepackage{array, xcolor}
+\usepackage{color,hyperref}
+\definecolor{clemsonorange}{HTML}{EA6A20}
+\hypersetup{colorlinks,breaklinks,linkcolor=clemsonorange,urlcolor=clemsonorange,anchorcolor=clemsonorange,citecolor=black}
+
+\begin{document}
+
+\maketitle
+
+\blankline
+
+\begin{tabular*}{.93\textwidth}{@{\extracolsep{\fill}}lr}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  % Modify information %%%%%%%%%%%%
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+E-mail: \texttt{loftus@nyu.edu} & Web: \url{http://joftius.github.io/stat-ub103.html}  \\
+
+ Office hours: by appointment  &  Class hours: M/T/R 9:30-10:45am \\
+
+ Office: KMC 8-66 & Classroom: Tisch 201 \\
+ & \\
+&  \\
+\hline
+\end{tabular*}
+
+\vspace{5 mm}
+
+% First Section %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section*{Course Description}
+
+This course examines modern statistical methods as a basis for decision making in the face of uncertainty. Topics include probability theory, discrete and continuous distributions, hypothesis testing, estimation, and statistical quality control. With the aid of computers, these statistical methods are used to analyze data. Also presented are an introduction to statistical models and their application to decision making. Topics include the simple linear regression model, inference in regression analysis, sensitivity analysis, and multiple regression analysis.
+
+\bigskip
+
+% Second Section %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section*{Required Materials}
+
+\begin{itemize}
+\item We will make use of a number of free resources linked on the course page.
+\item On certain days students will be asked to bring a laptop to class. 
+\end{itemize}
+
+% Third Section %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Fourth Section %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Fifth Section %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section*{Course Policies}
+
+\subsection*{General Rules}
+
+\begin{itemize}
+\item Be on time to class. Attendance is part of the grade.
+\item Do not use mobile devices in class. Laptops may be used only for taking notes.
+\item Late submission of assignments may be permitted with prior notice and on a case-by-case basis, but is generally \underline{highly discouraged} and may result in half credit for the assignment.
+\end{itemize}
+
+\subsection*{Grading Policy}
+Final grades will be determined as follows.
+\begin{itemize}
+    \item \underline{\textbf{30\%}} distributed equally for 3 in class midterms. 
+    \item \underline{\textbf{20\%}} for a comprehensive final exam.
+    \item \underline{\textbf{20\%}} for homework.
+    \item \underline{\textbf{20\%}} for a project.
+    \item \underline{\textbf{10\%}} for participation.
+\end{itemize}
+
+
+\subsection*{Code of Conduct}
+
+All students are expected to follow the Stern Code of Conduct \url{http://www.stern.nyu.edu/uc/codeofconduct}. A student's responsibilities include, but are not limited to, the following:
+\begin{itemize}
+\item A duty to acknowledge the work and efforts of others when submitting work as one's own.
+Ideas, data, direct quotations, paraphrasing, creative expression, or any other incorporation
+of the work of others must be clearly referenced.
+\item A duty to exercise the utmost integrity when preparing for and completing examinations, including an obligation to report any observed violations.
+\item To minimize the temptation for copying or sharing during an exam, there will be multiple versions of every exam, and the seating order will be randomly assigned.
+\end{itemize}
+
+\subsection*{Accommodations for Different Abilities}
+If you are qualified for academic accommodation of any kind during this course, you must notify me at the beginning of the course and provide a letter from the Moses Center for Students with Disabilities (CSD, 998-4980, www.nyu.edu/csd) verifying your registration and outlining the accommodations they recommend.  If you will need to take an exam at the CSD, you must submit a completed Exam Accommodations Form to them at least one week prior to the scheduled exam time to be guaranteed accommodation.
+
+\subsection*{Health and Wellness}
+To access the University's health and mental health resources, contact the NYU Wellness Exchange.
+You can call its private hotline (212-443-9999), available 24 hours a day, seven days a week, to reach out to a
+professional who can help to address day-to-day challenges as well as other health-related concerns.
+
+%\footnotesize{Discrimination based on race, color, religion, creed, sex, national origin, age, disability, veteran status, or sexual orientation is a violation of state and federal law and/or NC State University policy and will not be tolerated. Harassment of any person (either in the form of quid pro quo or creation of a hostile environment) based on race, color, religion, creed, sex, national origin, age, disability, veteran status, or sexual orientation also is a violation of state and federal law and/or NC State University policy and will not be tolerated. Retaliation against any person who complains about discrimination is also prohibited. NC State's policies and regulations covering discrimination, harassment, and retaliation may be accessed at \href{http://policies.ncsu.edu/policy/pol-04-25-05} or  \href{http://www.ncsu.edu/equal_op/}. Any person who feels that he or she has been the subject of prohibited discrimination, harassment, or retaliation should contact the Office for Equal Opportunity (OEO) at 919-515-3148.}
+
+% Course Schedule %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\end{document}
