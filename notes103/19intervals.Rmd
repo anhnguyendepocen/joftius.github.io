@@ -1,0 +1,129 @@
+---
+title: "Lecture 19 - Confidence intervals"
+author: "Joshua Loftus"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggthemes)
+library(nycflights13)
+```
+
+#### Announcements
+
+- Exam study guide and practice problems posted soon (later today or tomorrow)
+
+- Confidence intervals
+- Derivation
+- Interpretation
+- Examples
+
+#### Wanted: an interval, or range, to cover the true parameter
+
+- Estimation: compute from the data a single number $\hat \theta$ as an estimate of a true parameter $\theta$
+- Intervals: compute from the data a range $[L, U]$ with the hope that $L \leq \theta \leq U$
+- To be more specific, the numbers $L$ and $U$ will be random and our goal will be to make
+$$
+P(L \leq \theta \leq U) \geq .95
+$$
+- (The number .95 is not really important, it could be something else depending on the context or goal)
+- Our main example will be the mean parameter, so we'll be considering $\theta = \mu$
+
+#### Derivation: recall the t-distribution
+
+- Based on the sample mean and variance:
+$$
+\hat \mu = \bar X = \bar X_n, \quad
+\hat \sigma^2 = S^2 = \frac{1}{n-1}\sum_{i=1}^n (X_i - \hat \mu)^2
+$$
+- Then the $t$-statistic is
+$$
+T = \frac{\hat \mu - \mu}{\hat \sigma / \sqrt{n}} \quad \text{or} \quad
+\frac{\bar X - \mu}{S / \sqrt{n}}
+$$
+- The distribution of this statistic is the **t-distribution with $n-1$ degrees of freedom**
+- Suppose we can find a constant $c$ so that $P(-c \leq T \leq c) = .95$, then
+$$
+T \leq c \quad \text{ is the same as } \quad \hat \mu - c \frac{\hat \sigma}{\sqrt{n}} \leq \mu
+$$
+- Combine this with the other inequality and conclude
+$$
+P\left(\hat \mu - c \frac{\hat \sigma}{\sqrt{n}} \leq \mu \leq \hat \mu - c \frac{\hat \sigma}{\sqrt{n}}\right) = .95 
+$$
+- Another way of saying the same thing: let $L = \bar X - c SE$ and $U = \bar X + c SE$ where $SE = S/\sqrt{n}$ is the standard error of the mean, then
+$$
+P(L \leq \mu \leq U) = .95
+$$
+- This is called a 95\% confidence interval for the population mean $\mu$
+
+#### How to compute the constant $c$
+
+- You may have noticed that the definition of the statistic $T$ involves the true parameter $\mu$
+- This means in practice we cannot actually calculate $T$, because $\mu$ is unknown
+- But it turns out we *can* calculate the constant $c$, and we don't need to know $\mu$, we only need to know the sample size $n$
+- If $P(-c \leq T \leq c) = .95$ this means that $P(T \leq -c) = 0.025$ and $P(T \geq c) = 0.025$.
+- This means $-c$ is the 2.5\% *quantile* and $c$ is the 97.5\% quantile of $T$
+- This is similar to the 68-95-99 rule for a normal distribution, but now instead of multiples 1, 2, and 3 of the standard deviation, we have a multiple $c$ of the standard error
+- $c$ only depends on the sample size $n$, because the $t$-distribution has one parameter: the degrees of freedom, which is $n-1$
+- We can use the `qt` function to compute $-c$ like this--suppose $n = 10$
+
+```{r}
+qt(0.025, 9) # df = n - 1 = 9
+```
+- Or to compute $c$ instead of $-c$, and supposing $n = 100$ this time
+
+```{r}
+qt(0.975, 99)
+```
+#### Putting it all together
+
+```{r}
+box <- c(1,1,1,5)
+n <- 50
+X <- sample(box, n, replace = TRUE)
+Xbar <- mean(X)
+SE <- sd(X)/sqrt(n)
+c <- qt(0.975, n-1)
+c(Xbar - c*SE, Xbar + c*SE)
+# Does the interval cover the true value?
+mean(box)
+```
+
+- Since we know the truth in this example, we can experiment and create many samples and compute the confidence intervals many times and see how often they cover the truth
+
+```{r}
+experiment <- function() {
+  X <- sample(box, n, replace = TRUE)
+  Xbar <- mean(X)
+  SE <- sd(X)/sqrt(n)
+  c(Xbar - c*SE, Xbar + c*SE)
+}
+CIs <- data.frame(t(replicate(30, experiment())))
+names(CIs) <- c("Lower", "Upper")
+CIs$SampleNumber <- 1:30
+ggplot() + 
+  geom_errorbar(data = CIs, aes(x = SampleNumber, ymin = Lower, ymax = Upper)) +
+  geom_hline(yintercept = 2) + theme_tufte()
+```
+
+- In a real data example, you don't know whether your confidence interval covers the true parameter or not... how can we interpret it?
+
+#### Interpretation
+
+- It's important to remember that the endpoints of the interval are random (computed from the data)
+- Imagine: repeatedly collect samples of $n$ iid random variables, compute the interval for that sample. Then about 95\% of the time that interval will cover the true parameter
+- The interpretation of the probability, or "confidence level," only makes sense this way. For one specific sample an interval is just a specific set of numbers, and it either contains the true parameter or doesn't
+- The probability or confidence aspect of the interval has to be interpreted as repeating the experiment
+- In particular, every time you redo the experiment the interval's upper and lower points will change. The center point (the sample mean) may move, and the length of the interval can increase or decrease if the sample standard deviation increases or decreases
+
+#### Practical considerations
+
+- People generally think of intervals as ranges of plausible values for the truth...
+- That's not quite mathematically correct, as we just discussed. 
+- Often visually plotted as "error bars"
+- Absence of error bars is a warning sign!
+- Increasing the sample size can make the error bars smaller, but remember the *square-root* scaling! To make the error bars half in size, the sample has to increase by 4x
+
+

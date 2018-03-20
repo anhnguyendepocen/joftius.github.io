@@ -1,0 +1,181 @@
+---
+title: "Lecture 18 - Using the normal distribution / CLT"
+author: "Joshua Loftus"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggthemes)
+library(nycflights13)
+```
+
+#### Announcements
+
+- Office hour after class today
+- Homework due tomorrow
+
+- Review CLT
+- Using normal distribution
+- Using t-distribution
+- Flaw of averages
+
+#### Context: central limit theorem applies to means (sums)
+
+- Using data to estimate unknown parameters
+- Sample mean is one of the most commonly used estimators
+
+- Common terminology: the **standard deviation of the sample mean** is sometimes referred to as the **standard error**
+- Emphasis on the word "error" -- this definition applies when thinking of the sample mean as an estimator of a true parameter
+- Standard error is a measure of how far the sample mean typically is from the population mean
+- Standard deviation is a measure of spread or dispersion of a random variable, there is no true/population value being estimated and hence no error
+- The standard error of the mean is the standard deviation of the original distribution divided by square-root of the sample size: $\sigma/\sqrt{n}$
+- Standard error: **goes to zero** as the sample size increases
+- Sample standard deviation: generally does not decrease as the sample size increases
+- The terminology is unfortunately confusing, but the concept is an important one, so it's necessary to remember (can appear on test)
+- We'll emphasize this distinction again when applying the central limit theorem
+- Example:
+
+```{r}
+n <- 100
+box <- c(1,1,1,5)
+X <- sample(box, n, replace = TRUE)
+# True parameters
+true_mu <- mean(box)
+true_sd <- sqrt(var(box)*(length(box)-1)/length(box)) # sample variance * (n-1)/n
+c(true_mu, true_sd)
+# Sample estimates
+c(mean(X), sd(X))
+# Standard error of the sample mean: divide by sqrt(n)
+true_sd/sqrt(n)
+```
+
+Larger sample size
+
+```{r}
+n <- 10000
+X <- sample(box, n, replace = TRUE)
+# Sample estimates
+c(mean(X), sd(X))
+# Standard error: divide by sqrt(n)
+true_sd/sqrt(n)
+```
+
+- The central limit theorem gives us more information about the whole distribution of the sample mean
+- CLT: the **distribution of the sample mean** is approximately normal, and that approximation is more accurate the larger the sample size
+- The standard error of the mean is the dispersion of that approximately normal distribution
+
+#### Using the central limit theorem
+
+- We can safely use the CLT if the sample is independent and identically distributed, and the sample size is large enough (a rule of thumb is more than 30, but the larger the better)
+- These conditions can be relaxed a little bit: weak dependence can be allowed, and distributions not identitical but not too different from each other. (This is more of an advanced topic, won't appear in exams, but good to know).
+
+$$
+\bar X_n \sim N\left(E[X], \frac{\text{Var}(X)}{n}\right)
+$$
+
+- **Problem**: we usually *don't know* the population mean and variance $E[X]$, $\text{Var}(X)$. So how can we use the CLT in practice?
+
+```{r}
+n <- 50
+df <- data.frame(Xbar = replicate(10000, mean(sample(box, n, replace = TRUE))))
+ggplot(df, aes(Xbar)) + 
+  geom_bar(alpha = .8, stat = "density", position = "identity") + 
+  ylab("Sample dist. of the mean") + theme_tufte() +
+  stat_function(fun = dnorm, args = list(mean = mean(box), true_sd/sqrt(n))) +
+  ggtitle("Central limit theorem for box example") 
+```
+
+- **Solution**: plug-in principle, use the sample mean and sample standard deviation as estimates for their population values
+- We need to know 3 numbers from the sample: the mean of the sample, the standard deviation of the sample, and the size of the sample.
+- In `R`: suppose `x` is the name of the variable. We get the necessary numbers with, `mean(x)`, `sd(x)`, and `length(x)` is the sample size. Applying the CLT, we think the sample mean is approximately normal, centered at `mean(x)`, and with standard deviation `sd(x)/sqrt(length(x))` 
+- If the variable is stored in a data frame called `df`, and the variable name is `var`, use `mean(df$var)`, `sd(df$var)`, and `nrow(df)` or `length(df$var)` as the sample size.
+- **Real data example** with Hawaiian airlines flights from `nycflights13` package:
+
+```{r}
+# Filter to Hawaiian airlines flights and "pull" the air_time variable out of the data frame
+X <- flights %>% filter(carrier == "HA") %>% pull(air_time)
+n <- length(X) # or nrow(flights)
+n
+# Central limit theorem: sample mean of air_time variable with this sample size
+# is approximately normal with mean and standard deviation given by
+c(mean(X), sd(X)/sqrt(n))
+```
+
+- **Example question**: suppose we collect another sample of `r n` Hawaiian air flights and look at the mean air time. What is the probability that the mean air time is (a) less than 620 minutes, (b) less than 625 minutes, (c) between these two, (d) more than 625 minutes
+
+```{r}
+mu <- mean(X)
+s <- sd(X)
+
+# (a)
+pnorm(620, mean = mu, sd = s/sqrt(n)) 
+
+# (b)
+pnorm(625, mean = mu, sd = s/sqrt(n)) 
+
+# (c)
+pnorm(625, mean = mu, sd = s/sqrt(n)) - pnorm(620, mean = mu, sd = s/sqrt(n))
+
+# (d)
+1 - pnorm(625, mean = mu, sd = s/sqrt(n)) 
+pnorm(625, mean = mu, sd = s/sqrt(n), lower.tail = FALSE) 
+```
+
+
+#### Revisiting the standard error vs standard deviation
+
+- Continuing with the Hawaiian airlines example, the SD of the original distribution is
+```{r}
+sd(X)
+```
+- This represents the dispersion of *individual* flight times
+- If you're about to board the plane to Hawaii, you may want to know the flight time will be about 623 minutes plus or minus maybe 20 minutes.
+
+- On the other hand...
+- If you're interested in how reliable is the number `r round(mean(X), 2)`, you use the knowledge that it was a sample mean based on `r length(X)` flights, and the sample standard deviation, to conclude that this number is reliable to within roughly plus or minus about `r round(sd(X)/sqrt(n), 2)` minutes.
+
+
+- **Puzzle**: suppose that instead of Hawaiian flights, we looked at all flights department from NYC. Would it make sense to analyze all the flight times combined in the same way?
+
+```{r}
+qplot(flights$air_time, bins = 80) + theme_tufte()
+```
+
+- The distribution is multi-modal (multiple peaks) and skewed (long tail on the right side)
+- The central limit theorem would still work! It would require a larger sample size to work well.
+- But it's a silly kind of experiment: picking a flight randomly with no destination in mind
+- Makes more sense to "control for" the destination before analyzing flight times
+
+#### The t-distribution
+
+- Sometimes called "Student's t-distribution"
+- Student was the anonymous publication name of William Sealy Gosset, who worked for Guinness from 1899-1937 (Happy St. Patrick's Day!)
+- Problem: the "experiment" we are imagining regarding the CLT involves collecting another sample with the same size. If we do that, the mean changes, but so does...? (the sd)
+- The t-distribution incorporates the randomness in both of these things into one distribution
+- Recall the sample mean and sample variance:
+$$
+\hat \mu = \bar X = \bar X_n, \quad
+\hat \sigma^2 = S^2 = \frac{1}{n-1}\sum_{i=1}^n (X_i - \hat \mu)^2
+$$
+- Then the $t$-statistic is
+$$
+T = \frac{\hat \mu - \mu}{\hat \sigma / \sqrt{n}} \quad \text{or} \quad
+\frac{\bar X - \mu}{S / \sqrt{n}}
+$$
+- The distribution of this statistic is the t-distribution with $n-1$ **degrees of freedom**
+- Suppose the true mean $\mu = 0$, then the probability $P(T \leq t)$ can be computed in `R` with the function `pt(t, df = n-1)`
+- We'll come back to this when we talk about **hypothesis tests**
+
+#### Flaw of averages
+
+- Name of a book by Sam Savage
+- The basic idea is this: don't just blindly use means to make decisions without appreciating **variability** (or randomness)
+- The actual outcome may not be an average looking outcome! 
+- The book insists on throwing away virtually all of classical statistics in favor of using simulations...
+- That's not really necessary--classical statistics includes the use of other summary statistics (measures of dispersion) and results like the CLT to analyze variability
+- For example, suppose you are making a decision based on a sample mean $\bar X$ and have some measure of utility of the decision, denoted $f(\bar X)$ (e.g. the payoff or loss)
+- The central limit theorem tells us about variability of $\bar X$
+- Results in classical statistics called the "delta method" or "propagation of uncertainty" tell us about the variability of $f(\bar X)$: it's approximation normal, but the dispersion now depends on both the variance of $X$ and the *derivative* of the function $f$
+- You will not be tested on this method, but it's good to know the takeaway message: don't forget about variability! Use your statistical imagination to think about all the various ways that things might go differently if you repeat the experiment
