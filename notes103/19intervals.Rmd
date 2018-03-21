@@ -50,7 +50,7 @@ T \leq c \quad \text{ is the same as } \quad \hat \mu - c \frac{\hat \sigma}{\sq
 $$
 - Combine this with the other inequality and conclude
 $$
-P\left(\hat \mu - c \frac{\hat \sigma}{\sqrt{n}} \leq \mu \leq \hat \mu - c \frac{\hat \sigma}{\sqrt{n}}\right) = .95 
+P\left(\hat \mu - c \frac{\hat \sigma}{\sqrt{n}} \leq \mu \leq \hat \mu + c \frac{\hat \sigma}{\sqrt{n}}\right) = .95 
 $$
 - Another way of saying the same thing: let $L = \bar X - c SE$ and $U = \bar X + c SE$ where $SE = S/\sqrt{n}$ is the standard error of the mean, then
 $$
