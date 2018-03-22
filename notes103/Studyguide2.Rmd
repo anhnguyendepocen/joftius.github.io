@@ -67,7 +67,7 @@ library(ggthemes)
 
 \ 
 
-##### 8. Continuing problem 7, let $S^2 = \frac{1}{n-1}\sum_{i=1}^n (U_i - \bar U)^2$. What is the $T$ statistic for this sample? Suppose $n = 100$, $\bar U = 1.8$, $S = 10$, and $P(T > 2.62) = 0.995$. What is the 99\% confidence interval for $\mu$ based on this sample? (You don't need to simplify expressions with numbers)
+##### 8. Continuing problem 7, let $S^2 = \frac{1}{n-1}\sum_{i=1}^n (U_i - \bar U)^2$. What is the $T$ statistic for this sample? Suppose $n = 100$, $\bar U = 1.8$, $S = 10$, and $P(T > 2.62) = 0.005$ (so $P(T < -2.62) = 0.005$). What is the 99\% confidence interval for $\mu$ based on this sample? (You don't need to simplify expressions with numbers)
 
 \ 
 
