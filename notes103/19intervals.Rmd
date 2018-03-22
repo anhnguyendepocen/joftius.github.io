@@ -100,12 +100,12 @@ experiment <- function() {
   SE <- sd(X)/sqrt(n)
   c(Xbar - c*SE, Xbar + c*SE)
 }
-CIs <- data.frame(t(replicate(30, experiment())))
+CIs <- data.frame(t(replicate(20, experiment())))
 names(CIs) <- c("Lower", "Upper")
-CIs$SampleNumber <- 1:30
+CIs$SampleNumber <- 1:20
 ggplot() + 
   geom_errorbar(data = CIs, aes(x = SampleNumber, ymin = Lower, ymax = Upper)) +
-  geom_hline(yintercept = 2) + theme_tufte()
+  geom_hline(yintercept = 2) + coord_flip() + theme_tufte()
 ```
 
 - In a real data example, you don't know whether your confidence interval covers the true parameter or not... how can we interpret it?
