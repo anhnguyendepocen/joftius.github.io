@@ -52,7 +52,7 @@ The law of large numbers says $\bar W \to E[W_1] = 1 + \mu/2$, so no, $\bar W$ d
 
 \ 
 
-$P(\bar X < 64000) \approx P(Z < 64000)$ for $Z \sim N(70000, 30000/\sqrt{100})$.
+$P(\bar X < 64000) \approx P(Z < 64000)$ for $Z \sim N(70000, 30000^2/100)$.
 
 Since $64000 = 70000 - 2 \cdot 3000$ this is the probability of normal being less than 2 standard deviations below its mean.
 
