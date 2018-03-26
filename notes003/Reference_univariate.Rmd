@@ -1,0 +1,293 @@
+---
+title: "Introductory statistics reference"
+subtitle: "Part 1: univariate methods"
+author: "Joshua Loftus"
+date: "`r Sys.Date()`"
+output: tint::tintHtml
+bibliography: skeleton.bib
+link-citations: yes
+---
+
+```{r setup, include=FALSE}
+library(tint)
+# invalidate cache when the package version changes
+knitr::opts_chunk$set(tidy = FALSE, cache.extra = packageVersion('tint'))
+options(htmltools.dir.version = FALSE)
+library(tidyverse)
+library(ggthemes)
+options(digits = 4)
+```
+
+-----
+
+# Conventions, concepts, definitions
+
+## Notational convention
+
+```{marginfigure}
+We try to use consistent notation throughout to minimize confusion and emphasize conceptual differences.
+```
+
+**Roman alphabet**: upper case $X, Y, Z$ for random variables, lower case $x, y, z$ for specific values
+
+```{marginfigure}
+$$\sum_{i=1}^3 x_i = x_1 + x_2 + x_3$$
+```
+
+**Greek letters**: lower case $\mu, \sigma, \theta$ for parameters, upper case $\Sigma$ for summation
+
+```{marginfigure}
+$\hat \theta$ is a random estimator of $\theta$, but $\bar X$ is an estimator for $\mu$
+```
+
+**Exceptions**: Sometimes the "hat" symbol is used instead of upper case to denote randomness. The Roman letters $n$ and $p$ are also used as parameters, usually with $n$ known and $p$ unknown.
+
+## Concepts
+
+```{marginfigure}
+This line of code always produces the same output:
+  
+`x <- 2; x`
+
+\ 
+
+But this code gives different output every time:
+  
+`X <- rnorm(1); X`
+```
+
+A **random variable** $X$ is a mathematical model for a quantity that we are not certain about. A **specific value** $x$ is not random. If we run a line of `R` code that sets a specific value to $x$, the outcome will always be the same, no matter who runs the code or how many times they run it. But if we run a line of `R` code to sample a random variable $X$, the outcome may be different for each person and each time they run the code.
+
+```{marginfigure}
+Always the same:
+  
+`x <- 1:5; x`
+
+\ 
+
+Different every time:
+  
+`X <- rnorm(5); X`
+```
+
+A **data sample** is a list of specific numbers $x_1, x_2, \ldots, x_n$, and a **random sample** is a list of random variables $X_1, X_2, \ldots, X_n$. The sample size is usually denoted by $n$.
+
+```{marginfigure}
+$$ \bar x = \frac{1}{n} \sum_{i=1}^n x_i $$
+$$ s^2 = \frac{1}{n-1} \sum_{i=1}^n (x_i - \bar x)^2 $$
+```
+
+**Summary statistics** like $\bar x, s$ are for *describing* data, while **sample statistics** or **estimators** are random variables whose properties we can analyze with probability models. We use the same formulas for both, but with lower case letters for data and upper case letters for random samples.
+
+```{marginfigure}
+Sometimes, instead of thinking of a parameter as an unknown quantity, it is just a shorthand notation. If I need to write Var($X$) many times, I may use $\sigma^2$ instead, even if I'm not considering $\sigma^2$ as an unknown quantity to be estimated.
+```
+
+**Parameters** represent true values which we think of as determined by nature. In a statistics application the parameters are usually unknown, and we use data to *estimate* them. To understand and analyze the statistical methods for doing that, and get an idea of how well those methods are working, we use probability and mathematics or computer simulations.
+
+## Definitions
+
+```{marginfigure}
+For example if $X$ represents rolling a 6-sided die then $D = \{ 1, 2, 3, 4, 5, 6 \}$.
+
+\ 
+
+$p_X(2) = 1/6$.
+
+\ 
+
+$F_X(3) = 1/2$.
+```
+
+The **domain** $D$ of a random variable $X$ is the set of all possible outcomes.
+The **probability distribution function** (PDF) of a random variable $X$ is $p_X(x) = P(X = x)$.
+The **cumulative distribution function** (CDF) of a random variable $X$ is $F_X(x) = P(X \leq x)$.
+These two functions take as input any possible values $x$ from $D$ and output numbers between 0 and 1.
+A **histogram** is the data sample version of a PDF.
+
+```{marginfigure}
+$$ E[X] = \sum_{x \in D} x p_x(X) $$
+  
+For any function $f(x)$,
+$$ E[f(X)] = \sum_{x \in D} f(x) p_x(X) $$
+  
+To compute variance, use $f(x) = (x-E[X])^2$,
+$$ \text{Var}(X) = \sum_{x \in D} (x - E[X])^2 p_x(X) $$
+```
+
+The **expected value** $E[X]$ of a random variable $X$ is a measure of the central tendency or average of the possible values of $X$. The **variance** $\text{Var}(X)$ is a measure of the spread of the random variable, the average of squared distance between possible values and the expected value. These formulas work for discrete random variables, and the versions for continuous random variables use calculus (integration) but are analogous.
+
+
+## Dice example
+
+Continuing the 6-sided dice example.
+
+```{r fig.margin = TRUE, fig.cap = "Dice example PDF."}
+ggplot(data.frame(x = 1:6, y = rep(1/6, 6)),
+       aes(x, y)) +
+  geom_bar(stat = "identity") + theme_tufte()
+```
+
+```{r fig.margin = TRUE, fig.cap = "Dice example CDF."}
+ggplot(data.frame(x = 1:6, y = cumsum(rep(1/6, 6))),
+       aes(x, y)) +
+  geom_bar(stat = "identity") + theme_tufte()
+```
+
+```{r cache = T, fig.margin = TRUE, fig.cap = "Dice example histogram."}
+ggplot(data.frame(x = sample(1:6, 100, replace = TRUE)),
+       aes(x)) +
+  stat_count() + theme_tufte()
+```
+
+The `R` function `sample(1:6, 1, replace = TRUE)` represents the random variable $X$. Every time we run this function it is like rolling the dice again.
+
+```{r cache = T}
+sample(1:6, 1, replace = TRUE)
+sample(1:6, 1, replace = TRUE)
+```
+
+The function `sample(1:6, 10, replace = TRUE)` represents a random sample of 10 dice rolls. Every time we run this function we get a new random sample.
+
+```{marginfigure}
+The expected value is $E[X] = 3.5$, and the standard deviation of $X$ is 1.871. But the sample means and standard deviations change every time we get a new sample.
+
+\ 
+
+The function `mean(sample(1:6, 10, replace = TRUE))` represents the random variable $\bar X$, the sample mean of 10 dice rolls.
+```
+
+```{r cache = T}
+X <- sample(1:6, 10, replace = TRUE)
+X
+c(mean(X), sd(X))
+X <- sample(1:6, 10, replace = TRUE)
+X
+c(mean(X), sd(X))
+```
+
+## Normal example
+
+```{r fig.margin = TRUE, fig.cap = "Normal example. The curve is the PDF, and the shaded area represents the CDF $F_Z(-1)$."}
+ggplot(data.frame(x = c(-3,3)), aes(x)) + 
+           stat_function(fun = dnorm) +
+            stat_function(fun = dnorm,
+                xlim = c(-3, -1),
+                geom = "area",
+                fill = "gray") +
+  theme_tufte()
+```
+
+```{r cache = T, fig.margin = TRUE, fig.cap = "Normal example histogram."}
+qplot(rnorm(200), bins = 20) + theme_tufte()
+```
+
+We denote $Z$ as a normal random variable $Z \sim N(\mu, \sigma^2)$ with mean $\mu$ and variance $\sigma^2$. It is a continuous random variable with the "bell shaped" pdf shown in the margin. 
+
+Probabilities $P(a \leq Z \leq b)$ are given by the **area under the PDF curve** between the horizontal axis values of $a$ and $b$. 
+
+-----
+
+# Estimation, bias-variance, and large samples
+
+## Estimating unknown parameters
+
+```{marginfigure}
+If $X_1, \ldots, X_n$ are independent with expected value $\mu$ and variance $\sigma^2$, then
+
+$$E[\bar X] = \mu$$
+  
+$$\text{Var}(\bar X) = \sigma^2/n$$
+  
+$\sigma/\sqrt{n}$ is also called the **standard error (SE)** of the sample mean
+```
+
+The prototypical example of **estimation** is using a **sample mean** $\bar X$ as an estimate of the unknown **population mean** $\mu$. In general, we use $\theta$ to represent an unknown parameter and $\hat \theta$ an estimator computed from data in some way, like the sample mean. Estimators are functions that input a sample and output a number, and hopefully that number will be close to the true value $\theta$.
+
+```{marginfigure}
+$$\text{MSE}(\hat \theta) = E[(\hat{\theta} - \theta)^2] $$
+```
+
+One way of measuring how close $\hat \theta$ is to the truth, quantifying how good it is at estimating $\theta$, is with the **mean squared error** (MSE). This is the average squared distance between the estimator (which is random) and the truth (which is not random).
+
+## Bias, tradeoff with variance
+
+```{marginfigure}
+$$\text{Bias}(\hat \theta) = E[\hat \theta] - \theta$$
+```
+
+The **bias** of an estimator is the difference between its expected value and the truth. An **unbiased** estimator is one whose bias is zero.
+
+```{marginfigure}
+$$\text{MSE}(\hat \theta) = \text{Bias}(\hat \theta)^2 + \text{Var}(\hat \theta)$$
+```
+
+The **bias-variance tradeoff** is an important concept based on the formula which shows MSE can be written in terms of bias and variance. To choose a good estimator with low MSE, we want to have both low bias and low variance. Sometimes a biased estimator will have lower MSE than an unbiased one, if its variance is much lower.
+
+## Sample size and "big data"
+
+```{marginfigure}
+Reducing bias usually requires careful modeling, while variance can be reduced by increasing the sample size.
+```
+
+Considering an estimator $\hat \theta$ computed from a sample with size $n$, it is interesting to think about what happens as $n$ becomes larger. As a general rule, **variance will decrease** as $n$ increases, but the **bias may not decrease**. This is an important fact to remember when interpreting optimistic claims about "big data."
+
+```{marginfigure}
+$$\text{MSE}(\bar X_{\text{NYC}}) = 1 + \sigma^2/n$$
+```
+
+Suppose we want to estimate a population mean $\mu$ which is the average walking speed of all Americans, but our samples $X_1, \ldots, X_n$ are collected in New York City where the average walking speed is $\mu + 1$. Then the MSE will always be larger than 1. If we wanted to estimate the walking speed of New Yorkers, then this would be unbiased, and the MSE would go to 0 as the sample size increases.
+
+## Law of large numbers
+
+In this section we give $\bar X$ the subscript $n$ to emphasize that it is a mean of a sample of size $n$.
+
+```{marginfigure}
+$$ \bar X_n \to \mu \quad \text{as} \quad n \to \infty $$
+```
+
+The **law of large numbers** says that if $X_1, \ldots, X_n$ are independent and identically distributed (iid) with expected value $\mu$, then the sample mean $\bar X_n$ will get arbitrarily close to the true mean $\mu$ provided $n$ is large enough. This law concerns the long run. It is possible that increasing the sample size sometimes randomly moves the mean away from the truth, but in the long run such errors will become smaller.
+
+# Approximating distributions
+
+Sometimes we are interested not only in summaries like the mean and variance, but the whole distribution of data or of a random variable.
+
+## Histograms and normal approximation
+
+A histogram plot is one general way to get an idea about the distribution of data. If the data is unimodal (does not have multiple peaks) and not too skewed (roughly symmetric),
+
+## Central limit theorem
+
+If $X_1, \ldots, X_n$ are independent and identically distributed (iid) with expected value $\mu$ and variance $\sigma^2$, then $E[\bar X_n] = \mu$ and $\text{Var}(\bar X_n) = \sigma^2/n$. But aside from the mean and variance, can we say more about the distribution of $\bar X_n$?
+
+```{marginfigure}
+$\bar X_n \sim N(\mu, \sigma^2/n)$
+```
+
+The **central limit theorem** says that if $n$ is large enough, then the distribution of $\bar X_n$ is approximately normal, and this approximation gets better for larger values of $n$. This is true even if the distribution of $X_i$ is not normal. Recall the standard error of the sample mean: $\sigma/\sqrt{n}$. This is the standard deviation of the normal distribution in the CLT.
+
+-----
+
+# Confidence intervals 
+
+## General idea
+
+Use the data to compute a (random) range $[L, U]$, hoping that this range covers the true parameter $\theta$ with high probability, for example 95\%. 
+```{marginfigure}
+$$
+P(L \leq \theta \leq U) = 0.95
+$$
+```
+We also want the length of the interval $U - L$ to be as small as possible.
+
+## Standardization and CI for the true mean
+
+
+
+
+
+```{r bib, include=FALSE}
+# create a bib file for the R packages used in this document
+knitr::write_bib(c('base', 'rmarkdown'), file = 'skeleton.bib')
+```
+
