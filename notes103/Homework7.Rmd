@@ -1,0 +1,114 @@
+---
+title: "Homework 6 (due Thursday, April 5th)"
+author: By signing my name, I agree to abide by the Stern Code of Conduct _______________
+output: html_document
+---
+---
+title: "Homework 6 (due Thursday, April 5th)"
+author: By signing my name, I agree to abide by the Stern Code of Conduct _______________
+output: html_document
+---
+
+
+```{r include=FALSE}
+library(tidyverse)
+```
+
+# Confidence intervals
+
+### Question 1
+
+**Replicability** and **reproducibility** are important parts of the scientific method. Reproducibility refers to reaching the same conclusion by using the same method on the same data. Replicability refers to reaching a similar conclusion even when using a different method and/or different set of data. These ideas are related to the frequentist interpretation of probability based on repeating experiments.
+
+I searched Google Scholar for studies that tried to replicate the paper we talked about in class on Thursday (Connellan, 2000). I found two results that were closely related, including one (Spelke, 2005) that claimed the first paper had not been replicated and, in fact, was already contradicted by earlier research. The other paper (Nagy, 2007) conducted an experiment to determine if female babies were more likely than male babies to imitate finger movements made by the experimenter. Gestures in response to the experimenter were coded as 1, 2, or 3 with high scores for closer imitation.
+
+The mean score for 19 females was 1.47 with an SD of 0.24, and the mean score for 23 males was 1.34 with an SD of 0.15. Use this information to compute a **99\% confidence interval** for each group by changing the relevant lines below.
+
+```{r}
+# Enter data here. Note that group 1 is female and group 2 is male.
+mean1 <- 0.5
+# delete this line and enter code to calculate qt(something) * SE
+# modify lower and upper to mean - something and mean + something
+lower1 <- 0
+upper1 <- 1
+mean2 <- 0.5
+# delete this line and enter code to calculate qt(something) * SE
+# modify lower and upper to mean - something and mean + something
+lower2 <- 0
+upper2 <- 1
+
+# Don't change anything else in this section below this line
+data <- data.frame(sex = c("female", "male"),
+                   mean = c(mean1, mean2),
+                   lower = c(lower1, lower2),
+                   upper = c(upper1, upper2))
+ggplot(data, aes(sex, mean)) + geom_point() +
+  geom_errorbar(aes(x = sex, ymin = lower, ymax = upper)) +
+  ylim(c(0,3)) + theme_minimal() + ylab("Imitation scores")
+```
+
+
+**Explain in one or two sentences how you interpret these intervals**. You don't need to comment on the overall study, just how to interpret this output.
+
+### Question 2
+
+What's the average life fuel efficiency for cars driving on the highway vs in cities? The `mpg` dataset is included in the `ggplot2` package, and we can use it to answer this question.
+
+```{r}
+# 1. Delete these instructions before your final knit
+# 2. Uncomment the line below that creates a "mpg2008" dataset, meaning delete the "#" at the beginning of the line but keep the rest of it
+# 5. Use t.test(mpg2008$hwy)$conf.int to get a 95 percent confidence interval for the average life expectancy
+#mpg2008 <- filter(mpg, year == 2008)
+```
+
+Does this interval contain the number 25?
+
+Change the `hwy` variable to `cty` to get a confidence interval for the average miles-per-gallon for cars driving in cities.
+
+```{r}
+# code here
+```
+
+Does this interval contain the number 16?
+
+### Question 3
+
+If we increase a sample size, the sample standard deviation and sample mean may change, but probably not by a lot, especially if the sample size is already large. The upper and lower limits of a 95 percent confidence interval are given by the sample means plus/minus the sample standard deviation times a constant multiplier. That multiplier is plotted below, for sample sizes from n = 50 up to n = 500.
+
+```{r}
+curve <- data.frame(n = 50:500)
+curve$multiplier = qt(.975, curve$n-1)/sqrt(curve$n)
+ggplot(curve, aes(n, multiplier)) + geom_line() + theme_minimal()
+```
+
+Use this graph to answer the following questions:
+
+- A sample size of 100 has a multiplier of about 0.2. If we double the sample size to 200, how much does the multiplier decrease?
+
+Answer here.
+
+- What if we double the sample size again to 400, how much does it decrease?
+
+Answer here.
+
+- Suppose the sample standard deviation is always roughly equal to 10. About how large of a sample would we need to have a confidence interval which equals the mean plus or minus 1?
+
+Answer here.
+
+- If we wanted a 99 percent confidence interval instead, would we need a larger or small sample size to get an interval with the about same length? (The graph doesn't answer this, but try to reason intuitively instead of using any code)
+
+Answer here.
+
+# References
+
+Connellan, J., Baron-Cohen, S., Wheelwright, S., Batki, A., & Ahluwalia, J. (2000). Sex differences in human neonatal social perception. *Infant behavior and Development*, 23(1), 113-118.
+
+https://pdfs.semanticscholar.org/50c7/f3fb0b144fb648fb4238d01d2837c57ce36b.pdf
+
+Nagy, E., Kompagne, H., Orvos, H., & Pal, A. (2007). Gender‐related differences in neonatal imitation. *Infant and Child Development*, 16(3), 267-276.
+
+https://pdfs.semanticscholar.org/7def/e1f9967d6ddf4e5a24ccc07b7aff4d4daf14.pdf 
+
+Spelke, E. S. (2005). Sex differences in intrinsic aptitude for mathematics and science?: a critical review. American Psychologist, 60(9), 950.
+
+http://psycnet.apa.org/fulltext/2005-15840-001.pdf
