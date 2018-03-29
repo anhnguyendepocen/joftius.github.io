@@ -46,11 +46,11 @@ $$
 - The distribution of this statistic is the **t-distribution with $n-1$ degrees of freedom**
 - Suppose we can find a constant $c$ so that $P(-c \leq T \leq c) = .95$, then
 $$
-T \leq c \quad \text{ is the same as } \quad \hat \mu - c \frac{\hat \sigma}{\sqrt{n}} \leq \mu
+T \leq c \quad \text{ is the same as } \quad \bar X - c \frac{S}{\sqrt{n}} \leq \mu
 $$
 - Combine this with the other inequality and conclude
 $$
-P\left(\hat \mu - c \frac{\hat \sigma}{\sqrt{n}} \leq \mu \leq \hat \mu + c \frac{\hat \sigma}{\sqrt{n}}\right) = .95 
+P\left(\bar X - c \frac{S}{\sqrt{n}} \leq \mu \leq \bar X + c \frac{S}{\sqrt{n}}\right) = .95 
 $$
 - Another way of saying the same thing: let $L = \bar X - c SE$ and $U = \bar X + c SE$ where $SE = S/\sqrt{n}$ is the standard error of the mean, then
 $$
@@ -89,6 +89,15 @@ c <- qt(0.975, n-1)
 c(Xbar - c*SE, Xbar + c*SE)
 # Does the interval cover the true value?
 mean(box)
+```
+
+#### Let R calculate the interval for you
+
+```{r}
+# Compare to our manually calculated interval
+c(Xbar - c*SE, Xbar + c*SE)
+t.test(X)$conf.int
+t.test(X, conf.level = 0.99)$conf.int
 ```
 
 - Since we know the truth in this example, we can experiment and create many samples and compute the confidence intervals many times and see how often they cover the truth

@@ -1,0 +1,129 @@
+---
+title: "CILab"
+author: "Your name here!"
+date: "3/29/2018"
+output: html_document
+---
+---
+title: "CILab"
+author: "Your name here!"
+date: "3/29/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(nycflights13)
+library(fivethirtyeight)
+```
+
+## Calculate a confidence interval manually and plot it
+
+Use the following data from a published study: means are 51.9 and 40.6, sample SDs are 23.3 and 25, and sample sizes are 44 and 58, respectively.
+
+```{r}
+Xbar1 <- 51.9
+S1 <- 23.3
+n1 <- 44
+c1 <- qt(.975, n1 - 1)
+err1 <- c1*S1/sqrt(n1)
+lower1 <- Xbar1 - err1
+upper1 <- Xbar1 + err1
+c(lower1, upper1)
+```
+
+Copy and paste the above code. Change **all** variable names from var1 to var2 (double check!). Finally, change the numbers based on the information given above: mean 40.6, sample SD 25, and sample size 58.
+
+# Delete this line and put your answer here
+
+Next we combine the results into one data frame for plotting.
+
+```{r}
+data <- data.frame(sex = c("male", "female"),
+                   lower = c(lower1, lower2),
+                   upper = c(upper1, upper2))
+ggplot(data) + 
+  geom_errorbar(aes(x = sex, ymin = lower, ymax = upper)) +
+  theme_minimal()
+```
+
+How would you interpret these results? 
+
+# Delete this line and put your answer here
+
+## How much money do movies make?
+
+We'll use the `bechdel` dataset in the `fivethirtyeight` package. If you haven't already installed this package, you'll need to run `install.packages("fivethirtyeight")` first. In this data is a variable called `domgross` for domestic gross earnings of each film.
+
+```{r}
+# Remove movies that have NA values for some variables
+movies <- bechdel[complete.cases(bechdel),]
+# Histogram of earnings
+qplot(movies$domgross, bins = 50)
+```
+
+Since this distribution is very skewed, the mean is not a very good summary statistic. Let's focus on the median instead. Fortunately, we can get a confidence interval for the median easily in `R` using the `wilcox.test` function.
+
+```{r}
+wilcox.test(movies$domgross, conf.int = TRUE)$conf.int
+```
+Is this different from the interval given by `t.test`? Input your code below to see, and explain your conclusion.
+
+# Delete this line and put your answer here
+
+Let's look at the return on investment by dividing by the `budget` variable.
+
+```{r}
+movies$return <- movies$domgross/movies$budget
+```
+
+- Create a histogram. Is the distribution very skewed? Does it make more sense to focus on the mean or median?
+- Give a confidence interval for whichever parameter you decided to focus on.
+
+# Delete this line and put your answer here
+
+Now let's consider the returns separately based on whether movies pass or fail the Bechdel test (using the `binary` variable). To pass the Bechdel test, a movie has to meet 3 incredibly simple rules (and it is astonishing that there are so many movies that fail it).
+
+```{r}
+table(movies$binary)
+```
+
+1. It has to have at least two [named] women in it
+2. Who talk to each other
+3. About something besides a man
+
+```{r}
+movies %>% group_by(binary) %>% 
+  summarize(median = median(return),
+            mean = mean(return))
+```
+
+Based on this information, do you think it's safe to say that movies that **pass** the Bechdel test tend to have higher financial returns than those that fail it?
+
+# Delete this line and put your answer here
+
+## dplyr example creating many intervals
+
+Change all appearances of AA (American Airlines) below to WN (Southwest).
+
+```{r}
+AA <- flights %>% filter(carrier == "AA")
+head(AA %>% group_by(dest) %>% summarize(count = n()))
+```
+
+```{r}
+AAtimes <- AA %>% group_by(dest) %>% summarize(
+  lower = t.test(air_time)$conf.int[1],
+  upper = t.test(air_time)$conf.int[2]) %>%
+  arrange(lower)
+head(AAtimes)
+```
+
+```{r}
+ggplot() + geom_errorbar(data = AAtimes,
+                aes(x = reorder(dest, lower),
+                    ymin = lower,
+                    ymax = upper)) +
+  coord_flip() + theme_minimal()
+```
