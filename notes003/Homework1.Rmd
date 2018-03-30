@@ -1,0 +1,177 @@
+---
+title: "Homework 1 (due Thursday, April 5th)"
+author: I agree to abide by the Stern Code of Conduct - CHANGE THIS TO YOUR NAME
+output: html_document
+---
+---
+title: "Homework 1 (due Thursday, April 5th)"
+author: I agree to abide by the Stern Code of Conduct - CHANGE THIS TO YOUR NAME
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(digits = 4)
+library(tidyverse)
+library(gapminder)
+# If you haven't done it yet, make sure to run
+# install.packages("tidyverse") and
+# install.packages("gapminder") in the console (below)
+# before doing anything else
+# If it asks if you want to compile packages from source
+# choose "no" or you may get errors
+```
+
+# Random variables
+
+## R's four functions for each distributions
+
+`R` has four important functions for each of many different kinds of random variables. Run `?distributions` in the console to see which kinds of random variables are supported.
+
+### Example: Binomial random variables
+
+- This section is an example for you to follow to answer the questions in the next section.
+- Run `?dbinom` to see the documentation for the four functions for the Binomial distribution.
+- Notation: we say the random variable X has Binomial distribution Bin(n, p) with n trials and success probability p. 
+
+```{r}
+n <- 40
+p <- 2/3
+# Expected value E[X] = n*p
+n*p
+# Variance Var(X) = n*p*(1-p)
+n*p*(1-p)
+# Distribution function: Prob(X = 25)
+dbinom(25, size = n, prob = p)
+# Cumulative distribution function: Prob(X <= 21)
+pbinom(21, size = n, prob = p)
+# Upper tail instead: Prob(X > 21)
+1 - pbinom(21, size = n, prob = p)
+# Quantile: what is the specific value x
+# such that P(X <= x) = .95?
+qbinom(.95, size = n, prob = p)
+# Random sampling: generate a sample of 8 observations of X
+rbinom(8, size = n, prob = p)
+```
+
+### Question 1: Normal random variables
+
+- Enter your code in the code chunk below to fill out this section similar to the Binomial example.
+- Type `?dnorm` in the console to see the documentation for the functions for a normal random variable. 
+- Notation: we say that Z has a normal distribution N(mu, sigma2) with mean mu and variance sigma2.
+- Notation: `R` always uses the letter x to refer to values of the random variable, but we'll use z for this one.
+- Warning: the `R` functions for normal use standard deviation, sd, instead of variance.
+- Hint: use `sd = sqrt(sigma2)`.
+
+```{r}
+mu <- sqrt(2)
+sigma2 <- 9
+# Expected value E[Z] = mu
+mu
+# Variance Var(Z) = sigma2
+sigma2
+# Distribution function: Prob(Z = 1)
+# [note: for continuous random variables this is only approximate]
+
+# Cumulative distribution function: Prob(Z <= 1.5)
+
+# Upper tail instead: Prob(Z > 1.5)
+
+# Quantile: what is the specific value z
+# such that P(Z <= z) = .95?
+
+# Random sampling: generate a sample of 8 observations of Z
+
+```
+
+## Plotting distribution functions
+
+### Normal probability distribution function
+
+```{r}
+range <- data.frame(x = c(-7, 10))
+```
+
+Plotting the normal pdf:
+
+```{r}
+# Copy this
+ggplot(range, aes(x)) + 
+  stat_function(fun = dnorm, args = list(mean = mu, sd = sqrt(sigma2))) +
+  theme_minimal()
+```
+
+
+### Normal cumulative distribution function
+
+Plotting the normal cdf:
+
+```{r}
+# copy and paste the code above, change dnorm to pnorm -- that's it!
+```
+
+### Histogram of a normal sample
+
+```{r}
+sample_size <- 100
+nbins <- 15
+Z_sample <- data.frame(z = rnorm(sample_size, mean = mu, sd = sqrt(sigma2)))
+ggplot(Z_sample, aes(z)) + geom_histogram(aes(y = ..density..), bins = nbins) +
+  stat_function(fun = dnorm, args = list(mean = mu, sd = sqrt(sigma2))) +
+  theme_minimal()
+```
+
+### Question 2
+
+Create a histogram plot like the one above, but with a larger sample size.
+
+```{r}
+# Copy and paste the code above
+# Change sample_size to 1000 and nbins to 40
+```
+
+# Real data
+
+## GDP and life expectancy in gapminder
+
+Let's use data from the year 2002
+
+```{r}
+world <- filter(gapminder, year == 2002,
+                continent != "Oceania")
+```
+
+### GDP per capita histogram
+
+```{r}
+# Copy this
+ggplot(world, aes(gdpPercap)) + 
+  geom_histogram(bins = 15) +
+  theme_minimal()
+```
+
+### GDP per capita density
+
+We can also easily create a smooth version of the histogram using `geom_density`, and have different panels for each continent using `facet_wrap`.
+
+```{r}
+# Copy this
+ggplot(world, aes(gdpPercap)) + 
+  geom_density() +
+  facet_wrap(~continent, scales = "free") +
+  theme_minimal()
+```
+
+### Problem 3
+
+Histogram of `lifeExp` for the world.
+
+```{r}
+# paste here, change gdpPercap to lifeExp
+```
+
+Density plots of `lifeExp` for each continent.
+
+```{r}
+# paste here, same as above
+```
