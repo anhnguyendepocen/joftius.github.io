@@ -1,5 +1,5 @@
 ---
-title: "Homework 1 (due Thursday, April 5th)"
+title: "Homework 1 (due Wednesday, April 4th)"
 author: I agree to abide by the Stern Code of Conduct - CHANGE THIS TO YOUR NAME
 output: html_document
 ---
