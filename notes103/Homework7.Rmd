@@ -57,7 +57,7 @@ What's the average life fuel efficiency for cars driving on the highway vs in ci
 ```{r}
 # 1. Delete these instructions before your final knit
 # 2. Uncomment the line below that creates a "mpg2008" dataset, meaning delete the "#" at the beginning of the line but keep the rest of it
-# 5. Use t.test(mpg2008$hwy)$conf.int to get a 95 percent confidence interval for the average life expectancy
+# 3. Use t.test(mpg2008$hwy)$conf.int to get a 95 percent confidence interval for the average life expectancy
 #mpg2008 <- filter(mpg, year == 2008)
 ```
 
