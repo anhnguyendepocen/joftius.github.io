@@ -1,0 +1,157 @@
+---
+title: "Lecture 20 - Hypothesis tests"
+author: "Joshua Loftus"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggthemes)
+library(nycflights13)
+```
+
+#### Announcements
+
+- Homework due Thursday
+- Office hour after class today
+
+- Falsification
+- Hypothesis testing
+- Examples
+- Relation to intervals
+
+- Next lecture we'll see a few more examples (multiple groups, multiple variables)
+
+### Falsification
+
+- Philosophy of science (Karl Popper circa 1934/1959)
+- Idea: can't prove a scientific theory is true, can only prove it's false
+- If we do many experiments and their results are consistent with some theory, it's still possible that a new experiment will some day disprove the theory
+- Hypothesis testing takes this kind of approach
+
+- Example: Is this gene associated with brain development? If it isn't, then suppressing the expression of that gene during the development of a mouse embryo shouldn't affect the mouse's brain. Hence, once the experiment is done, if the mouse embryos have brains that did not develop "normally" that is evidence against the hypothesis
+
+- Example: Is this drug an effective treatment for cold symptoms? If it isn't, then people who take the drug should not improve more than people who take a placebo. The experiment is trying to disprove the hypothesis that "the drug and placebo are equally effective at treating cold symptoms"
+
+- Example: Is this defendant in a criminal trial guilty of committing a certain crime? They are assumed to be innocent (the hypothesis) until proven guilty by a sufficient degree of evidence. (The idea is not limited to only science experiments)
+
+- Example: A person wants to bet on coin tosses, but insists that they get to bet on heads because they say that's what's lucky for them. You wonder if the coin might be weighted to land on heads more often. You assume the coin is fair, but then you notice it lands on heads only 2 times out of the first 10 tosses. Is this enough evidence to prove the coin isn't fair?
+
+### Hypothesis testing
+
+#### The basic idea
+
+- Null hypothesis: the goal of scientific discovery is to try to disprove this.
+- Test statistic computed from data
+- The null hypothesis tells us the distribution of the test statistic
+- If the observed value seems very extreme, **reject** the null hypothesis
+
+- Why the name "null"? Usually this hypothesis will mean that nothing interesting is going on. People sometimes refer to it as the "dull hypothesis" for this reason.
+- Skeptical approach: when you think you've seen a pattern, assume it's actually just due to randomness, and only change this belief if you can quantify sufficient evidence to disprove it
+
+- Coin toss example: the number of heads $X$ in 10 coin tosses is Bin(10, $p$). If $p = 1/2$, what is $P(X \geq 8)$?
+
+```{r}
+1 - pbinom(7, 10, .5)
+```
+So *if the coin is fair*, an outcome *at least as extreme* as the one we observed is pretty rare, occurring only about 5.5\% of the time.
+
+#### Types of errors
+
+- We are reasoning statistically or probabilistically, using data that may be noisy or imperfect
+- We want to avoid committing errors, but can't guarantee this 100\%
+- What if the null hypothesis is true, but we reject it? This is **type 1 error** or **false positive**
+- If the null hypothesis is false, but we fail to reject it, that's a **type 2 error** or **false negative**
+- Our first goal will be to *guarantee* that the probability of a type 1 error (false positive) is low, say 5\%
+- Our second goal will be to choose, among all possible tests that satisfy the 1st goal, the one that has the lowest probability of type 2 error (false negative). This is also called the most *powerful* test
+
+#### Formalities: definitions and notation
+
+**Significance level** is determined by the context or convention, often 5\% or 1\%. Similar to confidence level for intervals. For simplicity we'll use 5\% throughout.
+
+**Hypotheses** for most common scenarios
+
+- Testing a parameter $\theta$
+- Null hypothesis $H_0: \theta = \theta_0$
+- Alternative hypothesis (simple) $H_1 : \theta = \theta_1$ for some $\theta_1 \neq \theta_0$
+- Alternative hypothesis (composite) $H_1: \theta \neq \theta_0$ (two-sided), or $\theta > \theta_0$ (greater), or $\theta < \theta_0$ (less) 
+
+**Procedure**
+
+- Use data to compute a statistic $T$. The choice of statistic will be usually determined by the specific example--past research by statisticians worked out details for the "best" statistic in many cases.
+- The distribution (cdf) of $T$, *if the null hypothesis is true*, is $P_{H_0}(T \leq t)$ or $P_0(T \leq t)$
+- Terminology: this is often called the distribution "under the null"
+- One-sided (greater): suppose $P_0(T > t_{.95}) = 0.05$. If we observe $T > t_{.05}$ then we *reject the null hypothesis*. Otherwise (if $T \leq t_{0.05}$) we *fail to reject the null*.
+- Two-sided: suppose $P_0(-t_{.975} \leq T \leq t_{.975}) = 0.05$. If we observe $T$ outside the interval from $[-t_{.975}, t_{.975}]$ then we reject the null hypothesis, otherwise fail to reject.
+
+**p-values**
+
+- Probability, under the null, that the test statistic is at least as extreme as the observed value
+- e.g. Suppose $T = 2.8$ is computed from the data. Then the $p$-value for a one-sided (greater) test is $P(T \geq 2.8)$.
+- e.g. Same as above, but two-sided: $P(|T| > 2.8)$ or $P(T > 2.8) + P(T < -2.8)$.
+- Tail area starting from the observed value of the test statistic
+- Low $p$-values correspond to rejecting the null
+- If $p < 0.05$ then the test rejects at the 5\% significance level
+- If $p < 0.01$, reject at the 1\% significance level
+
+### Examples
+
+**Fair coin toss or cheating?**
+
+- Probability of heads is $p$.
+- Ber($p$), $\theta = p$, $\theta_0 = 1/2$, one-sided test $H_0 : p = 1/2$ vs $H_1 : p > 1/2$.
+- Data: toss the coin $n$ times
+- Test statistic: $T$ = number of heads has Bin($n, 1/2$) distribution under $H_0$
+- Reject null hypothesis if $T$ is large enough--how large? 
+- How to find constant $t_{.95}$? `qbinom(.95, size, prob)`
+- For significance level 5\%, with $n = 10$ coin tosses, reject if $T > 8$
+
+```{r}
+qbinom(.95, 10, .5)
+```
+
+**Testing for one mean**
+
+- Population mean is $\mu$
+- $\theta = \mu$, some specific value $\theta_0 = \mu_0$ (often zero)
+- Data: an independent and identically distributed sample with $E[X_i] = \mu$
+
+If $\text{Var}(X_i) = \sigma^2$ is **known**, test is based on the normal distribution
+
+- e.g. For a two sided test
+
+$$
+P_0\left (-z_{.975} < \frac{\bar X - \mu_0}{\sigma} < z_{.975} \right) = 0.95
+$$
+- Reject if $|\bar X - \mu_0|/\sigma$ is larger than $z_{.975} \approx 1.96$
+
+If $\sigma$ is **unknown** (most common in real data examples), use $t$-test
+
+- e.g. for a one-sided (greater) test
+
+$$
+P_0\left (\frac{\bar X - \mu_0}{S} < t_{n-1,.95} \right) = 0.95
+$$
+- Reject if $(\bar X - \mu_0)/S$ is larger than $t_{n-1,.95}$. e.g. if $n = 100$
+
+```{r}
+qt(.95, 99)
+```
+
+- e.g. Is the flight time from NYC to Hawaii more than 620 minutes?
+
+```{r}
+X <- flights %>% filter(carrier == "HA") %>% pull(air_time)
+c(mean(X), sd(X))
+t.test(X, mu = 620, alt = "greater")
+```
+This low $p$-value means we would reject the null hypothesis that the average flight time is 620 minutes.
+
+### Relation to intervals
+
+- Calculate a 95\% confidence interval (possibly one-sided)
+- If this interval does not contain the value of the parameter specified by the null hypothesis, then reject the null
+- Otherwise fail to reject the null
+
+

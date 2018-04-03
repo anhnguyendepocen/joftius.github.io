@@ -1,0 +1,113 @@
+---
+title: "CILab"
+author: "Your name here!"
+date: "4/03/2018"
+output: html_document
+---
+---
+title: "CILab"
+author: "Your name here!"
+date: "4/03/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(nycflights13)
+library(fivethirtyeight)
+library(MASS)
+```
+
+## Testing a single mean
+
+Recall our 95 percent confidence interval for the flight time from NYC to Hawaii:
+
+```{r}
+X <- flights %>% filter(carrier == "HA") %>% pull(air_time)
+t.test(X)$conf.int
+```
+
+- Test the null hypothesis that the mean flight time is for two choices of mu: one inside the interval and one outside.
+
+```{r}
+# Inside the interval:
+t.test(X, mu = 620.8874)
+```
+Is the p-value larger or smaller than 0.05?
+
+```{r}
+# Outside the interval
+```
+
+Is the p-value larger or small than 0.05?
+
+
+## Testing a single proportion
+
+Suppose a polling company has surveyed 1000 registered voters and 551 of them said they supported a given candidate. Use `binom.test` to test the null hypothesis that the population support for the candidate is 50 percent against the one-sided alternative that it is greater.
+
+```{r}
+# code here. hint: binom.test(..., alt = "greater")
+```
+
+Is the p-value less than 0.05? Would the test reject the null hypothesis if the significance level was 1 percent?
+
+## Testing two means
+
+### Paired
+
+Paired measurements mean that the two variables are measuring different aspects of the same individual or observational unit. For example, in the `mpg` data the observational units are cars, and two mileage variables are measured: highway mpg and city mpg. 
+
+```{r}
+mpg2008 <- mpg %>% filter(year == "2008")
+# Use t.test with paired = TRUE
+```
+
+## Testing two medians
+
+```{r}
+movies <- bechdel[complete.cases(bechdel),]
+movies$return <- movies$intgross_2013/movies$budget_2013
+movies %>% group_by(binary) %>% 
+  summarize(return = median(return))
+# Movies that pass seem to have higher median returns
+# But are we sure?
+# New R feature: The "formula" below, with ~, splits
+# the groups automatically using the binary variable
+wilcox.test(return ~ binary, data = movies)
+```
+Would it make sense to do a paired test in this scenario?
+
+
+## Does it make a difference which airline you take?
+
+Use `t.test` with the formula to test if the flight time is different for each carrier.
+
+```{r}
+to_hawaii <- flights %>% filter(dest == "HNL") 
+```
+Which carrier has a longer flight time? Is that result significant at the 1 percent level?
+
+## Test for independence
+
+Most useful for kinds of data that are not numerical, but categorical. For example, the `survey` data from the `MASS` package has data from students at an Australian university
+
+```{r}
+head(survey)
+```
+
+Are the variables `Sex` and `Smoke` independent? 
+
+```{r}
+counts <- table(survey$Smoke, survey$Sex)
+counts
+```
+
+Use `?chisq.test` to read about how you can test for independence, then use that function below on this data.
+
+```{r}
+# Code here
+```
+
+Does the data have sufficient evidence to reject the null hypothesis that the variables are independent at the 5 percent level? The 10 percent level?

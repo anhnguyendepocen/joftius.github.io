@@ -1,0 +1,84 @@
+---
+title: "Lecture 21 - Hypothesis tests for multiple groups or variables"
+author: "Joshua Loftus"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggthemes)
+library(nycflights13)
+library(MASS)
+```
+
+#### Announcements
+
+- Homework due Thursday
+- Office hour at 1pm today
+
+- Testing for differences between groups
+- Relation to intervals
+- Testing for independence of variables
+
+### Differences between groups
+
+- Write $\bar X_1$ and $\bar X_2$ for the sample means in group 1 and 2, respectively.
+- Same for $S_1, S_2$ (sample sd) and $n_1, n_2$ (group sizes)
+- True (unknown) group means $\mu_1, \mu_2$
+- Instead of testing whether $\mu_1$ equals a specific value, we are now interested in testing
+- $H_0 : \mu_1 = \mu_2$
+- Alternative hypotheses: two sided $\mu_1 \neq \mu_2$, greater $\mu_1 > \mu_2$, less $\mu_1 < \mu_2$
+
+- So far nothing special, right? But there are possible complications:
+- Do we assume they have the same variance or not? (In general, no)
+- Are the samples are "paired" or not? (We'll see an example in the HTLab)
+- In general, check documentation of whatever program you are using and/or [wikipedia](https://en.wikipedia.org/wiki/Student%27s_t-test#Independent_two-sample_t-test)
+
+- One example: don't assume equal variances, unpaired
+
+$$
+(\bar X_1 - \bar X_2) / \sqrt{\frac{S_1^2}{n_1} + \frac{S_2^2}{n_2}}
+$$
+- This has a $t$-distribution with degrees of freedom given by a complicated formula
+- The equal variances/paired cases have slightly different formulas
+- Don't worry, software takes care of details pretty much automatically
+- Does the formula make sense? If the groups have the same mean, the observed value should be close to 0
+
+### Relation to intervals
+
+- Recall from last time:
+- Calculate a 95\% confidence interval (possibly one-sided)
+- If this interval does not contain the value of the parameter specified by the null hypothesis, then reject the null
+- Otherwise fail to reject the null
+
+- For multiple groups:
+- If intervals do not overlap: a test for difference would reject the null
+- If intervals do overlap: **inconclusive**
+- The examples of published studies we saw where they did not plot confidence intervals may have avoided plotting them for this reason. They conducted tests, and their tests *did* reject the null hypothesis that both groups had equal means
+
+- It's also possible to calculate one confidence interval for the difference between the means. If this interval contains 0, fail to reject the null.
+- This interval is given by default when using R functions like `t.test` on two groups
+
+## Testing for independence
+
+- Categorical data: common scenario that isn't covered by previous examples
+- Summarize by calculating a table of counts
+
+```{r}
+nrow(survey) # survey of this many students
+counts <- table(survey$Exer, survey$Sex)
+counts
+```
+
+- Most common test in this scenario is called the $\chi^2$ (chi-squared) test
+- If the null hypothesis is true, would expect numbers in each "cell" of the table to be similar between the groups
+- e.g. there are 114 people who exercise frequently, and an equal number of female and male survey respondents. So the **expected** numbers for the first row are 114/2 = 57
+- The test statistic is the sum, over every cell in the table, of $(\text{observed} - \text{expected})^2/\text{expected}$
+- e.g. this sum over the first row would be $(49-57)^2/57 + (65-57)^2/57$
+- The observed value of the test statistic is then compared to a $\chi^2$ distribution with `(nrow-1)*(ncol-1)` degrees of freedom
+- What are the degrees of freedom for our case?
+
+```{r}
+chisq.test(counts)
+```
