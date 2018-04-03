@@ -122,7 +122,7 @@ If $\text{Var}(X_i) = \sigma^2$ is **known**, test is based on the normal distri
 - e.g. For a two sided test
 
 $$
-P_0\left (-z_{.975} < \frac{\bar X - \mu_0}{\sigma} < z_{.975} \right) = 0.95
+P_0\left (-z_{.975} < \frac{\bar X - \mu_0}{\sigma/\sqrt{n}} < z_{.975} \right) = 0.95
 $$
 - Reject if $|\bar X - \mu_0|/\sigma$ is larger than $z_{.975} \approx 1.96$
 
@@ -131,7 +131,7 @@ If $\sigma$ is **unknown** (most common in real data examples), use $t$-test
 - e.g. for a one-sided (greater) test
 
 $$
-P_0\left (\frac{\bar X - \mu_0}{S} < t_{n-1,.95} \right) = 0.95
+P_0\left (\frac{\bar X - \mu_0}{S/\sqrt{n}} < t_{n-1,.95} \right) = 0.95
 $$
 - Reject if $(\bar X - \mu_0)/S$ is larger than $t_{n-1,.95}$. e.g. if $n = 100$
 
