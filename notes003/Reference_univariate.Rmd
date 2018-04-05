@@ -326,9 +326,90 @@ $$
 ```
 We also want the length of the interval $U - L$ to be as small as possible.
 
-## Standardization and CI for the true mean
+## For the true mean
+
+```{marginfigure}
+The sample standard error of the mean is $SE = S/\sqrt{n}$, and the $t$-statistic for the mean is $\frac{\bar X}{SE}$.
+
+The plot below shows 95\% confidence intervals computed from 20 samples when the true mean is 2.
+```
+
+```{r fig.margin = T, echo = F, cache = T}
+n <- 50
+experiment <- function() {
+  X <- rnorm(n, mean = 2)
+  t.test(X)$conf.int
+}
+CIs <- data.frame(t(replicate(20, experiment())))
+names(CIs) <- c("Lower", "Upper")
+CIs$SampleNumber <- 1:20
+ggplot() + 
+  geom_errorbar(data = CIs, aes(x = SampleNumber, ymin = Lower, ymax = Upper)) +
+  geom_hline(yintercept = 2) + coord_flip() + theme_tufte() +
+  ggtitle("About 95% of intervals should contain the true mean")
+```
+
+For an i.i.d. sample of size $n$, we use the quantiles of a $t$-distribution with $n-1$ degrees of freedom to compute confidence intervals. For example, if $P(-t_{.975} \leq T \leq t_{.975}) = 0.95$, then
+$$
+\left[\bar X - t_{.975} SE,  \bar X + t_{.975} SE \right]
+$$
+is a 95\% confidence interval for $E[X]$. We can get these quantiles in `R` easily with the `qt` function, for example with a sample size of 50 (and hence 49 degrees of freedom)
+
+```{r cache = T}
+# A sample of size 50 with mean 2
+randsample1 <- rnorm(50, mean = 2)
+```
+
+```{r fig.margin = T, echo = F}
+qplot(randsample1, bins = 12) + 
+  geom_vline(xintercept = 2) +
+  ylab("") + xlab("") +
+  geom_vline(xintercept = t.test(randsample1)$conf.int, linetype = 2) +
+  theme_tufte()
+```
+
+```{r}
+t975 <- qt(.975, 49)
+t975
+Xbar <- mean(randsample1)
+SE <- sd(randsample1)/sqrt(50)
+c(Xbar - t975*SE, Xbar + t975*SE)
+t.test(randsample1)$conf.int
+```
 
 
+## For the difference between two groups
+
+```{marginfigure}
+$$
+(\bar X_1 - \bar X_2) / \sqrt{\frac{S_1^2}{n_1} + \frac{S_2^2}{n_2}}
+$$
+```
+Comparing the means of two groups is a common scenario. We can compute confidence intervals for the difference between the means $\mu_1 - \mu_2$ using the $t$-distribution. The formulas are a bit more complicated, but we can rely on software to take care of the details for us.
+
+```{r cache = T}
+# A sample of size 100 with mean -1
+randsample2 <- rnorm(100, mean = -1)
+```
+
+```{r fig.margin = T, echo = F, cache = T}
+cidata <- data.frame(X = c(randsample1, randsample2),
+           group = factor(c(rep(1, 50), rep(2, 100))))
+ggplot(cidata, aes(X, fill = group)) + 
+  scale_fill_grey() +
+  geom_density(alpha = .6) +
+  geom_vline(xintercept = c(-1, 2)) +
+  geom_vline(xintercept =
+               t.test(randsample1, randsample2)$conf.int - 2.5,
+             linetype = 2) +
+  theme_tufte()
+```
+
+```{r}
+t.test(randsample1, randsample2)$conf.int
+```
+
+# Hypothesis tests
 
 
 

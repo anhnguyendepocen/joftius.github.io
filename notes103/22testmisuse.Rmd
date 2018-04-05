@@ -1,0 +1,157 @@
+---
+title: "Lecture 22 - Hypothesis tests: misuses and common mistakes"
+author: "Joshua Loftus"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggthemes)
+library(nycflights13)
+library(fivethirtyeight)
+library(MASS)
+```
+
+#### Announcements
+
+- Homework due now
+- Office hour today (1pm?)
+
+- Interpreting p-values
+- P-hacking
+- Multiple testing
+- Confidence intervals are better
+- Sample size and power
+
+### Interpreting p-values
+
+- We've learned about a few kinds of tests. They all involve a null hypothesis and (almost always) an alternative hypothesis, and the outcome can be reported as a p-value
+- In a 2012 [blog post](https://simplystatistics.org/2012/03/07/r-a-fisher-is-the-most-influential-scientist-ever/) called "R. A. Fisher is the most influential scientist ever," statisticians Jeff Leek and Rafael Irizarry estimated from google scholar that Fisher's work on p-values would have been cited about 3 million times if everyone who published p-values cited him
+- p-values are everywhere and it's important to understand what they mean
+
+```{r}
+movies <- bechdel[complete.cases(bechdel),]
+movies$return <- movies$intgross_2013/movies$budget_2013
+wilcox.test(return ~ binary, data = movies)
+```
+
+- This p-value is less than 0.05, so we would reject the null hypothesis at a 5\% significance level
+- In general, for any significance level higher than the p-value you would reject the null
+- P-values can be thought of as the cutoff for significance: 0.042 is the **highest significance level that would cause us to not reject the null**
+
+```{r}
+counts <- table(survey$Smoke, survey$Sex)
+counts
+chisq.test(counts)
+```
+
+- Another interpretation: the p-value is the **probability, assuming the null is true, of a test statistic value at least as extreme as the observed value**
+- The more extreme the test statistic value, the greater the evidence against the null hypothesis
+
+- Remember that the chi-squared test involved adding up, over each cell of the table, the $(\text{observed} - {expected})^2$ where the expected amount is calculated assuming the null hypothesis of independence. If the test statistic is large that means the observed values are far from the expected values
+- Similarly, remember that the $t$-test statistic for comparing two groups involved the difference between their means $\bar X_1 - \bar X_2$. If the absolute value of this difference is large (extreme) 
+- The definition of "extreme" depends on the alternative hypothesis. For one-sided alternatives, it is the extreme in the direction of that one side. For example, if the null is $\mu = \mu_0$ and the alternative is $\mu > \mu_0$, then extreme would correspond to $\bar X$ being much higher than $\mu_0$ (not much lower)
+
+- **p-values are *not* the probability that the null hypothesis is true**
+- **p-values are *not* the probability that the null hypothesis is true**
+- **p-values are *not* the probability that the null hypothesis is true**
+- **p-values are *not* the probability that the outcome is due to chance**
+- **p-values are *not* the probability that the outcome is due to chance**
+- **p-values are *not* the probability that the outcome is due to chance**
+- The null hypothesis is either true or false, it's not random
+- These misinterpretations are astonishingly common...
+- They can be avoided by remembering which things are considered random: the data, the test statistic, but *not* the hypothesis
+
+
+### P-hacking
+
+- P-hacking means using various tricks to try to get a p-value to be small (less than 0.05)
+- I have to tell you what it is so you know what not to do
+- Don't do it
+- It's a form of cheating
+- There are lots of [embarrassing examples](https://www.buzzfeed.com/stephaniemlee/brian-wansink-cornell-p-hacking) of it coming back to [bite people](https://twitter.com/TheJoyofCooking/status/968560552438988800)
+
+- **Examples of what not to do**
+- [Keep asking slightly different questions](https://xkcd.com/882/) until the p-value is small
+- Keep adding new data to your sample but stop once the p-value is small
+- Remove certain data points (call them "outliers") until the p-value is small
+- Measure and test lots of variables, but only report the ones with small p-values
+- Change the model in various ways (we'll see more in regression) until the p-value is small
+- Do tests for lots of different subgroups until you find a group with a significant p-value
+- Transform the data and try different kinds of tests
+
+- What are some best practices?
+- Have a plan! Decide in advance what is going to be tested
+- They call this pre-registration in [clinical trials](http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0132382)
+- Be open! Keep a record of everything you try, and report all of it
+- [Reproducible research](https://en.wikipedia.org/wiki/Reproducibility#Reproducible_research)
+
+## Multiple testing
+
+- Suppose you have many different hypotheses to test, and you're going to report all of them, or *at least* report how many are being tested
+- This is different from only reporting the ones that are significant!
+- For example, you have measurements for thousands of genes and want to do a test for each gene to see if it is associated with some kind of phenotype or medical condition
+- If each test has a 5\% probability of type 1 error, and the tests are independent, what is the probability of making at least one type 1 error?
+
+$$
+P(\text{at least one false positive out of } m \text{ tests}) = 1 - P(\text{no false positives out of } m)
+$$
+We can do this using independence!
+$$
+P(\text{no false positives out of } m) = (0.95)^m
+$$
+```{r}
+m <- 1:90
+FWER <- data.frame(m=m, FWER = 1 - 0.95^m)
+ggplot(FWER, aes(x = m, y = FWER)) + geom_point() + theme_tufte()
+```
+
+- Understanding errors when there are many tests is different from understanding one test
+- Interpreting many p-values simultaneously is different from interpreting one at a time
+- In this class we will mostly limit ourselves to dealing with simple enough cases that we don't have to worry about this
+- But it's becoming more important as technological progress makes more data available
+
+- Statisticians have developed methods for "adjusting" p-values when there are many to be interpreted together, for example in genomics settings
+- One method is based on the "false discovery rate" (FDR)
+- Given $p$-values for $m$ tests, this method picks the $0 \leq k \leq m$ smallest $p$-values for rejection, and $k$ is chosen in a way to make it so the **expected proportion** of false discoveries is small (like 5\% or 10\%)
+- (You will not be tested on this, but it's good to know about)
+
+### Confidence intervals are better
+
+- Confidence intervals give more information than a hypothesis test
+- "There is a significant difference between two means of two groups" vs "The CI for the difference between the groups is from 0.005 to 0.025"
+- Can also be plotted!
+- "A p-value is just a crude measure of sample size" (what?! see next section)
+
+## Sample size and power
+
+- Consider an example for differences between groups
+- The true difference is $\mu_1 - \mu_2 = 0.0001$
+- If the sample size is very large, the test will reject the null hypothesis
+- But is that really useful information? It depends on if 0.0001 is large enough to be of any practical importance
+- **Statistical significance vs practical significance**
+
+```{r cache = F}
+group1 <- rnorm(10000, mean = 0.1)
+group2 <- rnorm(10000, mean = 0)
+t.test(group1, group2)
+range <- data.frame(x = c(-2,2))
+ggplot(range, aes(x)) +
+  stat_function(fun = dnorm, args = list(mean = 0.01, sd = 1)) +
+  stat_function(fun = dnorm, args = list(mean = 0, sd = 1)) +
+  theme_tufte() +
+  ggtitle("Two significantly different distributions?")
+```
+
+- Hypothesis tests are still useful if you must make a decision, e.g. A/B testing, summarizing the conclusion of a scientific study, etc
+- But beware: very large sample sizes might mean any test you do will be significant
+
+### Best way to proceed
+
+- First, decide what is the smallest effect that is practically significant
+- Next, calculate how large of a sample size you would need to detect that small of an effect
+- Finally, collect as much data as is necessary, not much more or less
+
+- This also avoids another problem that is widespread in some fields: *under*powered studies
+- Recent analysis of over 6,000 [economics studies](https://www.hoplofobia.info/wp-content/uploads/2015/10/2017-The-Power-of-Bias-in-Economics-Research.pdf) found "median statistical power is 18\%, or less" 
