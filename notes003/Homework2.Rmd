@@ -1,5 +1,5 @@
 ---
-title: "Homework 8 (due Thursday, April 12th)"
+title: "Homework 2 (due Wednesday, April 11th)"
 author: By signing my name, I agree to abide by the Stern Code of Conduct _______________
 output: pdf_document
 ---
@@ -7,6 +7,37 @@ output: pdf_document
 ```{r include = F}
 library(fivethirtyeight)
 ```
+
+### Question 0
+
+Suppose we are calculating a 95\% confidence interval for a mean based on a sample of size $n$.
+
+#### a.
+
+At first, the interval is just too wide to be useful. We decide to increase the sample size to get a narrower interval. What sample size would we need to get an interval that will probably be about half as wide as the original one?
+
+\ 
+
+\ 
+
+#### b. 
+
+Suppose $n = 100$, and the confidence interval has the form $\bar X \pm c SE$ where $SE$ is the sample standard error of the mean (note: this is not the same as a the sample standard deviation), and the constant $c$ is obtained from the $t$-distribution with $n-1$ degrees of freedom. For example, for a 95\% confidence level, $c$ is
+
+```{r}
+qt(.975, 99)
+```
+What is the length of the interval? The answer should be some constant times $SE$. What is the length if we increase the confidence level to 99\%? (You will need to use `R` to answer this second part, but can copy the answer to this page by hand). 
+
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+
 
 ### Question 1
 
@@ -88,7 +119,7 @@ What is the null hypothesis for this test? What do you conclude based on the tes
 
 #### a.
 
-The numbers below are from the paper discussed in class about neonatal sex differences in "social perception." These particular numbers are for the percent of time spent looking at an object.
+The numbers below are from a highly cited paper about neonatal sex differences in "social perception." In that study, the researchers presented neonatal infants with two stimuli to look at: a picture of a face and an object. They recorded how much time each infant spent looking at either of the two stimuli, and recorded preferences as percent of total time spent looking at each. These researchers were interested in seeing if there was a difference in the average preferences between female and male infants. The numbers below are for the percent of time spent looking at the object (not the face). The study included 58 female and 44 male subjects.
 
 ```{r}
 x1 <- 51.9
@@ -146,3 +177,40 @@ If we have two hypothesis tests computed at the 5\% significance level, each one
 
 What is $p$-hacking? Give one example of how it might be done in practice. What are some recommendations on how to avoid it?
 
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+### Reference
+
+Connellan, J., Baron-Cohen, S., Wheelwright, S., Batki, A., & Ahluwalia, J. (2000). Sex differences in human neonatal social perception. Infant behavior and Development, 23(1), 113-118.
+
+https://pdfs.semanticscholar.org/50c7/f3fb0b144fb648fb4238d01d2837c57ce36b.pdf 
