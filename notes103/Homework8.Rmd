@@ -134,7 +134,7 @@ Based on this interval, do we reject the null hypothesis that male babies spent 
 
 ### c. 
 
-If we have two hypothesis tests computed at the 5\% significance level, each one individually has a 5\% probability of type 1 error (false rejection). Assuming the tests are independent, what is the probability of at least one false rejection? The answer should be a number, but show your work.
+If we have two hypothesis tests computed at the 5\% significance level, each one individually has a 5\% probability of type 1 error (false rejection). Assuming the tests are independent, and both null hypotheses are true, what is the probability of at least one false rejection? The answer should be a number, but show your work.
 
 \ 
 
