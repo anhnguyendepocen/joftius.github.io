@@ -15,6 +15,7 @@ knitr::opts_chunk$set(tidy = FALSE, cache.extra = packageVersion('tint'))
 options(htmltools.dir.version = FALSE)
 library(tidyverse)
 library(ggthemes)
+library(MASS)
 options(digits = 4)
 ```
 
@@ -411,6 +412,44 @@ t.test(randsample1, randsample2)$conf.int
 
 # Hypothesis tests
 
+## General idea 
+
+Use the data to decide whether or not to reject a **null hypothesis** about the true (unknown) distribution. The **significance level**, usually 5\%, is a limit on the probability of rejecting the null hypothesis when the null hypothesis is true. This kind of error is called a **type 1 error**, false positive, or false discovery. If the null hypothesis is false but we fail to reject it, that is a **type 2 error** or false negative. The probability of rejecting the null when it is not true is called **power**.
+
+## $P$-values
+
+There are two common, correct ways of interpreting $p$-values, and some other common ones which are incorrect.
+
+**Correct**:
+
+- The probability, assuming the null hypothesis is true, of the test statistic being at least as extreme as the value observed in the data
+- The cutoff level for significance: we can reject the null hypothesis at any significance level which is larger than the $p$-value
+
+**Incorrect**:
+
+- The probability that the null hypothesis is true (the null hypothesis either is true or isn't, there is no randomness)
+- The probability that the outcome is due to chance only (the test statistic is random whether the null hypothesis is true or not--collect a new sample and the test statistic will probably have a different value)
+
+## For one mean
+
+```{r}
+t.test(rnorm(100), alternative = "greater")
+t.test(randsample1, mu = 1) # two-sided by default
+```
+
+## For a difference between two means
+
+```{r}
+t.test(randsample1, randsample2)
+```
+
+## For independence (especially with categorical variables)
+
+```{r}
+counts <- table(survey$Sex, survey$Smoke)
+counts
+chisq.test(counts)
+```
 
 
 ```{r bib, include=FALSE}
