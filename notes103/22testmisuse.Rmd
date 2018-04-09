@@ -13,18 +13,14 @@ library(fivethirtyeight)
 library(MASS)
 ```
 
-#### Announcements
-
-- Homework due now
-- Office hour today (1pm?)
+## Outline
 
 - Interpreting p-values
 - P-hacking
 - Multiple testing
 - Confidence intervals are better
-- Sample size and power
 
-### Interpreting p-values
+## Interpreting p-values
 
 - We've learned about a few kinds of tests. They all involve a null hypothesis and (almost always) an alternative hypothesis, and the outcome can be reported as a p-value
 - In a 2012 [blog post](https://simplystatistics.org/2012/03/07/r-a-fisher-is-the-most-influential-scientist-ever/) called "R. A. Fisher is the most influential scientist ever," statisticians Jeff Leek and Rafael Irizarry estimated from google scholar that Fisher's work on p-values would have been cited about 3 million times if everyone who published p-values cited him
@@ -64,7 +60,7 @@ chisq.test(counts)
 - They can be avoided by remembering which things are considered random: the data, the test statistic, but *not* the hypothesis
 
 
-### P-hacking
+## P-hacking
 
 - P-hacking means using various tricks to try to get a p-value to be small (less than 0.05)
 - I have to tell you what it is so you know what not to do
@@ -117,41 +113,9 @@ ggplot(FWER, aes(x = m, y = FWER)) + geom_point() + theme_tufte()
 - Given $p$-values for $m$ tests, this method picks the $0 \leq k \leq m$ smallest $p$-values for rejection, and $k$ is chosen in a way to make it so the **expected proportion** of false discoveries is small (like 5\% or 10\%)
 - (You will not be tested on this, but it's good to know about)
 
-### Confidence intervals are better
+## Confidence intervals are better
 
 - Confidence intervals give more information than a hypothesis test
 - "There is a significant difference between two means of two groups" vs "The CI for the difference between the groups is from 0.005 to 0.025"
 - Can also be plotted!
-- "A p-value is just a crude measure of sample size" (what?! see next section)
-
-## Sample size and power
-
-- Consider an example for differences between groups
-- The true difference is $\mu_1 - \mu_2 = 0.0001$
-- If the sample size is very large, the test will reject the null hypothesis
-- But is that really useful information? It depends on if 0.0001 is large enough to be of any practical importance
-- **Statistical significance vs practical significance**
-
-```{r cache = F}
-group1 <- rnorm(10000, mean = 0.1)
-group2 <- rnorm(10000, mean = 0)
-t.test(group1, group2)
-range <- data.frame(x = c(-2,2))
-ggplot(range, aes(x)) +
-  stat_function(fun = dnorm, args = list(mean = 0.01, sd = 1)) +
-  stat_function(fun = dnorm, args = list(mean = 0, sd = 1)) +
-  theme_tufte() +
-  ggtitle("Two significantly different distributions?")
-```
-
-- Hypothesis tests are still useful if you must make a decision, e.g. A/B testing, summarizing the conclusion of a scientific study, etc
-- But beware: very large sample sizes might mean any test you do will be significant
-
-### Best way to proceed
-
-- First, decide what is the smallest effect that is practically significant
-- Next, calculate how large of a sample size you would need to detect that small of an effect
-- Finally, collect as much data as is necessary, not much more or less
-
-- This also avoids another problem that is widespread in some fields: *under*powered studies
-- Recent analysis of over 6,000 [economics studies](https://www.hoplofobia.info/wp-content/uploads/2015/10/2017-The-Power-of-Bias-in-Economics-Research.pdf) found "median statistical power is 18\%, or less" 
+- "A p-value is just a crude measure of sample size" (what?! see next lecture)
