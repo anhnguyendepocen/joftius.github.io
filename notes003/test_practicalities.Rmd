@@ -1,0 +1,238 @@
+---
+title: "Hypothesis tests: practicalities, misuses, common mistakes"
+author: "Joshua Loftus"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggthemes)
+library(nycflights13)
+library(fivethirtyeight)
+library(MASS)
+```
+
+## Outline
+
+- Interpreting p-values
+- P-hacking
+- Multiple testing
+- Confidence intervals are better
+- Statistical vs practical significance
+- How large of a sample is enough?
+
+## Interpreting p-values
+
+- p-values are everywhere (Fisher would have over 3 million citations for them) 
+- It's important to understand what they mean
+
+```{r}
+movies <- bechdel[complete.cases(bechdel),]
+movies$return <- movies$intgross_2013/movies$budget_2013
+wilcox.test(return ~ binary, data = movies)
+```
+
+- This p-value is less than 0.05, so we would reject the null hypothesis at a 5\% significance level
+- In general, for any significance level higher than the p-value you would reject the null
+- P-values can be thought of as the cutoff for significance: 0.042 is the **highest significance level that would cause us to not reject the null**
+- Another interpretation: the p-value is the **probability, assuming the null is true, of a test statistic value at least as extreme as the observed value**
+- The more extreme the test statistic value, the greater the evidence against the null hypothesis
+
+- The definition of "extreme" depends on the alternative hypothesis. For one-sided alternatives, it is the extreme in the direction of that one side. For example, if the null is $\mu = \mu_0$ and the alternative is $\mu > \mu_0$, then extreme would correspond to $\bar X$ being much higher than $\mu_0$ (not much lower)
+
+- **p-values are *not* the probability that the null hypothesis is true**
+- **p-values are *not* the probability that the null hypothesis is true**
+- **p-values are *not* the probability that the null hypothesis is true**
+- **p-values are *not* the probability that the outcome is due to chance**
+- **p-values are *not* the probability that the outcome is due to chance**
+- **p-values are *not* the probability that the outcome is due to chance**
+- The null hypothesis is either true or false, it's not random
+- These misinterpretations are astonishingly common...
+- They can be avoided by remembering which things are considered random: the data, the test statistic, but *not* the hypothesis
+
+
+## P-hacking
+
+- P-hacking means using various tricks to try to get a p-value to be small (less than 0.05)
+- I have to tell you what it is so you know what not to do
+- Don't do it
+- It's a form of cheating
+- There are lots of [embarrassing examples](https://www.buzzfeed.com/stephaniemlee/brian-wansink-cornell-p-hacking) of it coming back to [bite people](https://twitter.com/TheJoyofCooking/status/968560552438988800)
+
+- **Examples of what not to do**
+- [Keep asking slightly different questions](https://xkcd.com/882/) until the p-value is small
+- Keep adding new data to your sample but stop once the p-value is small
+- Remove certain data points (call them "outliers") until the p-value is small
+- Measure and test lots of variables, but only report the ones with small p-values
+- Change the model in various ways (we'll see more in regression) until the p-value is small
+- Do tests for lots of different subgroups until you find a group with a significant p-value
+- Transform the data and try different kinds of tests
+
+- What are some best practices?
+- **Have a plan**: decide in advance what is going to be tested
+- They call this pre-registration in [clinical trials](http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0132382)
+- **Be open**: keep a record of everything you try, and report all of it
+- [Reproducible research](https://en.wikipedia.org/wiki/Reproducibility#Reproducible_research)
+
+## Multiple testing
+
+- Suppose you have many different hypotheses to test, and you're going to report all of them, or *at least* report how many are being tested
+- This is different from only reporting the ones that are significant!
+- If each test has a 5\% probability of type 1 error, the tests are independent, and all the null hypotheses are true, what is the probability of making at least one type 1 error?
+
+$$
+P(\text{at least one false positive out of } m \text{ tests}) = 1 - P(\text{no false positives out of } m)
+$$
+We can do this using independence!
+$$
+P(\text{no false positives out of } m) = (0.95)^m
+$$
+```{r}
+m <- 1:90
+FWER <- data.frame(m=m, FWER = 1 - 0.95^m)
+ggplot(FWER, aes(x = m, y = FWER)) + geom_point() + theme_tufte()
+```
+
+- Understanding errors when there are many tests is different from understanding one test
+- Interpreting many p-values simultaneously is different from interpreting one at a time
+- In this class we will mostly limit ourselves to dealing with simple enough cases that we don't have to worry about this
+- But it's becoming more important as technological progress makes more data available
+
+- Statisticians have developed methods for "adjusting" p-values when there are many to be interpreted together, for example in genomics settings
+- Two of the most common are called "Bonferroni correction" and "false discovery rate" (FDR)
+- You will not be tested on this, but it's good to have heard about it once so you can remember to look it up or ask about it if you ever find yourself needing to interpret many $p$-values together
+
+## Confidence intervals are better
+
+- Confidence intervals give more information than a hypothesis test
+- "There is a significant difference between two means of two groups" vs "The CI for the difference between the groups is from 0.005 to 0.025"
+- Can also be plotted!
+- Issues with sample sizes: when samples are large, significant $p$-values may not be interesting (see next section)
+
+## Statistical significance and practical significance
+
+- Suppose you read this headline: Diet X is associated with lower risk of cancer
+- You check out the study, the null hypothesis is no assocation, the $p$-value is $<0.00001$
+- Very significant result!
+- But what if the risk reduction was, e.g., from 2.5\% to 2.47\% risk?
+- The result is highly statistically significant, but not very practically significant
+
+- (Statistical) **power** is the probability of rejecting the null hypothesis when it is not true
+- Important to think about **effect size**
+- Effect size, one sample: $\mu/\sigma$
+- Effect size, two groups: $(\mu_1 - \mu_2)/\sigma$
+- Large effect size and/or large sample size lead to high power
+
+- Note: to make formulas simple for now, we assume variances are known and equal 1, hence we use normal distribution instead of t-distribution
+
+- Let's be more mathematical: consider an example for differences between groups
+- Suppose the true difference is $\mu_1 - \mu_2 = 0.01$
+- If the sample size is very large, the test will reject the null hypothesis
+- But is that really useful information? It depends on if $0.01$ is large enough to be of any practical importance
+
+```{r cache = F}
+group1 <- rnorm(1000000, mean = 0.01)
+group2 <- rnorm(1000000, mean = 0)
+t.test(group1, group2)
+range <- data.frame(x = c(-2,2))
+ggplot(range, aes(x)) +
+  stat_function(fun = dnorm, args = list(mean = 0.01, sd = 1)) +
+  stat_function(fun = dnorm, args = list(mean = 0, sd = 1)) +
+  theme_tufte() +
+  ggtitle("Two significantly different distributions?")
+```
+
+- Below we consider an even smaller effect of $\mu = 0.001$
+- Plot the probability of rejecting the null at 5\% significance as a function of sample size $n$
+
+```{r}
+c_null <- qnorm(.95)
+mu <- 0.001
+powern <- function(n) {
+  1 - pnorm(c_null - mu*sqrt(n))
+}
+range <- data.frame(n = 10^c(1:7))
+ggplot(range, aes(n)) + 
+  stat_function(fun = powern) + theme_tufte() +
+  ylab("Power") +
+  ggtitle("Power as a function of sample size, mu = 0.001")
+```
+
+- Hypothesis tests are still useful if you must make a decision, e.g. A/B testing, summarizing the conclusion of a scientific study, etc
+- But beware: very large sample sizes might mean any test you do will be significant
+
+- Let's also look at the "power function" for $n = 100$ and a two sided alternative
+
+```{r}
+c_null <- qnorm(.975)
+powermu <- function(mu) pnorm(-c_null - mu*10) + pnorm(c_null - mu*10, lower.tail = F)
+range <- data.frame(mu = seq(from = -.5, to = .5, length.out = 100))
+ggplot(range, aes(mu)) + 
+  stat_function(fun = powermu) + theme_tufte() +
+  ylab("Power") +
+  ggtitle("Power as a function of true mean (two-sided), n = 100")
+```
+
+## How large of a sample is enough?
+
+- First, decide what is the smallest effect size that is **practically significant**
+- Next, calculate how large of a sample size you would need to detect that small of an effect
+- e.g. have an 80\% power for that small effect, with a test that has a 5\% significance level
+- Finally, collect as much data as is necessary, not much more or less
+
+- Example:
+- Suppose $\mu/\sigma = 0.25$ is the smallest effect size that would be practically distinguishable from 0
+- How large of a sample is needed to have 80\% probability of rejecting the null hypothesis $H_0 : \mu = 0$ at the 5\% significance level?
+- Want: $P(\sqrt{n} \bar X/\sigma > c_{.95}) = 0.8$
+- This is the same as
+$$
+P\left(\frac{\bar X - \mu}{\sigma/\sqrt{n}} > c_{.95} - \frac{\mu}{\sigma/\sqrt{n}}\right) = 0.8
+$$
+- Note: $(\bar X - \mu)/(\sigma/\sqrt{n}) \sim N(0, 1)$
+- Remember $\mu/\sigma = 0.25$ is the worst case, so find $n$ so that
+$$
+P\left(Z < c_{.95} - 0.25 \sqrt{n}\right) = 0.2
+$$
+- This is the same as $c_{.95} - 0.25\sqrt{n} = c_{.2}$
+- So $\sqrt{n} = (c_{.95} - c_{.2})/0.25$
+
+```{r}
+((qnorm(.95)- qnorm(.2))/0.25)^2
+```
+- Check the answer: If $n = 99$, what is probability of rejecting at 5\% significance level?
+
+```{r}
+1 - pnorm(qnorm(.95) - sqrt(99) * 0.25 )
+```
+
+### Simulations to the rescue
+
+- Instead of doing calculations with formulas and solving equations, just generate data randomly!
+- Let's say we want 85\% power for an effect size of $\mu/\sigma = .2$
+- How large of a sample do we need?
+
+```{r}
+# Guess and check
+n <- 100 
+t.test(rnorm(n, mean = .2))$p.value # too small?
+n <- 200
+mean(replicate(2000, t.test(rnorm(n, mean = .2))$p.value < 0.05))
+n <- 220
+mean(replicate(2000, t.test(rnorm(n, mean = .2))$p.value < 0.05))
+```
+
+### Sample too small?
+
+- This approach avoids another problem that is widespread in some fields: *under*powered studies
+- Recent analysis of over 6,000 [economics studies](https://www.hoplofobia.info/wp-content/uploads/2015/10/2017-The-Power-of-Bias-in-Economics-Research.pdf) found "median statistical power is 18\%, or less" 
+
+## Summary: take home messages
+
+- $p$-values are tail probabilities of test statistics under the null distribution, **not** the "probability of the null hypothesis" (which is meaningless)
+- Have a plan *before* analyzing the data, and keep a record of your analysis (e.g. in R Markdown) to avoid $p$-hacking
+- Need to interpret many $p$-values at once? Beware, consult a statistician about "adjustment for multiple testing"
+- Sample sizes too small? Not enough power, can't find the signal in the noise
+- Sample sizes very large? Too much power, everything looks like a signal
+- Get the right sample size by doing a **power calculation**
+- Some of the many reasons  to **consult a statistician *before* collecting data**
