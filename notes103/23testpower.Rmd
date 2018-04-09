@@ -1,0 +1,154 @@
+---
+title: "Lecture 23 - Sample size and power of tests"
+author: "Joshua Loftus"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggthemes)
+library(nycflights13)
+library(fivethirtyeight)
+library(MASS)
+```
+
+#### Outline
+
+- Statistical vs practical significance
+- How large of a sample is enough?
+
+## Statistical significance and practical significance
+
+- Suppose you read this headline: Diet X is associated with lower risk of cancer
+- You check out the study, the null hypothesis is no assocation, the $p$-value is $<0.00001$
+- Very significant result!
+- But what if the risk reduction was, e.g., from 2.5\% to 2.47\% risk?
+- The result is highly statistically significant, but not very practically significant
+
+- Note: to make formulas simple, we assume variances are known and equal 1, hence we use normal distribution instead of t-distribution
+- In practice, the ratio $\mu/\sigma$ is what matters. We'll come back to this at the end
+
+- Let's be more mathematical: consider an example for differences between groups
+- Suppose the true difference is $\mu_1 - \mu_2 = 0.01$
+- If the sample size is very large, the test will reject the null hypothesis
+- But is that really useful information? It depends on if $0.01$ is large enough to be of any practical importance
+
+```{r cache = F}
+group1 <- rnorm(1000000, mean = 0.01)
+group2 <- rnorm(1000000, mean = 0)
+t.test(group1, group2)
+range <- data.frame(x = c(-2,2))
+ggplot(range, aes(x)) +
+  stat_function(fun = dnorm, args = list(mean = 0.01, sd = 1)) +
+  stat_function(fun = dnorm, args = list(mean = 0, sd = 1)) +
+  theme_tufte() +
+  ggtitle("Two significantly different distributions?")
+```
+
+- Below we consider an even smaller effect of $\mu = 0.001$
+- Plot the probability of rejecting the null at 5\% significance as a function of sample size $n$
+
+```{r}
+c_null <- qnorm(.95)
+mu <- 0.001
+powern <- function(n) {
+  1 - pnorm(c_null - mu*sqrt(n))
+}
+range <- data.frame(n = 10^c(1:7))
+ggplot(range, aes(n)) + 
+  stat_function(fun = powern) + theme_tufte() +
+  ylab("Power") +
+  ggtitle("Power as a function of sample size, mu = 0.001")
+```
+
+- Hypothesis tests are still useful if you must make a decision, e.g. A/B testing, summarizing the conclusion of a scientific study, etc
+- But beware: very large sample sizes might mean any test you do will be significant
+
+- Just for fun, let's also look at the "power function" for $n = 100$ and increasing true mean $\mu$:
+
+```{r}
+powermu <- function(mu) 1 - pnorm(c_null - mu*10)
+range <- data.frame(mu = seq(from = 0, to = 1, length.out = 100))
+ggplot(range, aes(mu)) + 
+  stat_function(fun = powermu) + theme_tufte() +
+  ylab("Power") +
+  ggtitle("Power as a function of true mean, n = 100")
+```
+
+- Here's the power function for the two sided alternative
+
+```{r}
+c_null <- qnorm(.975)
+powermu <- function(mu) pnorm(-c_null - mu*10) + pnorm(c_null - mu*10, lower.tail = F)
+range <- data.frame(mu = seq(from = -.5, to = .5, length.out = 100))
+ggplot(range, aes(mu)) + 
+  stat_function(fun = powermu) + theme_tufte() +
+  ylab("Power") +
+  ggtitle("Power as a function of true mean (two-sided), n = 100")
+```
+
+## How large of a sample is enough?
+
+- Effect size, one sample: $\mu/\sigma$
+- Effect size, two groups: $(\mu_1 - \mu_2)/\sigma$
+
+- First, decide what is the smallest effect size that is **practically significant**
+- Next, calculate how large of a sample size you would need to detect that small of an effect
+- Have an 80\% probability of rejecting the null at 5\% significance, for example
+- Finally, collect as much data as is necessary, not much more or less
+
+- Suppose $\mu/\sigma = 0.25$ is the smallest effect size that would be practically distinguishable from 0
+- How large of a sample is needed to have 80\% probability of rejecting the null hypothesis $H_0 : \mu = 0$ at the 5\% significance level?
+- Want: $P(\sqrt{n} \bar X/\sigma > c_{.95}) = 0.8$
+- This is the same as
+$$
+P\left(\frac{\bar X - \mu}{\sigma/\sqrt{n}} > c_{.95} - \frac{\mu}{\sigma/\sqrt{n}}\right) = 0.8
+$$
+- Note: $(\bar X - \mu)/(\sigma/\sqrt{n}) \sim N(0, 1)$
+- Remember $\mu/\sigma = 0.25$ is the worst case, so find $n$ so that
+$$
+P\left(Z < c_{.95} - 0.25 \sqrt{n}\right) = 0.2
+$$
+- This is the same as $c_{.95} - 0.25\sqrt{n} = c_{.2}$
+- So $\sqrt{n} = (c_{.95} - c_{.2})/0.25$
+
+```{r}
+((qnorm(.95)- qnorm(.2))/0.25)^2
+```
+- Check the answer: If $n = 99$, what is probability of rejecting at 5\% significance level?
+
+```{r}
+1 - pnorm(qnorm(.95) - sqrt(99) * 0.25 )
+```
+
+### Simulations to the rescue
+
+- Instead of doing calculations with formulas and solving equations, just generate data randomly!
+- Let's say we want 85\% power for an effect size of $\mu/\sigma = .2$
+- How large of a sample do we need?
+
+```{r}
+# Guess and check
+n <- 100 
+t.test(rnorm(n, mean = .2))$p.value # too small?
+n <- 200
+mean(replicate(2000, t.test(rnorm(n, mean = .2))$p.value < 0.05))
+n <- 220
+mean(replicate(2000, t.test(rnorm(n, mean = .2))$p.value < 0.05))
+```
+
+### Sample too small?
+
+- This approach avoids another problem that is widespread in some fields: *under*powered studies
+- Recent analysis of over 6,000 [economics studies](https://www.hoplofobia.info/wp-content/uploads/2015/10/2017-The-Power-of-Bias-in-Economics-Research.pdf) found "median statistical power is 18\%, or less" 
+
+## Summary: take home messages
+
+- Sample sizes very large? Rejecting null hypothesis is not informative
+- Confidence intervals will be extremely narrow
+- May give an unrealistic sense of certainty
+
+- Avoid sample sizes too large or too small by doing a **power calculation**
+- One of most common reasons to consult a statistician
+- One of many reasons to **consult a statistician *before* collecting data**

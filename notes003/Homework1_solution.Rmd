@@ -1,0 +1,100 @@
+---
+title: "Homework 1 solution"
+author: Joshua Loftus
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(digits = 4)
+library(tidyverse)
+library(gapminder)
+```
+
+# Random variables
+
+## R's four functions for each distributions
+
+### Question 1: Normal random variables
+
+```{r}
+mu <- sqrt(2)
+sigma2 <- 9
+# Expected value E[Z] = mu
+mu
+# Variance Var(Z) = sigma2
+sigma2
+# Distribution function: Prob(Z = 1)
+# [note: for continuous random variables this is only approximate]
+dnorm(1, mean = mu, sd = sqrt(sigma2))
+# Cumulative distribution function: Prob(Z <= 1.5)
+pnorm(1.5, mean = mu, sd = sqrt(sigma2))
+# Upper tail instead: Prob(Z > 1.5)
+1- pnorm(1.5, mean = mu, sd = sqrt(sigma2))
+# Quantile: what is the specific value z
+# such that P(Z <= z) = .95?
+qnorm(.95, mean = mu, sd = sqrt(sigma2))
+# Random sampling: generate a sample of 8 observations of Z
+rnorm(8, mean = mu, sd = sqrt(sigma2))
+```
+
+## Plotting distribution functions
+
+### Normal cumulative distribution function
+
+Plotting the normal cdf:
+
+```{r}
+# copy and paste the code above, change dnorm to pnorm -- that's it!
+range <- data.frame(x = c(-7, 10))
+ggplot(range, aes(x)) + 
+  stat_function(fun = pnorm, args = list(mean = mu, sd = sqrt(sigma2))) +
+  theme_minimal()
+```
+
+### Question 2
+
+Create a histogram plot like the one above, but with a larger sample size.
+
+```{r}
+# Copy and paste the code above
+# Change sample_size to 1000 and nbins to 40
+sample_size <- 1000
+nbins <- 40
+Z_sample <- data.frame(z = rnorm(sample_size, mean = mu, sd = sqrt(sigma2)))
+ggplot(Z_sample, aes(z)) + geom_histogram(aes(y = ..density..), bins = nbins) +
+  stat_function(fun = dnorm, args = list(mean = mu, sd = sqrt(sigma2))) +
+  theme_minimal()
+```
+
+# Real data
+
+## GDP and life expectancy in gapminder
+
+Let's use data from the year 2002
+
+```{r}
+world <- filter(gapminder, year == 2002,
+                continent != "Oceania")
+```
+
+### Problem 3
+
+Histogram of `lifeExp` for the world.
+
+```{r}
+# paste here, change gdpPercap to lifeExp
+ggplot(world, aes(lifeExp)) + 
+  geom_histogram(bins = 15) +
+  theme_minimal()
+```
+
+Density plots of `lifeExp` for each continent.
+
+```{r}
+# paste here, same as above
+ggplot(world, aes(lifeExp)) + 
+  geom_density() +
+  facet_wrap(~continent, scales = "free") +
+  theme_minimal()
+```
