@@ -252,13 +252,13 @@ t.test(group1, group2)</code></pre>
 ##  Welch Two Sample t-test
 ## 
 ## data:  group1 and group2
-## t = 7.667, df = 2e+06, p-value = 1.761e-14
+## t = 5.646, df = 2e+06, p-value = 1.642e-08
 ## alternative hypothesis: true difference in means is not equal to 0
 ## 95 percent confidence interval:
-##  0.008064136 0.013603060
+##  0.005209812 0.010750209
 ## sample estimates:
-##     mean of x     mean of y 
-##  0.0098819298 -0.0009516684</code></pre>
+##    mean of x    mean of y 
+## 0.0082484169 0.0002684068</code></pre>
 <pre class="r"><code>range &lt;- data.frame(x = c(-2,2))
 ggplot(range, aes(x)) +
   stat_function(fun = dnorm, args = list(mean = 0.01, sd = 1)) +
@@ -333,13 +333,13 @@ P\left(Z &lt; c_{.95} - 0.25 \sqrt{n}\right) = 0.2
 <pre class="r"><code># Guess and check
 n &lt;- 100 
 t.test(rnorm(n, mean = .2))$p.value # too small?</code></pre>
-<pre><code>## [1] 0.01715195</code></pre>
+<pre><code>## [1] 0.478891</code></pre>
 <pre class="r"><code>n &lt;- 200
 mean(replicate(2000, t.test(rnorm(n, mean = .2))$p.value &lt; 0.05))</code></pre>
-<pre><code>## [1] 0.7955</code></pre>
+<pre><code>## [1] 0.7965</code></pre>
 <pre class="r"><code>n &lt;- 220
 mean(replicate(2000, t.test(rnorm(n, mean = .2))$p.value &lt; 0.05))</code></pre>
-<pre><code>## [1] 0.8325</code></pre>
+<pre><code>## [1] 0.8465</code></pre>
 </div>
 <div id="sample-too-small" class="section level3">
 <h3>Sample too small?</h3>
