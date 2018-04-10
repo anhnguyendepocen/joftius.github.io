@@ -1,0 +1,108 @@
+---
+title: "Scatterplots and regression lines"
+author: "Joshua Loftus"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggthemes)
+library(ggrepel)
+library(fivethirtyeight)
+library(gapminder)
+set.seed(1)
+```
+
+#### Outline
+
+- Creating scatterplots
+- Adding regression lines
+- Adding smooth curves
+- Interpretation
+
+## Scatterplots
+
+### This doesn't show all the data! 
+
+```{r}
+mpg2008 <- filter(mpg, year == "2008")
+mpgplot <- ggplot(mpg2008, aes(cty, hwy)) +
+    theme_tufte() + 
+    ggtitle("Miles per gallon") +
+    geom_text_repel(data = subset(mpg2008, cty >= 26 | cty == 9),
+                      mapping = aes(label = model))
+mpgplot + geom_point()
+```
+
+### Alpha: transparency. Now overlapping points are darker
+
+```{r}
+mpgplot + geom_point(alpha = .5)
+```
+
+### "Jittering" the points moves them slightly so they don't overlap
+
+```{r}
+mpgplot + geom_point() + geom_jitter()
+```
+
+### "Rug" plots are like 1-dimensional histograms for each axis
+
+```{r}
+movies <- bechdel[complete.cases(bechdel),]
+movie_plot <- ggplot(movies, aes(budget_2013, intgross_2013)) +
+  geom_rug(size = .1, alpha = .2) +
+  ggtitle("Budget vs gross earnings") +
+  theme_tufte()
+movie_plot + geom_point(alpha = .2)
+```
+
+### Transforming variables / changing axis scales
+
+```{r}
+log_movie_plot <- movie_plot +
+  geom_point(alpha = .2, aes(color = binary)) +
+  scale_x_log10() + scale_y_log10()
+log_movie_plot
+```
+
+### Preview of more cool things
+
+```{r}
+log_movie_plot + geom_smooth(method = "loess", se = FALSE, color = "black",
+                             aes(linetype = binary),
+                             data = subset(movies, budget_2013 > 5e5)) +
+  geom_abline(intercept = 0, slope = 1)
+```
+
+## Regression lines
+
+### We'll go into lots of detail on linear models soon
+
+```{r}
+gm2007 <- gapminder %>% filter(year == 2007)
+model <- lm(lifeExp ~ gdpPercap, data = gm2007)
+gm2007$predicted <- predict(model)
+```
+
+### But first, let's visualize them
+
+```{r}
+gm_plot <- ggplot(gm2007, aes(gdpPercap, lifeExp)) + theme_tufte() +
+  ggtitle("GDP and life expectancy") +
+  geom_text_repel(data = subset(gm2007, gdpPercap > 49000 | lifeExp < 40),
+                      mapping = aes(label = country)) +
+  geom_point(alpha = .5) 
+gm_plot + geom_smooth(method = "lm", se = FALSE)
+```
+
+### Errors of the model
+
+```{r}
+gm_plot + geom_smooth(method = "lm", se = FALSE) +
+  geom_segment(alpha = .5,
+               aes(x=gdpPercap, xend=gdpPercap, 
+                   y=lifeExp, yend=predicted),
+               data = subset(gm2007, gdpPercap > 12000))
+```
