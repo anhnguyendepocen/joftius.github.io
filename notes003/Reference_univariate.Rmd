@@ -432,18 +432,29 @@ There are two common, correct ways of interpreting $p$-values, and some other co
 
 ## For one mean
 
+To test the null hypothesis $H_0 : \mu = 0$ against the one-sided alternative $H_1 : \mu > 1$:
+
 ```{r}
-t.test(rnorm(100), alternative = "greater")
+t.test(rnorm(100), alternative = "greater") # mu = 0 by default
+```
+
+To test the null hypothesis $H_0 : \mu = 1$ against the two-sided alternative $H_1 : \mu \neq 1$:
+
+```{r}
 t.test(randsample1, mu = 1) # two-sided by default
 ```
 
 ## For a difference between two means
+
+Testing the null $H_0 : \mu_1 = \mu_2$ against the two-sided alternative $H_1 : \mu_1 \neq \mu_2$.
 
 ```{r}
 t.test(randsample1, randsample2)
 ```
 
 ## For independence (especially with categorical variables)
+
+Testing the null hypothesis $H_0 :$ `Sex` and `Smoke` are independent.
 
 ```{r}
 counts <- table(survey$Sex, survey$Smoke)
