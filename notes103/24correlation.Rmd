@@ -1,0 +1,206 @@
+---
+title: "Lecture 24 - Correlation and covariance"
+author: "Joshua Loftus"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggthemes)
+library(ggrepel)
+library(nycflights13)
+library(fivethirtyeight)
+library(MASS)
+set.seed(1)
+```
+
+#### Outline
+
+- Covariance: interaction between variables
+- Correlation: standardized covariance
+- Summarizing two continuous variables
+- Things to worry about
+
+## Covariance
+
+- Until this point we've focused on methods studying one variable (at a time), or *independent* and identically distributed samples of one random variable
+- Now we'll start considering relationships between two variables, and dependence
+- Here's an example plot to get a visual idea about what we're doing:
+
+```{r}
+mpg2008 <- filter(mpg, year == "2008")
+mpgplot <- ggplot(mpg2008, aes(cty, hwy)) +
+    theme_tufte() + 
+    ggtitle("Miles per gallon") +
+    geom_text_repel(data = subset(mpg2008, cty >= 26 | cty == 9),
+                      mapping = aes(label = model))
+mpgplot + geom_point(alpha = .5)
+mpgplot + geom_point() + geom_jitter()
+``` 
+
+### Mathematical background
+
+- We'll start with a bit of math and then move to data, interpretation, more plots, etc
+
+- Think about two random variables, $X$ and $Y$.
+- Remember linearity for expectation? $E[X + Y] = E[X] + E[Y]$
+- For variance, we needed independence: if $X$ and $Y$ are independent, then $\text{Var}(X + Y) = \text{Var}(X) + \text{Var}(Y)$
+- What if $X$ and $Y$ are *not* independent? (i.e. are dependent)
+- **Covariance** measures how they vary together:
+$$
+\text{Cov}(X, Y) = E[(X- E[X])(Y - E[Y])]
+$$
+- Roughly speaking:
+- If larger values of $X$ occur together with larger values of $Y$, their covariance is positive
+- If larger values of $X$ occur with smaller values of $Y$, their covariance is negative
+
+- What is $\text{Cov}(Y,X)$? (symmetry)
+- What is $\text{Cov}(X,X)$? ($\text{Var}(X)$)
+- If $E[X] = E[Y] = 0$, then $\text{Cov}(X,Y) = E[XY]$
+- What if we add a consant to $X$, what happens to the covariance?
+
+- Now we can answer this old question:
+$$
+\text{Var}(X + Y) = \text{Var}(X) + 2\text{Cov}(X,Y) + \text{Var}(Y)
+$$
+- Does this formula remind you of something in algebra? $(x+y)^2 = x^2 + 2xy + y^2$ (not a coincidence!)
+
+### Calculating from samples of data
+
+- Covariance between two random variables can be thought of as another unknown parameter
+- We now focus on calculating the **sample covariance** when we have data
+- (This is another example of using the plug-in principle to estimate an unknown parameter)
+
+- The data has to come in pairs: $(X_1, Y_1), (X_2, Y_2), \ldots, (X_n, Y_n)$.
+- One way of thinking about this is that it makes sense to put them in columns next to each other in the same spreadsheet
+- Remember the paired $t$-test for a difference in means? Similarly, it makes sense if observations of $X$ and $Y$ are measuring two aspects of one underlying thing, like city and highway mpg for the same car, or expenses and earnings for the same company
+- If the two variables aren't measured in pairs like this, we can't calculate covariance
+- Why is that? (Example: midterm grades and hours studying per week)
+
+- The sample covariance formula is
+$$
+\text{cov(X,Y)} = \frac{1}{n-1} \sum_{i=1}^n (x_i - \bar x)(y_i - \bar y)
+$$
+- In spreadsheet terms: first center each variable by subtracting its mean, then multiply the two centered variables together, then take the average of that product
+
+
+- Example using `R` functions for covariance:
+```{r}
+n <- 30
+X <- runif(n)
+Y <- 2*X^2 + .5*rnorm(n)
+# Scatterplot
+qplot(X, Y) + theme_tufte()
+# Calculate covariance
+X_centered <- X - mean(X)
+Y_centered <- Y - mean(Y)
+XY_centered_product <- X_centered * Y_centered
+sum(XY_centered_product)/(n-1)
+# Check our answer with R's built in covariance function
+cov(X,Y)
+# Check the variance summation formula
+var(X+Y)
+var(X) + 2*cov(X,Y) + var(Y)
+```
+
+- Covariance of the mpg data:
+
+```{r}
+cov(mpg2008$cty, mpg2008$hwy)
+```
+
+- In summary, covariance measures how two variables change together
+- We'll get better interpretability by standardizing, which is what we do next
+
+## Correlation
+
+### Standardization
+
+- Covariance depends on the scale, or units, of $X$ and $Y$
+- For example: $\text{Cov}(aX, bY) = ab \text{Cov}(X,Y)$
+- To get a scale-free version, we standardize $X$ and $Y$ by their standard deviations
+- Write $\sigma_X$ and $\sigma_Y$ for the standard deviations, e.g. $\sigma_X = \sqrt{E[(X-E[X])^2]}$.
+- The **correlation** between $X$ and $Y$ is
+$$
+\text{Cor}(X,Y) = \frac{\text{Cov}(X,Y)}{\sigma_X \sigma_y}
+$$
+- Correlation is always between plus and minus one: $-1 \leq \text{Cor}(X,Y) \leq 1$.
+- Like covariance, if it is positive it means $X$ and $Y$ both increase together, and if it is negative it means one decreases as the other increases
+- The closer correlation is to 1 or -1, the closer the relationship between $X$ and $Y$ is to a perfectly straight line
+
+```{r}
+Z <- 1.5 * X + 3
+qplot(X, Z) + theme_tufte()
+cor(X, Z)
+```
+
+- See these [interesting examples](https://en.wikipedia.org/wiki/Pearson_correlation_coefficient#/media/File:Correlation_examples2.svg) for more intuition
+
+### Calculating the sample version
+
+- First, standardize each variable (e.g. $x$) by subtracting its mean ($\bar x$) and dividing by its sample standard deviation ($s_x$)
+- Then calculate the covariance of the standardized variables
+
+$$
+\text{cor}(X,Y) = \frac{1}{n-1} \sum_{i=1}^n \left(\frac{x_i - \bar x}{s_x} \right)\left(\frac{y_i - \bar y}{s_y} \right)
+$$
+
+- Example code verifying this formula with the `R` function `cor`
+```{r}
+n <- length(X)
+X_standarized <- (X - mean(X))/sd(X)
+Y_standarized <- (Y - mean(Y))/sd(Y)
+sum(X_standarized * Y_standarized)/(n-1)
+cor(X,Y)
+cov(X_standarized, Y_standarized)
+```
+
+## Summarizing data
+
+- If we have a sample that measures two variables, we could summarize them by reporting their means, standard deviations, and correlation
+- Is that a good idea though?... (see next section)
+
+## Things to worry about
+
+### Is covariance/correlation meaningful?
+
+- Both covariance and correlation can be misleading if they are used for random variables or data that has either of the following issues
+
+- **Non-linear** relationships
+
+```{r}
+n <- 100
+x <- runif(n, min = -1, max = 1)
+nonlinear <- data.frame(x=x, y = x^2 + .1*rnorm(n))
+ggplot(nonlinear, aes(x, y)) + geom_point() + theme_tufte()
+# Is the (linear) correlation a meaningful summary of this relationship?
+cor(nonlinear$x, nonlinear$y)
+```
+
+- Highly **non-normal distributions**, i.e. if means aren't useful summaries (e.g. very skewed or multimodal distributions)
+
+```{r}
+movies <- bechdel[complete.cases(bechdel),]
+ggplot(movies, aes(budget_2013, intgross_2013)) +
+  geom_point(alpha = .3) + 
+  geom_rug(size = .1, alpha = .3) +
+  theme_tufte()
+with(movies, cor(budget_2013, intgross_2013))
+```
+
+- We can still calculate covariance and correlation, but they just don't have the same intuition meaning or interpretation in these cases
+
+### Take home message: always plot the data
+
+- [Anscombe's quartet](https://en.wikipedia.org/wiki/Anscombe%27s_quartet) - an interesting example we'll come back to after regression
+
+```{r}
+anscombe_m <- data.frame()
+for(i in 1:4)
+  anscombe_m <- rbind(anscombe_m,
+                      data.frame(set=i, x=anscombe[,i], y=anscombe[,i+4]))
+ggplot(anscombe_m, aes(x, y)) + 
+  geom_point() + theme_minimal() +
+  facet_wrap(~set, ncol=2)
+```
