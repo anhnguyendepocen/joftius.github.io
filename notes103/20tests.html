@@ -233,14 +233,14 @@ $(document).ready(function () {
 </ul>
 <p><span class="math display">\[
 P_0\left (-z_{.975} &lt; \frac{\bar X - \mu_0}{\sigma/\sqrt{n}} &lt; z_{.975} \right) = 0.95
-\]</span> - Reject if <span class="math inline">\(|\bar X - \mu_0|/\sigma\)</span> is larger than <span class="math inline">\(z_{.975} \approx 1.96\)</span></p>
+\]</span> - Reject if <span class="math inline">\(|\bar X - \mu_0|/(\sigma/\sqrt{n})\)</span> is larger than <span class="math inline">\(z_{.975} \approx 1.96\)</span></p>
 <p>If <span class="math inline">\(\sigma\)</span> is <strong>unknown</strong> (most common in real data examples), use <span class="math inline">\(t\)</span>-test</p>
 <ul>
 <li>e.g. for a one-sided (greater) test</li>
 </ul>
 <p><span class="math display">\[
 P_0\left (\frac{\bar X - \mu_0}{S/\sqrt{n}} &lt; t_{n-1,.95} \right) = 0.95
-\]</span> - Reject if <span class="math inline">\((\bar X - \mu_0)/S\)</span> is larger than <span class="math inline">\(t_{n-1,.95}\)</span>. e.g. if <span class="math inline">\(n = 100\)</span></p>
+\]</span> - Reject if <span class="math inline">\((\bar X - \mu_0)/SE\)</span> is larger than <span class="math inline">\(t_{n-1,.95}\)</span>. e.g. if <span class="math inline">\(n = 100\)</span></p>
 <pre class="r"><code>qt(.95, 99)</code></pre>
 <pre><code>## [1] 1.660391</code></pre>
 <ul>

@@ -124,7 +124,7 @@ If $\text{Var}(X_i) = \sigma^2$ is **known**, test is based on the normal distri
 $$
 P_0\left (-z_{.975} < \frac{\bar X - \mu_0}{\sigma/\sqrt{n}} < z_{.975} \right) = 0.95
 $$
-- Reject if $|\bar X - \mu_0|/\sigma$ is larger than $z_{.975} \approx 1.96$
+- Reject if $|\bar X - \mu_0|/(\sigma/\sqrt{n})$ is larger than $z_{.975} \approx 1.96$
 
 If $\sigma$ is **unknown** (most common in real data examples), use $t$-test
 
@@ -133,7 +133,7 @@ If $\sigma$ is **unknown** (most common in real data examples), use $t$-test
 $$
 P_0\left (\frac{\bar X - \mu_0}{S/\sqrt{n}} < t_{n-1,.95} \right) = 0.95
 $$
-- Reject if $(\bar X - \mu_0)/S$ is larger than $t_{n-1,.95}$. e.g. if $n = 100$
+- Reject if $(\bar X - \mu_0)/SE$ is larger than $t_{n-1,.95}$. e.g. if $n = 100$
 
 ```{r}
 qt(.95, 99)
