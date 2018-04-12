@@ -1,5 +1,5 @@
 ---
-title: "Scatterplots and regression lines"
+title: "Lecture 25 - Scatterplots and regression lines"
 author: "Joshua Loftus"
 output: html_document
 ---
@@ -16,10 +16,13 @@ set.seed(1)
 
 #### Outline
 
-- Creating scatterplots
+- Creating scatterplots (and some other cool features)
+- Transforming variables / changing scales
 - Adding regression lines
-- Adding smooth curves
-- Interpretation
+- Visualizing "errors"
+- What's special about the regression line?
+- What IS the regression line?
+- Regression vs correlation
 
 ## Scatterplots
 
@@ -59,11 +62,11 @@ movie_plot <- ggplot(movies, aes(budget_2013, intgross_2013)) +
 movie_plot + geom_point(alpha = .2)
 ```
 
-### Transforming variables / changing axis scales
+## Transforming variables / changing axis scales
 
 ```{r}
 log_movie_plot <- movie_plot +
-  geom_point(alpha = .2, aes(color = binary)) +
+  geom_point(alpha = .5, aes(color = binary)) +
   scale_x_log10() + scale_y_log10()
 log_movie_plot
 ```
@@ -124,7 +127,7 @@ gm_plot + scale_x_log10() +
   geom_smooth(method = "lm", se = FALSE)
 ```
 
-### Errors of the model
+## Errors of the model
 
 ```{r}
 # Error: vertical distance from point to line
@@ -154,6 +157,8 @@ gm_plot +
 
 ### Do the errors overall seem smaller or larger for this vs the regression line?
 
+## What's special about the regression line?
+
 Let's **square all the errors** and then take the **sum** (SSE = sum of squared errors)
 
 ```{r}
@@ -161,6 +166,54 @@ gm2007 %>% mutate(
   reg_err = lifeExp - log_pred,
   other_err = lifeExp - some_other_line) %>%
   summarize(
-    reg_SSE = mean(reg_err^2),
-    other_SSE = mean(other_err^2))
+    reg_SSE = sum(reg_err^2),
+    other_SSE = sum(other_err^2))
 ```
+
+### Among all straight lines, the regression line has the smallest possible sum of squared errors
+
+## What IS the regression line?
+
+- Astronomers in the 1700's
+- Carl Friedrich Gauss developed it the most, inventing the normal distribution in the process
+- The asteroid/dwarf planet Ceres, discovered in 1801, tracked for 40 days, but then disappeared behind the sun
+- Gauss predicted where it would be using regression, and astronomers found it using his predictions almost a year after they lost track of it
+- (This was a pretty big moment in the history of science / statistics)
+
+- Now we need some mathematical notation.
+
+- Remember the equation for a line? $y = mx + b$
+- Slope: $m$
+- Intercept: $b$
+- We're going to use different notation: $y = \beta_0 + \beta_1 x$
+
+- Data: $(x_1, y_1), (x_2, y_2), \ldots, (x_n, y_n)$ assuming $X$ and $Y$ are continuous, these are $n$ points 
+- Data usually doesn't fit exactly on a line (unless the *correlation* equals...?)
+- So we allow **errors** in the equation
+$$
+y_i = \beta_0 + \beta_1 x_i + e_i
+$$
+
+
+
+### The coefficients $\beta_0, \beta_1$ and the errors $e_i$ are unknown
+
+- How could we pick the best coefficients?
+- How could we get the smallest errors?
+- We'll come back to this next time
+
+## Regression vs correlation
+
+| Regression | Correlation |
+------------|---------------
+| Slope can be any number | Cor. between -1 and 1 |
+| Slope positive | Correlation positive |
+| Slope negative | Correlation negative |
+| Large slope? | Not necessarily large cor. |
+| Points are close to line if... | Correlation is close to -1 or 1 |
+| Intercept | No intercept |
+| Not symmetric | Symmetric |
+| Switch axes? Different line | Switch axes? Same correlation |
+| One variable is predictor, other is outcome | No distinction between variables |
+| Prediction errors measured vertically | Not usually used for prediction |
+
