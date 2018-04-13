@@ -168,3 +168,30 @@ $$
 
 ### 3. 
 
+You are consulting for a company that wants to assess different versions of its product. The company obtains data by presenting each version to a different set of its customers and asking them to rate the quality. The company has many customers, but a limited budget for this project. Describe what statistical method you would use in each scenario below, giving as much detail as you can, and anticipating any practical aspects of the process that you have learned about.
+
+#### a.
+
+The company's standard product is yellow, but they are considering introducing a blue version. They want to know if the average quality rating for the blue one is higher, but they don't want to begin production unless they are sure about the quality increase. How can they answer this question?
+
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+### b. 
+
+There are versions of the product with different numbers of decorative buttons, ranging from 2 up to 20 buttons. Before designing a new product inspired by the current one, the company wishes to find out if the quality rating is higher or lower for a larger number of buttons. What could they do to answer this question?
+
+
