@@ -1,0 +1,123 @@
+---
+title: "Lecture 26 - Regression coefficients: estimation and interpretation"
+author: "Joshua Loftus"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggthemes)
+library(ggrepel)
+library(fivethirtyeight)
+library(gapminder)
+options(scipen=999)
+set.seed(1)
+```
+
+#### Outline
+
+- Equations for a line
+- Coefficient estimation
+- Coefficient interpretation
+
+## Review
+
+- What is covariance? Correlation?
+- How is a regression line different from these?
+- What do they have in common?
+- Which variable is the outcome?
+- How are the errors measured?
+- What's special about the regression line?
+
+## Equations for a line
+
+- Since linear regression uses straight lines, it will help to remember these facts about them
+
+- Equation for a line using slope and intercept: $y = mx + b$
+- We use different notation: $y = \beta_0 + \beta_1 x$
+- $\beta_0$ and $\beta_1$ are often called **coefficients** (in computer science: weights)
+- Suppose $(x_0, y_0)$ is a point on the line, so $y_0 = m x_0 + b$
+- Equation for a line using slope and point: $y - y_0 = \beta_1(x - x_0)$
+- What point can be used in this formula to get the slope and intercept version?
+
+- Slope measures change in $y$ when $x$ changes by one unit
+- If $x$ changes from $x_0$ to $x_0 + 1$, then $y$ changes from $y_0$ to $y_0 + \beta_1$
+- This fact can be used to draw the line
+- Another strategy for drawing: find two points on the line and connect them. We'll come back to this later
+
+```{r}
+range <- data.frame(x = c(-2,0), y = c(0, 1))
+ggplot(range, aes(x, y)) + ylim(c(-3,3)) + xlim(c(-3,3)) +
+  geom_point(size = 2) +
+  geom_abline(slope = 1/2, intercept = 1, color = "blue") +
+  geom_abline(slope = -1, intercept = -1, linetype = 2) +
+  theme_minimal()
+```
+ 
+## Coefficient estimation
+
+- Data: $(x_1, y_1), (x_2, y_2), \ldots, (x_n, y_n)$ assuming $X$ and $Y$ are continuous, these are $n$ points 
+- Data usually doesn't fit exactly on a line (unless the *correlation* equals...?)
+- So we allow **errors** in the equation for the line
+$$
+y_i = \beta_0 + \beta_1 x_i + e_i
+$$
+
+### The coefficients $\beta_0, \beta_1$ and the errors $e_i$ are unknown
+
+- Everything we've learned so far about **estimation** applies here!
+- Goal: use the data to calculate sample estimates of coefficients: $\hat \beta_0$ and $\hat \beta_1$
+- Previously we saw some regression lines calculated for us by the `lm` function in `R`
+- How does that work? How can we do it ourselves?
+
+
+```{r}
+gm2007 <- filter(gapminder, year == "2007")
+ggplot(gm2007, aes(gdpPercap, lifeExp)) +
+  geom_point() + theme_minimal() +
+  ggtitle("How can we compute the regression line?")
+```
+
+### Slope: calculating from sample correlations and standard deviations
+
+- Last time we learned that the slope $\beta_1$ has the same *sign* as the correlation between $x$ and $y$ (both are positive or both are negative)
+- Let $r = \text{cor}(x, y)$, and $s_x$ is the sample standard deviation of $x$, likewise for $s_y$
+- The exact relationship is this:
+$$
+\hat \beta_1 =  r \cdot \frac{s_y}{s_x}
+$$
+- **This is an important relationship to remember**
+- We'll come back to it when we think about interpretation 
+
+### Intercept: calculating from sample means
+
+- Now that we know the slope, if we knew a point on the line then we could use the slope + point equation for a line
+- Let $\bar x$ and $\bar y$ be the sample means of the $x$ and $y$ variables
+- The estimated regression line always passes through one interesting point: the mean of the data $(\bar x, \bar y)$
+- So if $\hat \beta_0$ and $\hat \beta_1$ are the sample linear regression coefficients, we know
+$$
+\bar y = \hat \beta_0 + \hat \beta_1 \bar x
+$$
+- We can use this to calculate $\hat \beta_0$ if we already know $\hat \beta_1$ and the means:
+$$
+\hat \beta_0 = \bar y - \hat \beta_1 \bar x
+$$
+
+
+## Interpretation
+
+- Fitted regression line passes through the center of the data $(\bar x, \bar y)$
+- The slope $\hat \beta_1$ tells us how the predicted outcome $\hat y$ changes if the predictor variable $x$ changes
+- If $x$ increase by one unit, then $\hat y$ increases by $\hat \beta_1$ units
+- (Note that $x$ and $y$ may use different units, e.g. 2007 inflation-adjusted US dollars per person for GDP per capita and years for life expectancy)
+$$
+\hat \beta_1 =  r \cdot \frac{s_y}{s_x}
+$$
+- If $x$ increases by one standard deviation $s_x$, then the predicted outcome $\hat y$ increases by $r$ times the standard deviation $s_y$
+- Plugging any value of $x$ into $\hat \beta_0 + \hat \beta_1 x$ gives a predicted outcome, but this may be a bad idea if $x$ is outside the range of the data
+- Remember that the fitted regression line comes from an equation using **estimates** $\hat \beta_0, \hat \beta_1$
+
+- A few things to think about:
+- What would happen if we gathered a new sample of data and calculated the estimated coefficients again?
+- How accurate are the estimates? Does the accuracy depend on sample size?
