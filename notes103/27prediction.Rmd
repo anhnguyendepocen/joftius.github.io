@@ -1,0 +1,141 @@
+---
+title: "Lecture 27 - Prediction and errors"
+author: "Joshua Loftus"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggthemes)
+library(ggrepel)
+library(fivethirtyeight)
+library(gapminder)
+options(scipen=999)
+set.seed(1)
+```
+
+#### Outline
+
+- Computing coefficients in R
+- Predictions and errors
+- Extrapolation
+
+### Computing coefficients
+
+- Last time we learned how to calculate sample estimates $\hat \beta_0$ and $\hat \beta_1$ of the regression coefficients
+- Use sample standard deviations and correlation to get the slope:
+$$
+\hat \beta_1 =  r \cdot \frac{s_y}{s_x}
+$$
+- Then use sample means and slope to get the intercept:
+$$
+\hat \beta_0 = \bar y - \hat \beta_1 \bar x
+$$
+
+- Calculating two variable summary in `R`:
+
+```{r}
+gm2007 <- filter(gapminder, year == "2007")
+gm2007 %>% summarize(
+  meanx = mean(gdpPercap),
+  meany = mean(lifeExp),
+  sdx = sd(gdpPercap),
+  sdy = sd(lifeExp),
+  r = cor(lifeExp, gdpPercap)
+)
+```
+
+- Calculating regression coefficients from two variable summary
+
+```{r}
+beta1 <- cor(gm2007$lifeExp, gm2007$gdpPercap) * sd(gm2007$lifeExp) / sd(gm2007$gdpPercap)
+beta0 <- mean(gm2007$lifeExp) - beta1 * mean(gm2007$gdpPercap)
+c(beta0, beta1)
+```
+
+- Compare to coefficients calculated by `lm`
+
+```{r}
+gm_model <- lm(lifeExp ~ gdpPercap, data = gm2007)
+gm_model
+```
+
+## Prediction and errors
+
+### For points in the data
+
+- Each data point has an actual outcome $y_i$, but we can also predict the outcome using the regression model
+- Predicted values are written as: $\hat y_i = \hat \beta_0 + \hat \beta_1 x_i$
+- In other words, plug the value of the predictor variable $x$ into the linear equation
+- The error or **residual** is $\hat e_i = y_i - \hat y_i$
+- We'll go into more detail about residuals in a future lecture, but for now let's see an example
+
+- What's the predicted life expectancy for the United States?
+
+```{r}
+gm2007 %>% 
+  filter(country == "United States") %>%
+  select(gdpPercap, lifeExp)
+```
+
+```{r}
+59.6 + 0.000637 * 42951
+```
+
+- What's the residual?
+
+```{r}
+78.24 - 86.96
+```
+
+
+- Plotting all the predicted values
+
+```{r}
+gm2007$lifeExpPrediction <- predict(gm_model)
+ggplot(gm2007, aes(gdpPercap, lifeExpPrediction)) +
+  geom_point() + theme_tufte()
+```
+
+- Plotting all the residuals
+
+```{r}
+gm2007$errors <- residuals(gm_model)
+qplot(gm2007$errors, bins = 20) + theme_tufte()
+ggplot(gm2007, aes(gdpPercap, errors)) +
+  geom_point() + 
+  geom_hline(yintercept = 0) +
+  theme_tufte()
+```
+
+- We'll come back to plots of residuals when we discuss regression diagnostics
+
+### Extrapolation
+
+- Can use the regression line to get predictions for new points, ones that are not in our original data
+- A new point may not even have the outcome variable, but we can predict it using just the predictor variable
+- But beware! It may not work as well...
+
+- Suppose the population of Wakanda is about 12 million
+- GDP: over 90 trillion (an estimate of T'Challa's net worth)
+- GDP per capita is then at least 7,500,000
+- Predicted life expectancy based on this calculation...
+
+```{r}
+59.6 + 0.000637 * (7500000)
+```
+- It can be dangerous to predict for values **outside the range** of the predictor in the data
+- This is called **extrapolation** and it will probably yield larger errors than when predicting on values inside the original data
+
+- Safer, and useful: predicting an outcome for a new point when the predictor variable lies **within the range** seen in the original data. (e.g. for `gdpPercap` between 277 and 49,357)
+- Useful because we may not even have the actual outcome variable for a new data point. In this case, we can't calculate a residual
+
+### Recap
+
+- Plugging any value of $x$ into $\hat \beta_0 + \hat \beta_1 x$ gives a predicted outcome, but this may be a bad idea if $x$ is outside the range of the data
+- Remember that the fitted regression line comes from an equation using **estimates** $\hat \beta_0, \hat \beta_1$
+
+- A few things to think about:
+- What would happen if we gathered a new sample of data and calculated the estimated coefficients again?
+- How accurate are the estimates? Does the accuracy depend on sample size?
