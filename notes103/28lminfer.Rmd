@@ -1,0 +1,122 @@
+---
+title: "Lecture 28 - Inference for linear models"
+author: "Joshua Loftus"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggfortify)
+library(fivethirtyeight)
+library(gapminder)
+theme_set(theme_minimal())
+options(scipen=999)
+options(digits = 4)
+set.seed(1)
+```
+
+#### Outline
+
+- Hypothesis tests for coefficients
+- Confidence intervals for coefficients
+- Model diagnostic plots
+
+## Example: candy rankings data
+
+```{r}
+head(candy_rankings)
+```
+
+- We'll use the `sugarpercent` variable to predict `winpercent`
+
+## Fit a linear model
+
+### The `lm` function
+
+To compute a linear model, first use the function `lm(outcome_var ~ preditor_var, data = name_of_data)`
+
+- Change `outcome_var` to the name of the variable you are trying to predict
+- Change `predictor_var` to the name of the variable you are using as a predictor
+- Change `name_of_data` to the name of the data set that has your variables
+- Store the output of this function in a new variable so we can reuse it multiple times:
+
+```{r}
+candy_model <- lm(winpercent ~ sugarpercent, data = candy_rankings)
+```
+
+Look at the basic information about the fitted model, including the estimated coefficients:
+
+```{r}
+candy_model
+```
+
+### Inference for the model
+
+#### Summary: p-values for each coefficient and r-squared for overall model
+
+Use `summary()` on the output from `lm()` to get (1) p-values for the coefficients and (2) the R squared measure of goodness of fit
+
+```{r}
+summary(candy_model)
+```
+
+- $p$-values for hypothesis tests of null hypotheses saying a variable's true coefficient is 0
+$$
+H_{0,j} : \beta_j = 0
+$$
+- Each coefficient is tested individually. The test statistic
+$$
+T = \frac{\hat \beta_j}{\text{SE}(\hat \beta_j)}
+$$
+is compared to a $t$-distribution with $n - p$ degrees of freedom, where $p$ is the number of coefficients (e.g. $p = 2$ for the simple linear model with one intercept and one slope)
+- The tail areas of the $t$-distribution are used to calculate the probability of observing a value of $T$ at least as extreme as the value in the data, assuming the null hypothesis $\beta_j = 0$ is true
+- The default is to give $p$-values for two-sided alternatives
+
+- The R-squared and Adjusted R-squared values measure how well the linear model explains the outcome variable
+- $R^2$ values should be between 0 and 1
+- Values close to 1 indicate the model fits the data very well
+- Values close to 0 indicate the model fits the data poorly
+- What counts as a good value? This depends on the application. In social sciences, biology, and finance, it may be common for low values of $R^2$ to still be considered impressive
+
+- It's possible, but rare, for Adjusted $R^2$ to be negative
+- Adjusted $R^2$ cannot be larger than $R^2$. It's usually better to focus on the Adjusted one.
+- Why is called "adjusted"? It's possible to increase $R^2$ by just putting more and more predictors into the model, even if they're not very good predictors. The adjusted $R^2$ is penalized for the number of predictors. We'll come back to this kind of idea soon when we talk about model selection
+
+#### Confidence intervals for each coefficient
+
+- Use `confint()` to get confidence intervals for the coefficients
+- Optionally specify a different confidence level with `confint(model, level = 0.99)` for example
+
+```{r}
+confint(candy_model)
+confint(candy_model, level = .99)
+```
+
+### Diagnostic plots to check the model
+
+- First, if you have not already installed it, install the `ggfortify` package with `install.packages("ggfortify")` and remember to load the package with `library(ggfortify)`
+- Use the `autoplot()` function from the `ggfortify` package to see multiple diagnostic plots for the fitted model:
+
+```{r}
+autoplot(candy_model) 
+```
+
+- **Residuals vs Fitted** (top left) - check for two things
+- (1) obvious patterns between the residuals and fitted values indicate possible non-linear relationships that the linear model has not captured
+- (2) the vertical spread of points should be roughly the same throughout the graph. If the points are more vertically spread in one part of the plot compared to another (like a triangle pointing left or right) this indicates *heteroscedastic errors* 
+
+- **Normal Q-Q** (top right) points far away from the diagonal line indicate residuals that are not normally distributed. The best case is to see the points lined up perfectly on the dashed diagonal line
+
+- **Scale-Location** (bottom left) interpret similarly to top left
+
+- **Residuals vs Leverage** (bottom right) points far toward the right have high leverage, and if the values of their residuals are also large (far from 0 in either direction) then those points may be outliers 
+
+### What if the diagnostic plots are super sketchy?
+
+- One common solution: look for non-linear relationships between predictors and the outcome. Create scatterplots and look for things like polynomial (quadratic, cubic) or exponential/logarithmic relationships. For example, if there appears to be a quadratic relationship between $x$ and $y$ then add $x^2$ to your predictors. Is the outcome variable highly skewed, like something involving money? Then consider predicting the logarithm of that variable instead--transform $y$ to $log(y)$.
+
+
+- These next solutions are advanced topics, and it is optional (not required) to read about them
+- Other possibilities, especially if the first solution above has failed: consider "robust" methods like [sandwich estimators](https://cran.r-project.org/package=sandwich) or the [wild bootstrap](https://cran.r-project.org/package=hcci)
+

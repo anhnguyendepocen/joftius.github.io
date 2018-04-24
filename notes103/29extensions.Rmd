@@ -1,0 +1,178 @@
+---
+title: "Lecture 28 - Extensions of the linear model"
+author: "Joshua Loftus"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggfortify)
+library(fivethirtyeight)
+library(ggthemes)
+theme_set(theme_tufte())
+options(scipen=999)
+set.seed(1)
+```
+
+#### Outline
+
+- Multiple regression
+- Categorical predictors
+- Non-linear transformations of predictors
+
+## Multiple regression
+
+- Regression is not just about lines in 2-dimensions!
+- What if we have more than one predictor variable?
+- More than one "slope" coefficient
+- If you like to think geometrically: instead of a line, we now have a $p$ dimensional plane to predict $y$. The actual values of $y$ can be above or below the plane, and the errors of the predictions are given by the vertical distance from the actual $y$ to the plane
+
+- Now we need two indexes, $1 \leq i \leq n$ for observations (rows of spreadsheet) and $1 \leq j \leq p$ for variables (columns of spreadsheet)
+- For individual $i$, the value of predictor variable $j$ is $x_{ij}$
+- Linear model:
+$$
+y_i = \beta_0 + \beta_1 x_{i1} + \beta_2 x_{i2} + \cdots + \beta_p x_{ip} + e_i
+$$
+- (This next point is optional)
+- If you're like me and can't get enough matrix/vector notation, this could also be written as
+$$
+y = X \beta + e
+$$
+where $X$ is the "design matrix" of predictor variabes, $y$ is the vector of outcomes, $\beta$ the vector of parameters, and $e$ the vector of errors
+
+- For example, in the `candy_rankings` data, there are $n = 85$ observations in the sample, and if we use both `sugarpercent` and `pricepercent` as predictor variables then $p = 2$, and for the $i$th candy we have
+$$
+\text{winpercent}_i = \beta_0 + \beta_1 \text{sugarpercent}_i + \beta_2 \text{pricepercent}_i + e_i
+$$
+- All the $x_{ij}$ values are known from the data, and the unknown parameters are $\beta_j$ for $j = 0,1, \ldots, p$
+
+- Formulas to calculate the coefficients now require **linear algebra**, so we won't go into them (but if you plan to take a more quantitative career path I strongly recommend trying to learn as much linear algebra as you can)
+- Aside from formulas to calculate coefficients, almost everything else we've learned so far about linear models works as straightforwardly as you could hope
+- After getting coefficients $\hat \beta_0, \hat \beta_1, \ldots, \hat \beta_p$, the predicted the outcome variable $\hat y_i$ is
+$$
+\hat y_i = \hat \beta_0 + \hat \beta_1 x_{i1} + \cdots + \hat \beta_p x_{ip}
+$$
+and the residual is
+$$
+y_i - \hat y_i 
+$$
+- Hypothesis tests for coefficients from the `summary()` function:
+
+```{r}
+candy_model <- lm(winpercent ~ sugarpercent + pricepercent, data = candy_rankings)
+summary(candy_model)
+```
+
+### Interpreting coefficients
+
+- What is the meaning of the coefficient $\beta_j$ of the predictor variable $x_j$?
+- Something about the change in $y$ if variable $x_j$ changes, right?
+- **Be careful when interpreting coefficients in multiple regression**
+- $\beta_j$ is the expected change in $y$ if we increase $x_j$ by one unit *while holding all the other predictor variables constant*
+- Think carefully about what it means to hold the other predictor variables constant, especially if any other predictors are correlated with $x_j$
+
+- Consider:
+
+- Suppose you had a model with GDP per capita as one predictor and GDP as another predictor. What would it mean to hold GDP per capita constant and increase GDP? What else would be changing in that case? What would it mean to hold GDP constant while increasing GDP per capita? What if we also include population as a third predictor, is it even meaningful in that case to hold two of them constant while changing the other?
+
+
+## Categorical predictors
+
+- It's common to have variables in your data that are not continuous, but categorical
+- Pretty simple to include in the linear model. There's one complication to watch out for, which we'll come back to after seeing an example
+
+- Interpret coefficients for categorical variables as intercepts for subsets of the data corresponding to certain categories
+- The `chocolate` variable in the `candy_rankings` data is `TRUE` for candies that have chocolate in them and `FALSE` otherwise
+- The estimated coefficient for `chocolateTRUE` below shows that candies with chocolate have on average about 18\% more popularity
+
+```{r}
+candy_model <- lm(winpercent ~ sugarpercent + chocolate, data = candy_rankings)
+summary(candy_model)
+```
+
+- Common to display information about categorical variables in plots using color, line types, point types, or facets (different panels for each group)
+- The plot below uses color and linetype, and demonstrates interpretation of coefficient for chocolate variable as giving a different intercept for candies that have chocolate
+
+```{r}
+candy <- candy_rankings
+candy$predicted <- predict(candy_model)
+ggplot(candy, aes(sugarpercent, winpercent,
+                  color = chocolate)) + 
+  geom_point() +
+  geom_line(aes(sugarpercent, predicted, linetype = chocolate))
+```
+
+### Categories relative to what baseline group?
+
+- If the model has an overall intercept, shared by all points, then it cannot have a separate intercept for each categorical group. If there are $L$ groups, it can only have $L-1$ intercepts.
+- In the above example, candies with chocolate (`chocolateTRUE`) and without are two groups, but there is only one coefficient for `chocolateTRUE`, not one for `chocolateFALSE`
+- This is because of a problem in linear algebra called "collinearity." Without going into details, you can imagine it's a problem if you put the same predictor variable in the model multiple times, with each copy getting its own separate coefficient. Now the model doesn't know how to distribute the true coefficient for that variable between its different copies
+- To get around this, you can delete the overall intercept term. In `R` you just put $-1$ in the formula with your predictors, like this:
+
+```{r}
+candy_model <- lm(winpercent ~ -1 + sugarpercent + chocolate, data = candy_rankings)
+summary(candy_model)
+```
+
+- Now we can see, for example, that the average win percent for all candies without chocolate is about 38\%
+- (We'll revisit this problem, collinearity, when we talk about model selection)
+
+## Non-linear transformations of predictors
+
+- Suppose there is a non-linear relationship between the outcome and one of the predictors:
+
+```{r}
+n <- 1000
+X <- runif(n, min = -2, max = 2)
+Y <- 1 + 2 * X - 1.7 * X^2 + rnorm(n)
+nldata <- data.frame(Y = Y, X = X)
+ggplot(nldata, aes(X, Y)) + 
+  geom_point(alpha = .5) +
+  stat_smooth(method = "lm", se = F)
+```
+
+```{r}
+autoplot(lm(Y ~ X, nldata), alpha = .2)
+```
+
+- Pretty obvious that the linear model isn't good!
+- Solution: transform the predictor variable and add that transformed predictor into the model
+
+```{r}
+nldata$Xsq <- X^2
+nlmodel <- lm(Y ~ X + Xsq, nldata)
+summary(nlmodel)
+```
+
+```{r}
+autoplot(nlmodel, alpha = .2)
+```
+
+- This is considered a linear model because the coefficient $\beta$ in front of $X^2$ is still just a slope:
+
+$$
+y_i = \beta_0 + \beta_1 x_i + \beta_2 x_i^2 + e_i
+$$
+
+### Interactions between predictors
+
+- Simple idea: multiply predictors together to get a new predictor
+- Easy to do in `R`:
+
+```{r}
+candy_model <- lm(winpercent ~ sugarpercent * chocolate, data = candy_rankings)
+summary(candy_model)
+```
+
+- Interpreting interactions depends on whether the variables are continuous or discrete. Discrete variables have interesting special cases. In the above example, we have an interaction between a discrete variable and a continuous one. This creates a different intercept *and* different slope for candies that have chocolate vs those that don't
+
+```{r}
+candy$predicted <- predict(candy_model)
+ggplot(candy, aes(sugarpercent, winpercent,
+                  color = chocolate)) + 
+  geom_point() +
+  geom_line(aes(sugarpercent, predicted, linetype = chocolate))
+```
+
+- From the above plot, would you conclude that the relationship between sugar and popularity is stronger for candies with chocolate than it is for those without?
