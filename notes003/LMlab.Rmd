@@ -1,0 +1,111 @@
+---
+title: "LMlab"
+author: "Your name here!"
+date: "4/23/2018"
+output: html_document
+---
+---
+title: "LMlab"
+author: "Your name here!"
+date: "4/23/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+######################################################################
+############# Run the following line once then delete it #############
+######################################################################
+install.packages("ggfortify")
+######################################################################
+########### Delete the previous line after running it once ###########
+######################################################################
+library(tidyverse)
+library(ggfortify)
+library(fivethirtyeight)
+library(gapminder)
+theme_set(theme_minimal())
+```
+
+## First load the data and look at it
+
+### First few rows of data
+
+Use the `head()` function to show the first few rows of `candy_rankings`
+
+```{r}
+
+```
+
+### Plot points we plan to predict
+
+Store the plot in a new variable so we can reuse it several times:
+
+```{r}
+candy_plot <- ggplot(candy_rankings, aes(sugarpercent, winpercent)) +
+  geom_point() 
+```
+
+Look at the plot the first time:
+
+```{r}
+candy_plot
+```
+
+## Fit a linear model
+
+### The `lm` function
+
+We use the function `lm(outcome_var ~ preditor_var, data = name_of_data)`
+
+- Change `outcome_var` to the name of the variable you are trying to predict
+- Change `predictor_var` to the name of the variable you are using as a predictor
+- Change `name_of_data` to the name of the data set that has your variables
+- Store the output of this function in a new variable so we can reuse it multiple times:
+
+```{r}
+#candy_model <- lm(change this)
+```
+
+Look at the basic information about the fitted model, including the estimated coefficients. Type `candy_model` below
+
+```{r}
+
+```
+- Can also use `coef()` function
+- Check: `coef(candy_model)[1]` and `coef(candy_model)[2]`
+
+Add the regression line to our previous plot. Add `stat_smooth(method = "lm", se = F)` to the `candy_plot` below
+
+```{r}
+#candy_plot + change this
+```
+
+### Inference for the model
+
+Use the `summary()` function on `candy_model` to get (1) p-values for the coefficients and (2) the R squared measure of goodness of fit
+
+```{r}
+
+```
+
+Use `confint()` on the `candy_model` to get confidence intervals for the coefficients
+
+```{r}
+
+```
+
+### Diagnostic plots to check the model
+
+Use `autoplot()` function (from the `ggfortify` package) on `candy_model` to see multiple diagnostic plots for the fitted model:
+
+```{r}
+
+```
+
+Create a scatterplot plot with `sugarpercent` (the predictor variable) on the horizontal axis and predicted outcomes on the vertical axis (hint: use `predict(candy_model)`)
+
+```{r}
+
+```
+
