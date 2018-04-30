@@ -1,0 +1,189 @@
+---
+title: "Lecture 31 - Optimization, overfitting, and (cross) validation"
+author: "Joshua Loftus"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggfortify)
+library(fivethirtyeight)
+library(gapminder)
+library(glmnet)
+library(ggthemes)
+theme_set(theme_tufte())
+options(scipen=999)
+options(digits=4)
+set.seed(1)
+```
+
+#### Outline
+
+- Optimization: math behind machine learning/AI
+- Statistical problem: overfitting
+- Solution: validation / testing / data splitting
+- Cross-validation: uses all the data for training and testing
+
+## Optimization
+
+- Optimization is an area of math that develops and analyzes methods for finding maximums or minimums of functions
+- [Much of it](https://en.wikipedia.org/wiki/Newton%27s_method) is based on calculus, but [not all](https://en.wikipedia.org/wiki/Bisection_method)
+- (It's extremely useful and one of the common prereqs for many of the most successful researchers or users of machine learning / AI / or even statistics. Along with linear algebra, if you have the chance to study optimization and it aligns with your goals I strongly recommend it)
+
+
+- We have already thought of linear regression as an optimization problem: find the best line (or plane/hyperplane for multiple regression), where best means smallest sum of squared errors
+
+$$
+\text{minimize}_{\beta_0, \beta_1} \sum_{i=1}^n (y_i - \beta_0 - \beta_1 x_i)^2
+$$
+
+- This notation means to pick the parameters $\beta_0$ and $\beta_1$ to minimize the sum of squared errors
+- The sample mean can also be thought of as the solution to an optimization problem: find the best constant to minimize the squared errors
+
+$$
+\text{minimize}_{\beta_0} \sum_{i=1}^n (y_i - \beta_0)^2
+$$
+
+- Many methods in statistics and machine learning can be described as optimization problems, with possibly more complicated kinds of functions
+
+$$
+\text{minimize}_{f} \sum_{i=1}^n (y_i - f(x_i))^2
+$$
+
+- The resulting model predicts $y$ using the function $f(x)$:
+
+$$
+y_i = f(x_i) + e_i
+$$
+
+- So far we have used a linear function: $f(x) = \beta_0 + \beta_1 x$
+- A method that has recently become very popular, deep learning, constructs complicated non-linear functions by composing many "layers" of simple non-linear functions
+
+$$
+\text{minimize}_{f_1, f_2, f_3} \sum_{i=1}^n (y_i - f_3[f_2(f_1[x_i])])^2
+$$
+- (If you compose linear functions, the resulting function is also linear, just with different coefficients)
+- (If you compose simple non-linear functions, the resulting function can be a very complicated non-linear one)
+
+- The issues we talk about today are not just issues with linear models, but with all kinds of similar methods in stats/ML/data science/AI
+- Common elements: data, modeling assumptions about what kinds of functions are reasonable, and algorithms to find a function in that class that "best" fits the data
+- Whenever we're trying to get the "best" of something, there is a danger of overfitting...
+
+## Overfitting
+
+- Google flu trends https://gking.harvard.edu/files/gking/files/0314policyforumff.pdf 
+- http://www.tylervigen.com/spurious-correlations
+
+- History example: https://xkcd.com/1122/
+- Math example: https://i.stack.imgur.com/2AUPV.jpg 
+
+
+- Last time we talked about one approach to prevent overfitting: penalizing complexity
+- Changes the optimization problem from minimizing the fit error only to minimizing that plus a penalty for the complexity of the model
+- In our previous example, model complexity was measured using the number of predictor variables
+- But it may not always be easy to figure out how to measure or penalize model complexity, so it would be nice to have a more general method to avoid overfitting
+- The methods we'll study today are very general, practical, popular, and especially appropriate if there is a large sample of data 
+
+## Validation
+
+- Split the data into two sets: a **training** set and a **test** set
+- Use optimization on the training set to fit models
+- Measure the accuracy of fitted models on the test set
+- Plot this test accuracy or test error rate as a function of model complexity
+- Choose complexity that gives the best test error
+
+
+- Split the data:
+
+```{r}
+n <- 300
+p <- 100
+beta <- c(rep(1, 3), rep(0, p - 3))
+X <- matrix(rnorm(n*p), nrow = n)
+y <- X %*% beta + rnorm(n)
+data <- data.frame(y = y, X = X)
+split <- sample(1:n, n/2, replace = FALSE)
+train <- data[split, ]
+test <- data[-split, ]
+```
+
+- Fit models on training data
+
+```{r}
+simple_model <- lm(y ~ X.1 + X.2 + X.3, data = train)
+full_model <- lm(y ~ ., data = train) # the . means "every variable in the data"
+
+# Number of predictor variables in each model
+c(summary(simple_model)$df[1],
+  summary(full_model)$df[1])
+
+# Adjusted R-squared
+c(summary(simple_model)$adj.r,
+  summary(full_model)$adj.r)
+```
+
+- Which model is better, the one with 3 predictors or the one with 100 predictors *including* those 3?
+
+- Evaluate models on the test data:
+
+```{r}
+errors <- data.frame(
+  model = c(rep("simple", n/2), rep("full", n/2)),
+  test_error = c((predict(simple_model, newdata = test) - test$y)^2,
+                 (predict(full_model, newdata = test) - test$y)^2))
+
+errors %>% group_by(model) %>% summarize(
+  median = median(test_error),
+  mean = mean(test_error)
+)
+```
+
+- This was kind of cheating, because I knew the first 3 variables were the right ones to use in the simple model
+- What if we don't know that? Can we use a model selection algorithm to pick the right variables?
+
+## Cross-validation 
+
+- Split the data into $K$ sets, often $K = 5$ or 10, for example. 
+- Use one of the sets as a test set, fitting models on the remaining $K-1$ sets and measuring their accuracy on this test set
+- Repeat the above for each of the $K$ sets
+- There are now $K$ measurements of accuracy for each model
+- Average these $K$ measurements
+- Plot this average as a function of model complexity
+
+
+- The code below uses the `glmnet` library, which has a function to use cross-validation to pick variables automatically using a method called the lasso
+
+```{r}
+x_train <- X[split, ]
+y_train <- y[split]
+x_test <- X[-split, ]
+y_test <- y[-split]
+model <- cv.glmnet(x_train, y_train, nfolds = 5)
+```
+
+- Let's look at a plot of the cross-validation model accuracy as a function of complexity
+
+```{r}
+autoplot(model)
+```
+
+- What are the fitted coefficients of the best model?
+
+```{r}
+coef(model)
+```
+
+- Cross-validation and the lasso found the right variables to include in the model! Only the first 3, and the rest of the variables are not included
+
+- As we saw before, the model using only the first three variables has better test error than the model which uses all 100 variables
+
+### Summary
+
+- Many cutting edge methods in ML/AI rely on optimization, just like linear regression
+- More complex models have more parameters and/or more complex types of functions to predict the outcome variable
+- Too much model complexity can lead to overfitting--for example, including too many predictor variables can make it seem like the model does a better job of prediction...
+- Test or validation prediction accuracy is a higher standard
+- Keep [this image](https://qph.fs.quoracdn.net/main-qimg-17ec84ff3f63f77f6b368f0eb6ef1890) in mind, and remember bias-variance tradeoff
+- Cross-validation is a very useful method (when the sample size is large enough) to automatically pick models with low test error
+
