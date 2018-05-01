@@ -1,0 +1,197 @@
+---
+title: "Lecture 31 - Using logistic regression for classification"
+author: "Joshua Loftus"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(broom)
+library(ggfortify)
+library(titanic)
+library(ggthemes)
+theme_set(theme_tufte())
+set.seed(1)
+```
+
+#### Outline
+
+- Classification: categorical outcome variables
+- Detour/diversion: a method for missing values (for a predictor variable)
+- Logistic regression
+
+## Classification of categorical outcome variables
+
+- So far we have only considered methods for predicting continuous outcome variables
+- We've seen that categorical predictor variables can easily be included in such models
+- But what about categorical *outcome* variables? 
+
+- Precision medicine example: use DNA measurements from tumors to determine the type of cancer, for a dataset with measurements from many patients who each have one of several types of cancer. After training a good model, new patients could have a culture of cancer cells taken and sequenced, the model would then "classify" the type of cancer, and the best treatment for that type can then be pursued
+
+- Loan default example: use predictor variables like credit rating and income of a borrower to predict which loans will default and which ones will not
+
+- Voting example: use a persons' online data, e.g. facebook likes, to predict which party they will vote for (or perhaps whether they will bother voting at all)
+
+- Image classification: input an image, and classify what kind of object appears in the image (demo TF classify?) 
+
+- Can you think of some examples? The categorical outcome variable could be binary, with only two possibilities, or it could have more categories, perhaps many!
+
+- Linear regression no longer applies! What could possibly be the meaning of an intercept or slope when the outcome is a category?
+
+- Good news: just like for regression, there are also many methods for classification.
+- Linear regression is probably the simplest method for predicting continuous outcomes
+- Today we'll study logistic regression, which is probably the simplest method for classification of a binary outcome variable
+
+- We'll use this dataset about passengers on the Titanic (passenger ship which sank in 1912, killing over 1,500 of the roughly 2,200 people on board)
+- The outcome variable we wish to classify is `Survived` -- which is self-explanatory...
+
+```{r}
+head(titanic_train)
+```
+
+## Missing values
+
+- Lots of statistical software, `R` included, tends to ignore missing values by default, and may not even give you a warning or error to tell you that it has done this! This is bad. It relies on an assumption that the missing values are missing *randomly*, i.e. the fact that they are missing does not tell you anything about the outcome variable... that assumption is rarely true.
+
+- Missing data is a very widespread problem in the real world
+- The `flights` and `gapminder` and `fivethirtyeight` datasets we've used in this class are somewhat unrealistic in this respect. This is generally what happens in most classes, because dealing with missing data is a bit irritating and could take up a lot of our time
+- But I don't want to send you into the world totally helpless if you encounter missing data, so I'll show you one possible way of dealing with missing values in a predictor variable
+
+### Check if you have missing values
+
+```{r}
+# Count number of missing values, if any, for each variable in the data
+titanic_train %>% 
+  summarise_if(function(var) any(is.na(var)),
+               function(var) sum(is.na(var)))
+```
+
+- The `Age` variable has `r sum(is.na(titanic_train$Age))` missing values, out of a sample of size `r nrow(titanic_train)`
+- No other variables have any missing values
+- (The code above can be used on other data sets where there are multiple variables with missing values and it would count the number of missing values for each)
+- (`dplyr` in the `tidyverse` is so cool, srsly)
+
+### Create a new categorical predictor to indicate missing values
+
+```{r}
+# leave out variables we don't want
+# create a new variable to indicate missing Age
+# set missing values of Age to 0
+titanic <- titanic_train %>% 
+  select(-PassengerId, -Name, -Ticket, -Cabin, -Embarked) %>% 
+  mutate(ageNA = as.numeric(is.na(Age))) %>% 
+  replace_na(list(Age = 0)) 
+head(titanic)
+```
+
+- Now the coefficient for the `Age` variable will have to be interpreted carefully: it quantifies the relationship between `Age` and the predicted outcome variable *conditional* on `Age` not being missing. This means the relationship does not apply to the whole sample, but only the subset of the sample without missing data.
+- The coefficient for our new categorical predictor, `ageNA`, quantifies how the predicted outcome changes for people whose `Age` variable is missing from the data. It's an overall shift, like an intercept, for this subset of the sample
+
+## Logistic regression
+
+- When the outcome variable has only two categories, we can call it binary, and name those categories `TRUE`/`FALSE` or 0/1. These are just names, so they don't change anything about how the model will work
+- So we'll consider an outcome variable $Y$ which is either 0 or 1, but everything we say here applies if the names are different. The `Survived` variable in the `titanic` data is 0 if the person died and 1 if they survived
+
+- In logistic regression, the goal is to predict $P(Y_i = 1 | X_i = x_i)$, where $X_i$ is the predictor variable
+- The original outcome is either 0 or 1, but the predicted outcome will be a probability, so it can be anything between 0 and 1
+- There's one complication: to get a linear model, we need to first do a non-linear transformation of $P(Y = 1|X = x)$, the specific function we use to transform it is called the "logit" or "log-odds" function
+- Let's use $p(x) = P(Y = 1 | X = x)$ as a shorthand to simplify the formula, then we can write the logistic regression model as
+$$
+\ln \left( \frac{p(x_i)}{1-p(x_i)} \right) = \beta_0 + \beta_1 x_i
+$$
+
+- The left hand side is the logit function, the right hand side is linear just like in regression
+- Just like with linear regression, we can also have more predictor variables on the right hand side, each getting their own coefficient
+- I'm not going to test you on these details. But you should be aware of logistic regression, understand generally what is its purpose and how to interpret it
+- Once you already know how to fit, summarize, and interpret linear models in `R`, it's easy to do the same for logistic regression!
+- Let's resume the `titanic` example
+- To fit a logistic regression model in `R`, use the `glm` function **and remember to specify** `family = binomial`
+
+```{r}
+fit <- glm(Survived ~ ., data = titanic, family = binomial)
+summary(fit)
+```
+
+- Difference: there is no longer an $R^2$, instead, for models like logistic regression (called generalized linear models or GLMs) the analogous measure is called "deviance." This could be used to compare or choose models, with lower deviance being considered a good thing
+- Difference: it's a little more complicated to interpret the coefficients. Usually you want to *exponentiate* them first
+
+- Consider the coefficient for the categorical predictor `Sexmale` which is `r coef(fit)[3]`. To exponentiate it we can use the function `exp()` like this:
+
+```{r}
+exp(coef(fit)[3])
+```
+- The interpretation of this (exponentiated) coefficient is that the predicted *odds* of survival for males are about 0.06 times the odds of survival for non-males, **holding all other variables constant**
+- (Remember the bolded phrase above? It's the same as for coefficients in linear regression, and it's one of the most important things to remember when interpreting coefficients!)
+- The *odds* is just the ratio of probability of surviving divided by probability of not-surviving
+$$
+P(Y = 1 | X)/P(Y = 0 | X)
+$$
+- When does the odds equal 1? What does it mean if the odds is less than 1, or greater than 1?
+
+- To restate the interpretation of the coefficient: predicted odds of survival for males, holding other predictors constant, equals about 0.6 times the predicted odds of survival for non-males, holding other predictors constant
+
+```{r}
+sv <- titanic %>% group_by(Sex) %>% 
+  summarize(Survival = mean(Survived)) %>% 
+  mutate(Odds = Survival/(1-Survival))
+sv
+sv$Odds[2] / sv$Odds[1]
+```
+
+- OMG, why is this about 0.08 instead of about 0.06, like we expected from the model?...
+
+
+```{r}
+titanic %>% group_by(Sex) %>% summarize_if(is.numeric, funs(mean = mean))
+```
+
+- Because "all other things being equal" is not true on average for the sample, there are differences in the other predictor variables between males and non-males 
+
+
+### What about the other variables? ageNA?
+
+```{r}
+exp(coef(fit))
+```
+
+- What does this mean? What's the relationship between the odds of survival for people whose age was missing in this data, compared to those whose age was not missing?
+
+- What about the meaning of the `Age` coefficient?
+
+### Predicting the outcome variable
+
+- Just like with linear models, we can use the `predict()` function
+- Tip: for logistic regression, to get predicted probability of $Y = 1$ instead of predicted log-odds, specify `type = "response"`
+
+```{r}
+titanic$predicted <- predict(fit, type = "response")
+tplot <- ggplot(titanic, aes(factor(Survived), predicted))
+tplot + geom_boxplot()
+tplot + geom_boxplot(aes(fill = Sex))
+```
+
+- How do we get to an actual classification of 0 or 1? "Thresholding" the predicted probability
+- Pick a cutoff $c$, and if the predicted survival probability is higher than $c$ then classify that observation as 1, otherwise classify as 0
+- Can choose $c$ to tradeoff between false positives and false negatives
+- This is useful if one of those kinds of errors is costlier than the other
+
+- Getting predicted *probabilities* out of this model is a cool advantage of logistic regression compared to some other classification methods which don't output probabilities
+- Why? Because I can also tell you, for each observation that I classify, how *confident* I am about that classification. Useful for identifying the cases that are harder to classify than others--ones with predicted probabilities close to the cutoff $c$--this information could be useful for further scientific/business decisions about what kind of data to try to gather in the future to improve predictions, for example
+
+### Diagnostic plots
+
+```{r}
+autoplot(fit)
+```
+
+- The interpretation here is a different than for a linear model. We won't go into more detail now. But you should know that many of the tools for analyzing/interpreting linear regression have closely analogous versions for logistic regression (and other GLMs)
+
+### Summary for interpreting logistic regression
+
+- Binary outcome variable
+- A model that predicts the "log odds" of this binary variable from a linear function of predictor variables
+- Coefficients should be exponentiated to be easier to interpret
+- After exponentiating them...
+- Coefficients for continuous variables show the increase of the predicted odds given an increase of one unit in that predictor **holding all other predictor variables constant**
+- Coefficients for discrete/categorical predictor variables show the *ratio* of the predicted odds between the groups determined by that categorical variable, for example, between males and non-males, or between people whose age is missing vs those whose age was known--again, **holding all other predictor variables constant**
