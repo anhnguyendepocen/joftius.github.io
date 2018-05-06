@@ -1,0 +1,97 @@
+---
+title: "Homework 9 solution"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggfortify)
+library(gapminder)
+theme_set(theme_minimal())
+options(scipen=999)
+options(digits=4)
+```
+
+## Predicting life expectancy from GDP in the gapminder data
+
+We will use data from the most recent year:
+
+```{r}
+gm2007 <- gapminder %>% filter(year == "2007")
+```
+
+In the rest of this homework, use `data = gm2007` the same way the lecture notes have used `data = candy_rankings`
+
+### Show first few rows of data below
+
+```{r}
+head(gm2007)
+```
+
+### Fit a linear model predicting life expectancy from GDP per capita
+
+
+### Summary of the model
+
+```{r}
+gm_model <- lm(lifeExp ~ gdpPercap, data = gm2007)
+summary(gm_model)
+```
+
+
+### Confidence intervals for coefficients
+
+```{r}
+confint(gm_model)
+```
+
+What is the lower limit of the 95\% confidence interval for the GDP per capita coefficient?
+
+The lower limit is `r confint(gm_model)[2,1]`
+
+### Diagnostic plots
+
+Use the `autoplot()` function to show diagnostics below.
+
+```{r}
+autoplot(gm_model)
+```
+
+Is there a pattern in the residuals? Do the residuals seem approximately normally distributed?
+
+There is a pattern in the residuals, first increasing and then decreasing as the fitted values increase (from left to right in the top left graph).
+
+The Q-Q plot shows that some of the largest positive residuals are far from normally distributed (top right of the Q-Q plot).
+
+### Transforming to log(GDP per capita)
+
+- Fit a model with `log(gdpPercap)` as the predictor variable instead of `gdpPercap`
+- Compute its summary, compare the value of R-squared to the one for the previous model
+
+
+```{r}
+gm_log_model <- lm(lifeExp ~ log(gdpPercap), data = gm2007)
+```
+
+- Show diagnostic plots for this model. Do the residuals have any more or less of an obvious pattern in them? Do they seem any more or less normally distributed?
+
+```{r}
+autoplot(gm_log_model)
+```
+
+The residuals seem to have less of an obvious pattern than in the previous model.
+
+In the Q-Q plot, the large negative residuals seem to be far from normally distributed.
+
+### If you could add one more variable, what would it be?
+
+Suppose we could add another variable to this dataset to include in the model. It could be anything related to a country's economy, environment, consumption of specific goods, percent of population with access to high speed internet--anything like this that you can imagine. The goal is to better predict life expectancy and show that GDP and this other variable are important variables for predicting life expectancy. **(1)** Which variable would you pick, and why? **(2)** How would you interpret the fitted coefficient for this variable after it is added to the model?
+
+Keep in mind that your ultimate goal is to tell an interesting story with the data.
+
+
+**(1)** I would like to include a variable like "percent of population living in cities vs rural areas."  I expect that life expectancy is lower in rural areas, so this variable may be important for predicting the average life expectancy for a country.
+
+**(2)** The coefficient for this variable would be the increase in predicted life expectancy for one percent increase in population living in cities, **holding gdp per capita constant**
+
