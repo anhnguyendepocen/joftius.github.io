@@ -1,0 +1,89 @@
+---
+title: "Lecture 33 - Pitfalls of regression"
+author: "Joshua Loftus"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(broom)
+library(ggfortify)
+library(titanic)
+library(ggthemes)
+theme_set(theme_tufte())
+set.seed(1)
+options(scipen=10)
+```
+
+#### Outline
+
+- Collinearity
+- Simpson's paradox and ecological regressions
+- Association is not causation
+- Measurement
+
+## Collinearity
+
+- Suppose we are doing a regression $y \sim x_1 + x_2 + x_3$
+- Collinearity is a potential problem among the predictor variables
+- Occurs when two predictor variables are highly correlated with each other $x_1 \sim x_2$
+- Or when some subset of predictor variables can be used to predict one of the other predictor variables $x_3 \sim x_1 + x_2$
+
+
+### Why it's bad
+
+- If the collinearity is very strong, it may not even be possible to calculate the coefficients properly. There will be large numerical error.
+
+- Stops us from including all the levels of different categorical variables, making it harder to interpret coefficients for several categorical predictors in the same model
+
+- Increases uncertainty about coefficients for the collinear variables (higher standard errors, wider confidence intervals)
+
+- Test error will likely be worse compared to training error (overfitting)
+
+### What to do
+
+- Avoid redundancy. If your data contains several variables which are essentially different ways of measuring the same thing, don't use all of them as predictors
+- Other methods are available but outside the scope of this class: principal components regression, ridge regression
+
+## Simpson's paradox and ecological correlation
+
+- Ecological correlation refers to when data has been aggregated in some way before being used for a correlation/regression analysis. For example, comparing data at the level of states or countries, rather than at the individual level
+
+- Ecological correlation can be misleading because of "Simpson's paradox," a term to describe when the relationship within each group is different than in the overall population
+
+- For example, it is possible there is a positive correlation between $Y$ and $X$ in the country overall, but within every state the correlation between $Y$ and $X$ is negative. How is this possible? (draw pictures)
+
+- Example: https://economix.blogs.nytimes.com/2013/05/01/can-every-group-be-worse-than-average-yes/ 
+
+- Simpson's paradox can also happen outside of ecological correlation, when instead of a grouping/aggregating variable (like state or country) there is some other kind of **confounding** variable that reverses the direction of the relationship
+
+- e.g. The Navy noticed that, for sailors who fell overboard, there was a negative correlation between survival and wearing a life jacket. **Why?** Because they usually wore life jackets during bad weather, but not during good weather, so those who fell over without jackets were falling into calm water, and those who fell with jackets were falling during storms. In this case the **weather** is a confounding variable
+
+- **How could we address this problem?** Regression, including every possible confounding variable as a predictor
+
+- e.g. to determine effect of life jackets on survival, need to **control for** weather by including it as a predictor varible in some way
+
+- How could we control for a grouping variable, like states? Include categorical predictor. What does this do?
+
+## Association is not causation
+
+- Remember the chocolate and Nobel prize [example](http://www.biostat.jhsph.edu/courses/bio621/misc/Chocolate%20consumption%20cognitive%20function%20and%20nobel%20laurates%20%28NEJM%29.pdf)?
+
+- It seems funny because it's *obviously* wrong, but what about life expectancy and GDP?
+
+- Keep in mind the [Bradford Hill criteria](https://en.wikipedia.org/wiki/Bradford_Hill_criteria) like strength (a large enough effect size to actually explain the outcomes), consistency (multiple studies from different sources, using different kinds of data and analysis), plausible mechanism ()
+
+## Measurement
+
+- http://andrewgelman.com/2015/04/28/whats-important-thing-statistics-thats-not-textbooks/ 
+- https://opentextbc.ca/researchmethods/chapter/reliability-and-validity-of-measurement/
+
+- Reliability: like reproducibility, if we did it again and possibly in a slightly different way would we get the same result?
+
+- Validity: are the variables in our data actually measuring what we claim to be using them for? 
+
+- Is the thing being measured actually worth measuring? Is the data just noisey garbage?
+
+- There is generally going to be a big difference between data that was collected passively and then later used for some reason that wasn't anticipated at the time of collection, and data that was collected to answer a specific question
+

@@ -1,0 +1,308 @@
+---
+title: "Final exam practice"
+author: Joshua Loftus
+output: pdf_document
+---
+
+```{r include=FALSE}
+library(tidyverse)
+library(forcats)
+library(ggthemes)
+library(ggfortify)
+library(nycflights13)
+library(fivethirtyeight)
+library(gapminder)
+library(knitr)
+library(broom)
+theme_set(theme_minimal())
+set.seed(1)
+```
+
+## Study recommendations
+
+- Read the lecture notes posted on the course page. You can mostly skip over `R` code, since there will be no coding on the exam. You should look at the output from the code, like test and confidence interval output, or plots. These notes should be sufficient to answer any exam problems, but you can also review the textbook references linked on the course page.
+- Review homework solutions.
+- Any topics covered in lectures may appear on the exam. This includes, for example:
+    - Concepts related to observational studies
+    - Probability and random variables
+    - Sampling distribution of the mean
+    - Parameter estimation and unbiasedness
+    - Mean-squared error and bias-variance tradeoff
+    - Law of large numbers and central limit theorem
+    - Confidence intervals and hypothesis tests for a mean, for a difference in means, and a hypothesis test for independence
+    - Relationship between sample size, confidence level, and width of confidence interval
+    - Null and alternative hypotheses
+    - Relationship between intervals and tests
+    - Significance level and confidence level
+    - Type 1 and type 2 errors
+    - Definition, interpretation, and calculation of $p$-values
+    - Use and misuse of $p$-values
+    - Relationship between effect size, sample size, and power
+    - Basic idea of how to calculate a large enough sample size
+    - Covariance, correlation, and linear relationships
+    - Regression lines and relationship with correlation
+    - Interpretation and estimation of regression model coefficients
+    - Interpretation of coefficients in multiple regression models
+    - Interpretation of coefficients for categorical predictors
+    - Reading summaries: estimates, p-values, adjusted R-squared, confidence intervals
+    - Using diagnostic plots to detect problems with linear models
+    - Interpretation of $F$-test for nested models
+    - (The following topics were only covered at a high level, so they may only be tested for basic concepts and not technical details)
+    - Model selection concepts including overfitting, penalizing complexity, using training and test data, and the relationships between complexity, bias, variance, and accuracy on the training vs test sets
+    - Purpose of logistic regression (predicting probability of a categorical outcome being 0 or 1)
+    - Collinearity, Simpson's paradox, association vs causation, measurement
+
+
+\newpage
+
+
+## Question 1
+
+We will fit a linear model using the `diamonds` dataset. There are two continuous variables, `price` and `carat` (the weight of the diamond), and three categorical variables (`cut`, `color`, `clarity`). The first few rows of data are shown below. 
+
+```{r echo = FALSE}
+ddata <- diamonds[,c(1:4, 7)] %>% mutate(
+  cut = fct_collapse(cut,
+                     OK = c("Fair", "Good", "Very Good"),
+                     Premium = c("Premium", "Ideal")),
+  color = fct_collapse(color,
+                       Bad = c("G", "H", "I", "J"),
+                       Good = c("D", "E", "F")),
+  clarity = fct_collapse(clarity,
+                         Bad = c("I1", "SI2", "SI1"),
+                         Good = c("VS2", "VS1", "VVS2", "VVS1", "IF"))
+)
+attributes(ddata$cut)$class <- "factor"
+attributes(ddata$color)$class <- "factor"
+attributes(ddata$clarity)$class <- "factor"
+head(ddata)
+```
+
+```{r include = F}
+dtrain <- ddata %>% sample_frac(.1)
+dtest <- setdiff(ddata, dtrain)
+```
+
+There are `r nrow(ddata)` rows in this dataset, each one is an observation corresponding to an individual diamond. Before analyzing the data, we first split it into two random subsets, a **training set** with `r nrow(dtrain)` observations and a **test set** with `r nrow(dtest)` observations.
+
+### Part (a)
+
+```{r echo = F} 
+dmodel <- lm(log(price) ~ carat + cut, data = dtrain)
+summary(dmodel)
+```
+
+\ 
+
+- What outcome variable is this model predicting?
+
+\ 
+
+\ 
+
+- What are the predictor variables?
+
+\newpage
+
+- What is the interpretation of the coefficient for `carat`? Does the fact that this coefficient is positive surprise you, or is it what you would expect?
+
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+- What are the interpretations for the coefficients of `(Intercept)` and `cutPremium`? Which one is larger, and does that surprise you or is it expected?
+
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+- Why are all the p-values extremely small even though the coefficients are not very large?
+
+\ 
+
+\ 
+
+\ 
+
+- What is the null hypothesis for the p-value in the first row of the summary (the row for the `carat` variable)?
+
+\ 
+
+\ 
+
+\ 
+
+- What is the null hypothesis for the p-value in the last line of the summary (the line with an F-statistic)?
+
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+- How would you interpret the adjusted R-squared for this model?
+
+
+
+
+### Part (b)
+
+```{r echo = F}
+autoplot(dmodel, alpha = .2)
+```
+
+- What problems can you identify with the model based on the above diagnostic plots? Describe each problem with one sentence.
+
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+- If you could do one thing to try to fix these problems, what would it be? (Hint: see the **first plot** below)
+
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+```{r echo = F, out.width = "90%"}
+ggplot(dtrain, aes(carat, price, color = cut)) + 
+  scale_y_log10() +
+  geom_point(alpha = .3, aes(shape = cut)) +
+  stat_smooth(method = "lm", se = F, aes(linetype = cut))
+```
+
+
+```{r echo = F, out.width = "90%"}
+dmodel2 <- lm(log(price) ~ carat + I(carat^2) + cut + color, data = dtrain)
+dtrain$predicted <- predict(dmodel2)
+ggplot(dtrain, aes(carat, predicted)) + 
+  geom_line(aes(linetype = cut, color = color)) + ylab("log(price)") +
+  geom_point(alpha = .3, aes(y = log(price), color = color, shape = cut)) 
+```
+
+### Part (c)
+
+- The **second plot** above shows four lines which are predictions given by a new model, Model 2. What predictor variables are in this new model? (Hint: there are more than one new variables included)
+
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+- The table below shows adjusted R-squared and residual sums of squares (test error) on the test set for three models in increasing order of model complexity. Why does the most complex model, Model 3, have the best adjusted R-squared but also a larger test error than the other models?
+
+```{r echo = F, warning = F}
+dmodel3 <- lm(log(price) ~  cut * color * clarity + poly(carat, 9), data = dtrain)
+TestRSS <- c(sum((log(dtest$price) - predict(dmodel, newdata = dtest))^2),
+  sum((log(dtest$price) - predict(dmodel2, newdata = dtest))^2),
+  sum((log(dtest$price) - predict(dmodel3, newdata = dtest))^2))
+AdjRsquared <- c(glance(dmodel)$adj, glance(dmodel2)$adj, glance(dmodel3)$adj)
+output <- rbind(AdjRsquared, TestRSS)
+colnames(output) <- c("Model 1", "Model 2", "Model 3")
+options(scipen = 100)
+print(output, digits = 3)
+```
+
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+- Sketch a graph below to show the relationship between model complexity, bias-squared, and variance. Label your horizontal axis and each line in the graph. Pick three values on the horizontal axis, one for each model above, and label them Model 1, Model 2, and Model 3.
+
+\newpage
+
+## Question 2
+
+In this question we are interested hypothesis tests and confidence intervals for a coefficient $\beta$ in a linear model.
+
+### Part (a)
+
+Suppose we test $H_0 : \beta = 0$ against the one-sided alternative $H_1 : \beta > 0$, and the $p$-value we obtain is 0.7. In the graph below, shade the region that (approximately) corresponds to this $p$-value. 
+
+```{r echo = F, out.width = "90%"}
+ggplot(data.frame(x = c(-3, 3)), aes(x)) + stat_function(fun = dnorm)
+```
+
+
+### Part (b)
+
+Suppose we switch to the opposite one-sided alternative $H_1 : \beta < 0$. Would this alternative give us a different $p$-value than the previous one? If not, why not? If yes, what is the new value?
+
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+### Part (c)
+
+Suppose that $\beta$ is included in a model with several other coefficients, $\beta_1$ and $\beta_2$, and we use an $F$-test to test the hypothesis $H_0 : \beta = \beta_1 = \beta_2 = 0$. If we reject this null hypothesis, does it mean that $\beta$ must be nonzero?
+
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+### Part (d)
+
+Suppose that $\hat \beta_1 > 0$ and $\hat \beta_2 < 0$. Does this mean the correlation between the outcome variable $y$ and the predictor $x_1$ is positive, and $\text{cor}(y, x_2) < 0$? Explain.
+
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+### Part (e)
+
+Suppose observations in the dataset correspond to small geographic regions like neighborhoods, $y$ is the rate of emergency room visits from that neighborhood due to asthma, and $x_1$ measures the concentration of air pollution. True or false, and explain: $\beta_1$ is the increase in rate of ER visits due to asthma caused by pollution, holding other predictors constant.
+
