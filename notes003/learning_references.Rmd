@@ -1,0 +1,60 @@
+---
+title: "References to learn more"
+author: "Joshua Loftus"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(broom)
+library(ggfortify)
+library(titanic)
+library(ggthemes)
+theme_set(theme_tufte())
+set.seed(1)
+options(scipen=10)
+```
+
+# Where to go from here?
+
+- You are now well positioned to learn more
+- There are many incredibly powerful tools and methods available through different R packages for just about any kind of data or question you can imagine
+
+### General learning references
+
+- [r-statistics.co](http://r-statistics.co/) is a good reference, see for example the sections on [time series](http://r-statistics.co/Time-Series-Analysis-With-R.html)
+
+- [UC R Business Analytics Guide](http://uc-r.github.io/) is very comprehensive, with in-depth help on R programming in general, and on many statistics / machine learning topics from beginning to an intermediate level. See for example the sections on [descriptive analytics](http://uc-r.github.io/descriptive) and [predictive analytics](http://uc-r.github.io/predictive)
+
+- [R For Data Science](r4ds.had.co.nz) is a free online book that will take you into more details on the extremely useful `tidyverse`
+
+- [Introduction to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/) is a book (pdf free on the website) going into an intermediate level of detail on the statistical aspects of machine learning (written by superstar authors!)
+
+- [Advanced Data Analysis from an Elementary Point of View](http://www.stat.cmu.edu/~cshalizi/ADAfaEPoV/) is a great in-depth textbook (with free pdf). Check out the sections "The truth about linear regression," "The **bootstrap**", and all of Part III on **causal inference**
+
+### Special topics
+
+- **Deep learning** using [Keras](https://keras.rstudio.com/) in R
+
+- A little [online book](https://a-little-book-of-r-for-time-series.readthedocs.io/en/latest/src/timeseries.html) on **time series**. Start here and read up to the end of the "Forecasts using exponential smoothing" section and you'll be off to a solid start
+
+- The [prophet](https://cran.r-project.org/web/packages/prophet/vignettes/quick_start.html) [R package](https://facebook.github.io/prophet/docs/installation.html), developed by Facebook's Core Data Science team for **forecasting with time series**
+
+- A free [online book](https://www.tidytextmining.com/) on mining and **analysis of text**
+
+- **Mixed effect models** are another very useful generalization of linear models, especially when the observations are grouped but you don't want to estimate the coefficients for different grouping categories. Here are two [blog](https://www.jaredknowles.com/journal/2013/11/25/getting-started-with-mixed-effect-models-in-r) [posts](https://ourcodingclub.github.io/2017/03/15/mixed-models.html) describing the basic ideas in R. This is a slightly more advanced statistical topic, but one that comes up very often in consulting (in my experience)
+
+- This [introductory book](http://bayes.cs.ucla.edu/PRIMER/) on **causal inference** is not free, but there are previews of some chapters
+
+
+### Interactive tools
+
+- Interactive web apps in R with [Shiny](http://shiny.rstudio.com/)
+
+- [Dashboards](https://rmarkdown.rstudio.com/flexdashboard/index.html) using Shiny
+
+### Something else you're interested in that you don't see here?
+
+- Email me if you have any questions and I will try to help!
+
