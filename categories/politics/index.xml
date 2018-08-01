@@ -7,10 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <managingEditor>lastname at nyu.edu (Joshua Loftus)</managingEditor>
     <webMaster>lastname at nyu.edu (Joshua Loftus)</webMaster>
-    <lastBuildDate>Fri, 23 Feb 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 31 Jul 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/categories/politics/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Russian twitter trolls attacked Bernie too</title>
+      <link>/post/russian-twitter-trolls-attacked-bernie-too/</link>
+      <pubDate>Tue, 31 Jul 2018 00:00:00 +0000</pubDate>
+      <author>lastname at nyu.edu (Joshua Loftus)</author>
+      <guid>/post/russian-twitter-trolls-attacked-bernie-too/</guid>
+      <description>(Foreign) Political influence campaigns on Twitter You may have seen stories about Twitter accounts operated by Russians attempting to influence the 2016 election in the United States. Much of the reporting that I’ve seen described a Simple Narrative: Russians tried to help trump and hurt Clinton, even supporting Bernie Sanders in order to attack Clinton. I’ve also seen plenty of Democrats on Twitter attacking Sanders over this. I have not seen any stories reporting the fact that many of these bots also attacked Sanders.</description>
+    </item>
     
     <item>
       <title>Algorithmic fairness is as hard as causation</title>
