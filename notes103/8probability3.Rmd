@@ -21,15 +21,14 @@ knitr::opts_chunk$set(echo = TRUE)
 - Suppose some facial recognition software attempts to identify people with an outstanding arrest warrant from a database of photos. It inputs a photo of a person and classifies as a match to the database, or not a match. If the photo input is someone does not have a warrant, there is a 1\% chance it will mistakenly match them anyway, but it is 100\% accurate otherwise.
 - This software is given camera feeds from all over the city
 - There is a match. What's the probability the match is accurate?
-- Let $M$ denote a declared match, and $W$ denote that the person actually has an outstanding warrant. We know $P(M | W) = 1$, and $P(M | W^c) = .99$
+- Let $M$ denote a declared match, and $W$ denote that the person actually has an outstanding warrant. We know $P(M | W) = 1$, and $P(M | W^c) = .01$
 - Do we have enough information?
-- Suppose the population is 1,000,000, and 1,000 have outstanding warrants $W$
-- Suppose therefore that on a given day there are 100,000 photos input to the algorithm, and 100 of these have $W$
-- All 100 of these are matches $M$
-- But also... 1\% of the 100,000 without $W$ *also* match $M$
-- 1,100 matches total, but only 100 of them have $W$
-- $P(W | M) = 0.01$
-- If police are dispatched to arrest every one of these matches, only 1 out of every 100 of those arrests would be warranted
+- Suppose that on a given day there are 100,000 photos input to the algorithm, and 1000 of these have $W$
+- All 1000 of these are matches $M$
+- ...But! 1\% of the 99,000 without $W$ *also* match $M$
+- 1,990 matches total, but only 1000 of them have $W$
+- $P(W | M) \approx 0.5$
+- If police are dispatched to arrest every one of these matches, only half of those arrests would be warranted
 
 - Bayes' theorem: 1763 - 1812 (Thomas Bayes, Richard Price, Pierre-Simon Laplace)
 - Switching between $P(E_2 | E_1)$ and $P(E_1 | E_2)$
@@ -42,9 +41,6 @@ knitr::opts_chunk$set(echo = TRUE)
 - If someone just scored a 3 point basket, who was it?
 - $P(Curry | B) = P(B | Curry)P(Curry)/P(James) = (.4)(.4)/(.6) = 0.267$
 - $P(James | B) = P(B | James)P(James)/P(Curry) = (.4)(.6)/(.4) = 0.6$
-
-- Example: quality control
-- Suppose we have 3 manufacturers producing computer chips
 
 ##### Random variables
 

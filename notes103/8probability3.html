@@ -139,15 +139,14 @@ $(document).ready(function () {
 <li>Suppose some facial recognition software attempts to identify people with an outstanding arrest warrant from a database of photos. It inputs a photo of a person and classifies as a match to the database, or not a match. If the photo input is someone does not have a warrant, there is a 1% chance it will mistakenly match them anyway, but it is 100% accurate otherwise.</li>
 <li>This software is given camera feeds from all over the city</li>
 <li>There is a match. What’s the probability the match is accurate?</li>
-<li>Let <span class="math inline">\(M\)</span> denote a declared match, and <span class="math inline">\(W\)</span> denote that the person actually has an outstanding warrant. We know <span class="math inline">\(P(M | W) = 1\)</span>, and <span class="math inline">\(P(M | W^c) = .99\)</span></li>
+<li>Let <span class="math inline">\(M\)</span> denote a declared match, and <span class="math inline">\(W\)</span> denote that the person actually has an outstanding warrant. We know <span class="math inline">\(P(M | W) = 1\)</span>, and <span class="math inline">\(P(M | W^c) = .01\)</span></li>
 <li>Do we have enough information?</li>
-<li>Suppose the population is 1,000,000, and 1,000 have outstanding warrants <span class="math inline">\(W\)</span></li>
-<li>Suppose therefore that on a given day there are 100,000 photos input to the algorithm, and 100 of these have <span class="math inline">\(W\)</span></li>
-<li>All 100 of these are matches <span class="math inline">\(M\)</span></li>
-<li>But also… 1% of the 100,000 without <span class="math inline">\(W\)</span> <em>also</em> match <span class="math inline">\(M\)</span></li>
-<li>1,100 matches total, but only 100 of them have <span class="math inline">\(W\)</span></li>
-<li><span class="math inline">\(P(W | M) = 0.01\)</span></li>
-<li><p>If police are dispatched to arrest every one of these matches, only 1 out of every 100 of those arrests would be warranted</p></li>
+<li>Suppose that on a given day there are 100,000 photos input to the algorithm, and 1000 of these have <span class="math inline">\(W\)</span></li>
+<li>All 1000 of these are matches <span class="math inline">\(M\)</span></li>
+<li>…But! 1% of the 99,000 without <span class="math inline">\(W\)</span> <em>also</em> match <span class="math inline">\(M\)</span></li>
+<li>1,990 matches total, but only 1000 of them have <span class="math inline">\(W\)</span></li>
+<li><span class="math inline">\(P(W | M) \approx 0.5\)</span></li>
+<li><p>If police are dispatched to arrest every one of these matches, only half of those arrests would be warranted</p></li>
 <li>Bayes’ theorem: 1763 - 1812 (Thomas Bayes, Richard Price, Pierre-Simon Laplace)</li>
 <li>Switching between <span class="math inline">\(P(E_2 | E_1)\)</span> and <span class="math inline">\(P(E_1 | E_2)\)</span></li>
 <li><p><span class="math inline">\(P(E_2 | E_1) = P(E_1 | E_2)P(E_2)/P(E_1)\)</span></p></li>
@@ -158,8 +157,6 @@ $(document).ready(function () {
 <li>If someone just scored a 3 point basket, who was it?</li>
 <li><span class="math inline">\(P(Curry | B) = P(B | Curry)P(Curry)/P(James) = (.4)(.4)/(.6) = 0.267\)</span></li>
 <li><p><span class="math inline">\(P(James | B) = P(B | James)P(James)/P(Curry) = (.4)(.6)/(.4) = 0.6\)</span></p></li>
-<li>Example: quality control</li>
-<li><p>Suppose we have 3 manufacturers producing computer chips</p></li>
 </ul>
 </div>
 <div id="random-variables" class="section level5">
