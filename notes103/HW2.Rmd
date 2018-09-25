@@ -1,70 +1,40 @@
 ---
 title: "Homework 2"
-author: By signing my name, I agree to abide by the Stern Code of Conduct _______________
+author: I agree to abide by the Stern Code of Conduct (name & NYU ID) _______________
 output: pdf_document
 ---
 
 #### Question 1
 
-This question follows **Section 3.3** in the ModernDive book linked on the course page: http://moderndive.com/3-viz.html 
-
-- Load the libraries `dplyr, ggplot2, nycflights13`. 
-- Run the command `?flights` and read the help documentation to learn about what variables are included in this data frame.
-- Run the command `head(flights)` and look at the first few rows of data.
-- Use the `table()` function to find counts of the `carrier` variable.
-
-##### a. How many flights are there from Hawaiian Airlines? Which airline had the most number of flights? Write your answers here.
+##### a. 
+Consider a game involving tossing a coin three times, and use set notation (e.g. \{ item1, item2, ... \}) to answer the following: What is the sample space $S$? What is the event $E_1$ = "the first toss is H"? What is the intersection of $E_1$ and $E_2$ = "the second toss is H"?
 
 \ 
 
 \ 
 
-- Following the example in the book, use `filter()` to create a 
-data frame with all Hawaiian Airlines flights (*instead of Alaskan Airlines*). Use this data frame to complete the parts below.
-- Create a histogram of the `air_time` variable using `ggplot()` and `geom_histogram()`.
-- (Remember you can use `+ theme_minimal()` to make the plot use less ink)
-- Use the `ggsave()` command to save your plot as a pdf file named "air_time_hist.pdf"
+\ 
 
-##### b. Upload your plot on Classes under the File Exchange tab.
+\ 
 
-##### c. If you wanted to describe a histogram using summary statistics, which summaries would you use, and why?
+##### b. 
+A 6-sided die is rolled 5 times. What is the probability it comes up six every time? What is the probability of no sixes? What is the probability every roll is less or equal to 5?
 
 \ 
 
 \ 
 
-##### d. What are the mean and standard deviation of the `air_time` variable for these Hawaiian Airline flights?
-
 \ 
 
-##### e. What percent of these lie within one, two, and three standard deviation of the mean? Include 4 digits of accuracy for each, e.g. 12.34\%
-
-\ 
-
-##### f. Save all of the `R` code you used to do this problem in a file called "hw1.R" and upload it on Classes.
-
-\newpage
-#### Question 2
-
-##### a. Consider a game involving tossing a coin three times, and use set notation (e.g. \{ item1, item2, ... \}) to answer the following: What is the sample space $S$? What is the event $E_1$ = "the first toss is H"? What is the intersection of $E_1$ and $E_2$ = "the second toss is H"?
+##### c. 
+Every time I roll a 20-sided die there is a 1/20 chance it lands on 20. So if I roll it 10 times, the probability that at least one of these will be a 20 is 10/20 = 1/2. True or false? Explain your answer.
 
 \ 
 
 \ 
 
-##### b. A 6-sided die is rolled 10 times. What is the probability it comes up six every time? What is the probability of no sixes? What is the probability every roll is less or equal to 5?
-
-\ 
-
-\ 
-
-##### c. Every time I roll a 20-sided die there is a 1/20 chance it lands on 20. So if I roll it 10 times, the probability that at least one of these will be a 20 is 10/20 = 1/2. True or false? Explain your answer.
-
-\ 
-
-\ 
-
-##### d. What is the equation for the conditional probability of $E_2$ given $E_1$? Suppose $P(E_1) > P(E_2)$ and $P(E_1 \cap E_2) > 0$. Which is larger, $P(E_2 | E_1)$ or $P(E_1 | E_2)$, or is there not enough information to tell? Explain, and also draw a Venn diagram as an example.
+##### d. 
+What is the equation for the conditional probability of $E_2$ given $E_1$? Suppose $P(E_1) > P(E_2)$ and $P(E_1 \cap E_2) > 0$. Which is larger, $P(E_2 | E_1)$ or $P(E_1 | E_2)$, or is there not enough information to tell? Explain, and also draw a Venn diagram as an example.
 
 \ 
 
@@ -76,7 +46,8 @@ data frame with all Hawaiian Airlines flights (*instead of Alaskan Airlines*). U
 
 \ 
 
-##### e. The mortality rates from a hypothetical drug trial are in the table below. Is survival independent from treatment/placebo, adherence/non-adherence, both of these, or neither? Explain.
+##### e. 
+The mortality rates from a hypothetical drug trial are in the table below. Is survival independent from treatment/placebo, adherence/non-adherence, both of these, or neither? Explain.
 
 |         | Treatment           | Placebo  |
 | ------------- |:-------------:| -----:|
@@ -84,3 +55,112 @@ data frame with all Hawaiian Airlines flights (*instead of Alaskan Airlines*). U
 | Non-adherers      | 25%      |   25% |
 | Total | 20%      |    20% |
 
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+
+#### Question 2
+
+##### a. 
+Suppose $A$ and $B$ are disjoint. What is $P(A|B)$? Are $A$ and $B$ independent?
+
+\ 
+
+##### The **law of total probability** says that...
+
+If $E_1$ and $E_2$ are disjoint and $E_1 \cup E_2 = S$ is the whole sample space, then for any event $A$, $P(A) = P(A \cap E_1) + P(A \cap E_2) = P(A|E_1)P(E_1) + P(A|E_2)P(E_2)$. This is useful when it's hard to calculate $P(A)$ by the counting rule but easy to calculate $P(A|E_1)P(E_1)$ and so on. Use this to solve the following problem:
+
+##### b. 
+Suppose that half of the people on campus get the flu shot (vaccine). Let $V$ be the event that a person has the vaccine, and $F$ be the event that a person gets the flu, and suppose $P(F|V^c) = 3/10$ and $P(F|V) = 1/10$. Use the law of total probability to find the probability that a person on campus gets the flu. (Hint: this person either got the flu shot or didn't get the flu shot...)
+
+\ 
+
+\ 
+
+##### c. 
+Continuing the previous problem, what percent of people who got the flu were vaccinated?
+
+\ 
+
+\ 
+
+##### d. 
+Which of the quantities above would change if, due to an improved vaccine, $P(F|V)$ became much smaller? And for each of these quantities, would they become larger or smaller?
+
+\ 
+
+\ 
+
+\ 
+
+\ 
+
+
+#### Question 3
+
+- **Factorials**: $n!$ means "multiply all the numbers between 1 and $n$," for example $5! = 5\cdot 4\cdot 3\cdot 2\cdot 1 = 120$. Note that by default $0! = 1$.
+- **A cool trick with factorials**: $n! = n \cdot (n-1)! = n \cdot (n-1) \cdot (n-2)!$, etc.
+- **Permutations**: the number of ways to permute (i.e. arrange) $n$ objects in order, where the order matters, is $n!$. (There are $n$ possible items to go 1st, then there are $n-1$ remaining to go in second place, then there are $n-2$ for third, and so on.)
+- **Scientific notation in `R`**: A number like 4.015e+11 means, roughly, 4 followed by 11 zeros. 
+
+##### a. 
+A deck of cards has 52 cards. Use the command `factorial(52)` in `R` to find the number of ways a deck can be ordered (permutations). The answer is roughly an 8 followed by how many zeros?
+
+\ 
+
+\ 
+
+##### b. 
+To pick $k$ items out of $n$, and arrange them in a specific order, there are $n!/(n-k)!$ wasy to do this. For example, there are $n!/(n-1)! = n(n-1)!/(n-1)! = n$ ways to pick 1 item. How many ways are there to pick 2 items out of $n$? What about 3? Simplify each until the answer is not a fraction.
+
+\newpage
+
+##### c. 
+To pick $k$ items out of $n$, *ignoring the order* (e.g., picking item1 and then item2 is the same as picking item2 and then item1), you first count the number of ways to pick $k$ out of $n$ where the order does matter as in part (b), and then you divide by the number of ways to permute $k$ items. The final answer is $n!/((n-k)!k!)$. We have another name and notation for this: it's called the *Binomial coefficient* and denoted as $\binom{n}{k}$. In `R`, you can compute this number using the function `choose(n, k)` or the formula `factorial(n)/(factorial(n-k)*factorial(k))`. How many ways are there to pick a subset of 5 items out of 10?
+
+\ 
+
+\ 
+
+##### d. 
+Suppose I toss a coin 10 times and am interested in the number $X$ of times it comes up heads. Each individual sequence of 10 coin tosses has probability $(1/2)^{10}$. How many of these sequences have 5 heads?
+
+\ 
+
+\ 
+
+##### e. 
+To find $P(X = 5)$ we can multiply the probability of each individual outcome $(1/2)^{10}$ times the number of outcomes that have 5 out of 10 coming up heads. What is this probability?
+
+\ 
+
+\ 
+
+##### f. 
+What's the probability that the number of heads is either 4 or 6? (Hint: the event that it equals 4 is *disjoint*, or mutually exclusive, from the event that it equals 6).
+
+\ 
+
+\ 
+
+##### g. 
+Suppose that instead of fair coin tosses, we have coin tosses with probability $p$ of being heads. Each coin toss has a Ber($p$) distribution, and the number of heads is distributed as Bin($n, p$). Now, to compute probabilities, we still need to count which of the tosses are heads, but each individual outcome no longer has probability $(1/2)^n$. Instead, to get $k$ heads and $n-k$ tails, independently, each outcome with $k$ heads now has probability $p^k(1-p)^{n-k}$ (there are $k$ copies of $p$, one for each success, and $n-k$ copies of (1-p), one for each failure). What's the probability of 5 heads out of 10 when the coin has probability $p = 0.2$ of heads?
+
+\ 
+
+\ 
+
+##### h. 
+During a game of Dungeons and Dragons, I roll a 20-sided dice 5 times. What is the probability that it lands on 20 exactly 2 out of those 5 times?
+
+\ 
+
+\ 
+
+##### i. 
+Can you think of any real world examples, aside from coin tosses, where the numbers might have a Binomial distribution? Some hints are in the terms used for Binomial: there are $n$ independent "trials" (this just means event) and each one has probability $p$ of being a "success" (note that we could switch "success" with "failure" and it would be a Bin($n,1-p$), so success is just an arbitrary label), and we are interested in the distribution of the number of successes.  Examples could come from sports, business, science, or whatever you can imagine. Try to come up with two examples and briefly describe them below.
