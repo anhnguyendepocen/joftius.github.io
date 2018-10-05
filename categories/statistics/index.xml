@@ -7,10 +7,20 @@
     <generator>Hugo -- gohugo.io</generator>
     <managingEditor>lastname at nyu.edu (Joshua Loftus)</managingEditor>
     <webMaster>lastname at nyu.edu (Joshua Loftus)</webMaster>
-    <lastBuildDate>Mon, 26 Feb 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 05 Oct 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/categories/statistics/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Data for good talk at Columbia Data Science Institute</title>
+      <link>/post/data-for-good-talk-at-columbia-data-science-institute/</link>
+      <pubDate>Fri, 05 Oct 2018 00:00:00 +0000</pubDate>
+      <author>lastname at nyu.edu (Joshua Loftus)</author>
+      <guid>/post/data-for-good-talk-at-columbia-data-science-institute/</guid>
+      <description>I&amp;rsquo;m happy to be speaking at 1pm EST today at Columbia University on the topics of causal inference and selection bias in algorithmic fairness. I believe video will be available at the webinar link, and here are my slides.
+The talk is based on work described in this survey with my coauthors Matt Kusner, Chris Russell, and Ricardo Silva. See here for the video for Matt&amp;rsquo;s oral presentation of our first paper in this line of work at NIPS 2017.</description>
+    </item>
     
     <item>
       <title>A conditional approach to inference after model selection</title>
