@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Causal Inference on Joshua Loftus</title>
+    <link>/tags/causal-inference/</link>
+    <description>Recent content in Causal Inference on Joshua Loftus</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <managingEditor>lastname at nyu.edu (Joshua Loftus)</managingEditor>
+    <webMaster>lastname at nyu.edu (Joshua Loftus)</webMaster>
+    <lastBuildDate>Sat, 21 Jul 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/causal-inference/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>What happens when extremists win primaries? Depends on the model</title>
+      <link>/post/what-happens-when-extremists-win-primaries-depends-on-the-model/</link>
+      <pubDate>Sat, 21 Jul 2018 00:00:00 +0000</pubDate>
+      <author>lastname at nyu.edu (Joshua Loftus)</author>
+      <guid>/post/what-happens-when-extremists-win-primaries-depends-on-the-model/</guid>
+      <description>hi what’s up everybody cool
+library(tidyverse) library(knitr) theme_set(theme_minimal()) hall_data &amp;lt;- read_csv(&amp;quot;https://gist.githubusercontent.com/joftius/c7c3a5974f247ecfaf0b14fcf3e8405b/raw/65aca69b93d17aaee401088aa2f97ce9880a28d7/hall_extreme_primary.csv&amp;quot;)[,-1] #head(data) #names(data) Create sample subsets used by Hall  Look only at cases where the ideological distance between the two primary candidates are in the top half Trimmed: look only at competitive primaries as defined by the winning margin being less or equal to 20%  data &amp;lt;- subset(hall_data, absdist &amp;gt; median(hall_data$absdist)) data_trimmed &amp;lt;- subset(data, data$margin &amp;lt;= .2)  Figure 2 from Hall ggplot(data_trimmed, aes(rv, dv)) + geom_point() + stat_smooth(method = &amp;quot;lm&amp;quot;, se = F, data = subset(data_trimmed, rv &amp;gt; 0)) + stat_smooth(method = &amp;quot;lm&amp;quot;, se = F, data = subset(data_trimmed, rv &amp;lt; 0))  Figure 2 with non-competitive primaries included ggplot(data, aes(rv, dv)) + geom_point() + stat_smooth(method = &amp;quot;lm&amp;quot;, se = T, data = subset(data, rv &amp;gt; 0)) + stat_smooth(method = &amp;quot;lm&amp;quot;, se = T, data = subset(data, rv &amp;lt; 0))   Figure 2 with winning margin less or equal to 10% (instead of 20%) data_trimmed1 &amp;lt;- subset(data_trimmed, data$margin &amp;lt;= .</description>
+    </item>
+    
+  </channel>
+</rss>
