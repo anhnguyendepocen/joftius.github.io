@@ -85,7 +85,7 @@ Let $X_1, X_2, \ldots, X_n$ be i.i.d. with mean $\mu$ and variance $\sigma^2$, s
 
 Applying Chebyshev's inequality to the mean $\bar X$ tells us that
 $$
-P(|\bar X - \mu| \geq \sigma) \leq \frac{1}{\sqrt{n}}
+P(|\bar X - \mu| \geq \sigma) \leq \frac{1}{n}
 $$
 
 If we instead apply the central limit theorem, we would find
