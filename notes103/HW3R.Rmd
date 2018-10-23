@@ -26,7 +26,7 @@ varn <- function(x) mean((x - mean(x))^2)
 
 #### Part a.
 
-The code below generates a sample of size n and calculates both the sample variance and the biased version of sample version (the one that has n in the denominator instead of n-1). Modify the code to change n from 10 to some other value between 10 and 50. 
+The code below generates a sample of size n and calculates both the sample variance and the biased version of sample variance (the one that has n in the denominator instead of n-1). Modify the code to change n from 10 to some other value between 10 and 50. 
 
 ```{r}
 # Create a sample of data by rolling a 6-sided die n times
