@@ -1,0 +1,111 @@
+---
+title: "Homework 3 - R assignment solution"
+author: Joshua Loftus
+output: html_document
+---
+
+```{r include=FALSE}
+library(ggplot2)
+```
+
+### Question R1
+
+This question will guide you through a *simulation study* in `R` to understand the bias of a certain estimator.
+
+```{r}
+varn <- function(x) mean((x - mean(x))^2)
+```
+
+#### Part a.
+
+The code below generates a sample of size n and calculates both the sample variance and the biased version of sample variance (the one that has n in the denominator instead of n-1). Modify the code to change n from 10 to some other value between 10 and 50. 
+
+```{r}
+# Create a sample of data by rolling a 6-sided die n times
+n <- 20
+data <- sample(1:6, n, replace = TRUE)
+data
+# True variance
+35/12
+# Unbiased estimate of variance
+var(data)
+# Biased estimate of variance
+varn(data)
+```
+
+#### Part b.
+Repeat the previous experiment many times and find the expected value of each variance estimator.
+
+```{r}
+# Unbiased estimator
+mean(replicate(10000, var(sample(1:6, n, replace = TRUE))))
+# Biased estimator
+mean(replicate(10000, varn(sample(1:6, n, replace = TRUE))))
+```
+
+#### Part c.
+After running the previous code, which estimator's average value in the simulation is closer to the true value (roughly 2.9167)? 
+
+\ 
+
+The **unbiased estimator**'s average value is closer to the true value.
+
+
+#### Part d.
+Now go back and change n to another, larger value, and rerun all of the code. Do you notice anything about the average of the biased estimator?
+
+```{r}
+mean(replicate(10000, varn(sample(1:6, n + 10, replace = TRUE))))
+```
+
+With a larger sample size, the biased estimator's average value is now closer to the true value.
+
+\ 
+
+#### Part e.
+Copy the code from part (b) and paste it below here, then change the `mean` function to be `sd` instead.
+
+```{r}
+# Unbiased estimator
+sd(replicate(10000, var(sample(1:6, n, replace = TRUE))))
+# Biased estimator
+sd(replicate(10000, varn(sample(1:6, n, replace = TRUE))))
+```
+
+The biased estimator has a lower variability (as measured by standard deviation).
+
+### Question R2
+
+According to a Marketplace/Edison survey in April of 2017, about 23.4\% of survey responders agreed with the statement "the economic system in the U.S. is fair to all Americans." In this question we'll use a Bernoulli probability model to analyze this number. Suppose that there were 1,000 survey respondents and 234 agreed with the above quotation. Define a Bernoulli random variable which is 1 if a person agrees and 0 otherwise. Assume the survey was done with independent sampling (with replacement), so these Bernoulli random variables are independent. Then the number of people in the sample of 1,000 who agree is a Binomial random variable.
+
+- We have $X_i$ i.i.d Ber($p$) for $i = 1, \ldots, 1000$.
+- Let $S_n = \sum_{i=1}^n X_i$, so $S_n$ is Bin($n, p$).
+
+### a. 
+Using the fact that $n \bar X_n = S_n$, how could you use the Binomial distribution to calculate $P(a \leq \bar X_n \leq b)$?  How would you use `pbinom` with the given values of $a, b, n$, and $p$?
+
+```
+pbinom(n*b, size = n, prob = p) - pbinom(n*a, size = n, prob = p)
+```
+
+### b. 
+Instead of the Binomial distribution, how would we use the central limit theorem to calculate the same probabilities? Hint: your answer should use `pnorm` and involve $\sqrt{n}$ (and $a, b$, and $p$).
+
+**Solution**: The CLT says $\bar X_n$ is approximately normal with mean $p$ and standard deviation $\sqrt{p(1-p)/n}$. In `R` we could do:
+
+```
+pnorm(b, mean = p, sd = sqrt(p*(1-p)/n)) - pnorm(a, mean = p, sd = sqrt(p*(1-p)/n))
+```
+### c. 
+Now let $n = 1000$, $p = 0.234$, $b = 0.250, a = 0.239$ and compute the desired probability with both methods.
+
+\ 
+
+```{r}
+n <- 1000
+p <- 0.234
+a <- 0.239
+b <- 0.250
+pbinom(n*b, size = n, prob = p) - pbinom(n*a, size = n, prob = p)
+pnorm(b, mean = p, sd = sqrt(p*(1-p)/n)) - pnorm(a, mean = p, sd = sqrt(p*(1-p)/n))
+```
