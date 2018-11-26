@@ -1,0 +1,291 @@
+---
+title: "Homework 5"
+author: Solution
+output: html_document
+---
+
+```{r include=FALSE}
+library(tidyverse)
+# You may need to run install.packages("fivethirtyeight")
+# if you get an error saying "there is no package"
+library(fivethirtyeight)
+```
+
+## Question 1: Bechdel test hypothesis tests
+
+In this problem you will repeat experiments studying the `bechdel` data by analyzing films from different ranges of years.
+
+```{r}
+# Remove movies that have NA values for some variables
+# and create the return = gross/budget variable
+# (adjusted to 2013 dollars for inflation)
+movies <- bechdel %>% na.omit %>%
+  filter(year > 1993) %>%
+  mutate(return = domgross_2013/budget_2013)
+```
+
+### Intervals and tests for difference in mean returns
+
+#### Films from 1994-2003
+
+```{r}
+# t-test for difference in means
+movies90s <- filter(movies, year <= 2003)
+t.test(return ~ binary, conf.int = T, movies90s)
+```
+
+Does the 95\% confidence interval contain 0?
+
+```
+Yes
+```
+
+Do we reject the null hypothesis of equal means at the 5\% significance level?
+
+```
+No
+```
+
+#### Films from 2004-2013
+
+```{r}
+movies00s <- filter(movies, year > 2003) 
+t.test(return ~ binary, conf.int = T, movies00s)
+```
+
+Does the 95\% confidence interval contain 0?
+
+```
+Yes
+```
+
+Do we reject the null hypothesis of equal means at the 5\% significance level?
+
+```
+No
+```
+
+### Intervals and tests for difference in median returns
+
+#### Films from 1994-2003
+
+```{r}
+wilcox.test(return ~ binary, conf.int = T, movies90s)
+```
+
+Does the 95\% confidence interval contain 0?
+
+```
+No
+```
+
+Do we reject the null hypothesis of equal means at the 5\% significance level?
+
+```
+Yes
+```
+
+#### Films from 2004-2013
+
+```{r}
+wilcox.test(return ~ binary, conf.int = T, movies00s)
+```
+
+Does the 95\% confidence interval contain 0?
+
+```
+No
+```
+
+Do we reject the null hypothesis of equal means at the 5\% significance level?
+
+```
+Yes
+```
+
+
+### Why are some of the results different?
+
+Let's assume that the populations means/medians are the same in 2004-2013 as they are in 1994-2003. We may still make different conclusions based on the confidence intervals or tests depending on which of the two samples we analyze. Why?
+
+```
+Confidence intervals and tests depend on the sample. Even if the population parameters stay the same, the sample estimates change.
+```
+
+The answers for the medians are not the same as the answers for the means, why? (Hint: look at the plot)
+
+```
+The distributions are skewed, so their means and medians are different
+```
+
+## Question 2: types of errors
+
+### Part 1: type 1 errors (false positives)
+
+Throughout Part 1 we will assume that we are trying to answer one particular scientific question, that we have formulated it as a hypothesis test, and that in the real world **the null hypothesis is true**.
+
+We collect a sample of data and use a 5\% significance level to do the test. Since the null hypothesis is true, the probability that we make a type 1 error by incorrectly rejecting the null hypothesis is 5\%.
+
+Now suppose we do the same test again on a new independent sample of data. What is the probability that both test 1 and test 2 correctly **fail to reject the null**?
+
+Using independence and the multiplication rule:
+
+```
+P(don't reject 1 and don't reject 2) = P(don't reject 1) * P(don't reject 2) = 0.95 * 0.95 = 0.95^2
+```
+
+```{r}
+0.95^2
+```
+
+Each time we collect a new sample of data, there is a 5\% probability we make a type 1 error. If we do the test n times, what is the probability that we make no type 1 errors in any of the n independent tests?
+
+Using independence and the multiplication rule:
+
+```
+P(no type 1 errors) = P(don't reject 1 and don't reject 2 and ... and don't reject n) = 0.95^n
+```
+
+What type of random variable could we use to model the number of type 1 errors out of n independent tests?
+
+```
+Binomial: independent trials with "success" probability 0.05
+Bin(n, 0.05) 
+```
+
+### Part 2: type 2 errors (false negatives)
+
+Now, for Part 2, we will assume that the **null hypothesis is false**.
+
+Suppose we keep collecting new independent samples and computing the test, and each time our sample size is large enough to give the test **60\% power**, meaning that the probability of a type 2 error is 40\%. In the long run, the proportion of tests that correctly reject the null hypothesis converges to some number, what is this number?
+
+```
+The proportion of rejections is a sample mean of Bernoulli random variables (each one equals 0 if that test fails to reject, 1 if it does reject) with success probability 0.6, so by the law of large numbers this proportion converges to the expected value of the sample mean: 0.6
+```
+
+Now, instead of the long run, suppose we stop after collecting 10 samples. What is the probability that **strictly less than half** of these tests reject the null?
+
+```{r}
+# pbinom(less or equal to, number of trials, p)
+# use 4 instead of 5 because we want strictly less than half
+pbinom(4, 10, 0.6)
+```
+
+## Question 3: power when testing for a mean
+
+In this problem we will consider testing a single mean with the null hypothesis mu = 1. To do this we use `t.test(data, mu = 1)`. The code below creates a function to generate a sample of n observations from an exponential distribution and see if we reject the null hypothesis:
+
+```{r}
+experiment <- function(n, mu) {
+  sample <- rexp(n, 1/mu)
+  pval <- t.test(sample, mu = 1)$p.value
+  return(pval < 0.05)
+}
+```
+For example, we can do the experiment once with n = 30 and the true mu = 2, and see if the null hypothesis is rejected or not. If it is rejected, the function will return `TRUE`, and otherwise `FALSE`.
+
+```{r}
+experiment(30, 2)
+```
+
+### Part 1
+
+Why can we use the t-distribution to test for this mean, even though the data is exponentially distributed?
+
+```
+The central limit theorem says the sample mean is normal even if the original distribution is not. Since we are also estimating the variance, we use the t-distribution instead of the normal.
+```
+
+### Part 2
+
+The following code repeats the experiment 5 times and then shows the output from each. Modify this code by changing 5 to a larger number, like 1000, and then instead of showing all the outcomes use the `mean()` function on `repeats` to show the portion of experiments where the null hypothesis is rejected.
+
+```{r}
+repeats <- replicate(10000, experiment(30, 2))
+mean(repeats)
+```
+
+The previous code now shows a number as an answer. This is an estimate of (a) the type 1 error, (b) the type 2 error, or (c) the power?
+
+```
+(c) the power
+```
+
+### Part 3
+
+Now copy the above code and paste it below, change n from 30 to something larger like 40, and keep mu the same.
+
+```{r}
+repeats <- replicate(10000, experiment(40, 2))
+mean(repeats)
+```
+
+How does the answer compare to the previous one with sample size 30?
+
+```
+A larger sample size results in the test having higher power
+```
+
+### Part 4
+
+Paste the first code again below, and this time keep n as 30 but change mu to something smaller, between 1 and 2, like 1.5.
+
+```{r}
+repeats <- replicate(10000, experiment(30, 1.5))
+mean(repeats)
+```
+
+What do you notice about the answer?
+
+```
+A smaller effect size results in lower power
+```
+
+### Part 5
+
+Finally, without running any additional code, what do you expect the result will be if we changed mu to be 1 in the experiment? I.e., if the mean of the data really is 1, what percent of the time would we reject the null hypothesis?
+
+```
+If the true mean is 1, then the null hypothesis is true, so we should only reject 5% of the time.
+```
+
+Note: if you do run the code you will find the answer is higher tham 5\%. Why is that?
+
+```{r}
+repeats <- replicate(10000, experiment(30, 1))
+mean(repeats)
+```
+
+Answer: the central limit theorem is approximate, and the sample size of 30 is not large enough to overcome the skew of the underlying distribution. When the original distribution is far from normal shaped, we need a larger sample for the central limit theorem to work well. Here's the same experiment with a sample size of 200 instead:
+
+```{r}
+repeats <- replicate(10000, experiment(200, 1))
+mean(repeats)
+```
+
+## Question 4: what happens if there's bias?
+
+Consider a two-sample t-test for a difference in means, we'll call the true population means mu1 and mu2. We collect data X1, X2, ..., Xn, and Y1, Y2, ... Ym, each sample is i.i.d., E[X1] = mu1, but due to some kind of sampling bias E[Y1] > mu2. 
+
+The null hypothesis is mu1 = mu2, and the alternative hypothesis is mu1 > mu2.
+
+Recall that the test statistic is T = (Xbar - Ybar)/SE.
+
+### Part 1
+
+Suppose the null hypothesis is true. Do we expect that T will be close to 0? Explain why or why not.
+
+```
+No, because of the bias we expect that T will be less than 0. This will result in a type 1 error less than 5% (conservative test)
+```
+
+### Part 2
+
+Suppose the alternative hypothesis is true, and we pick a large enough sample size for each group so that if the difference mu1 = mu2 + 1, and if the sampling was not biased, then we would have 60\% power. Now given that we do have sampling bias, will the test really have a power of 60\%, or higher, or lower? Explain.
+
+
+```
+Lower: since the alternative is mu1 > mu2, we reject if the test statistic is large, but the bias makes the test statistic value lower.
+```
+
+

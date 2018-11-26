@@ -1,0 +1,149 @@
+---
+title: "Homework 7"
+author: I agree to abide by the Stern Code of Conduct - (NAME & NYU ID)
+output: html_document
+---
+---
+title: "Homework 7"
+author: I agree to abide by the Stern Code of Conduct - (NAME & NYU ID)
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+# if you haven't installed ggfortify yet run this next line once without the "#" then delete the whole line
+# install.packages("ggfortify") 
+library(tidyverse)
+library(ggfortify)
+library(gapminder)
+theme_set(theme_minimal())
+options(scipen=999)
+options(digits=4)
+```
+
+## Predicting life expectancy from GDP in the gapminder data
+
+We will use data from the most recent year:
+
+```{r}
+gm2007 <- gapminder %>% filter(year == "2007")
+```
+
+In the rest of this homework, use the `gm2007` data to answer questions.
+
+### Show first few rows of data below
+
+```{r}
+
+```
+
+### Fit a linear model predicting life expectancy from GDP per capita
+
+```{r}
+
+```
+
+### Summary of the model
+
+```{r}
+
+```
+
+Do we reject the null hypothesis for the coefficient of GDP per capita at the 1\% level?
+
+```
+Answer
+```
+
+What proportion of the variance in life expectancy can be explained by this model?
+
+```
+Answer
+```
+
+
+### Confidence intervals for coefficients
+
+```{r}
+
+```
+
+What is the lower limit of the 95\% confidence interval for the intercept?
+
+```
+Answer
+```
+
+
+### Diagnostic plots
+
+Use the `autoplot()` function to show diagnostics below.
+
+```{r}
+
+```
+
+Is there a pattern in the residuals? Do the residuals seem approximately normally distributed?
+
+```
+Answer
+```
+
+### Transforming to log(GDP per capita)
+
+- Fit a model with `log10(gdpPercap)` as the predictor variable instead of `gdpPercap`
+- Compute its summary, compare the value of R-squared to the one for the previous model
+
+
+```{r}
+
+```
+
+Does the model (1) with `gdpPercap` or model (2) with `log10(gdpPercap)` do better at explaining the variance in life expectancy?
+
+```
+Answer
+```
+
+The coefficient for `log10(gdpPercap)` shows the increase in predicted life expectancy if gdpPercap increases by...
+
+```
+Answer
+```
+
+- Show diagnostic plots for this model.
+
+```{r}
+
+```
+
+Do the residuals have any more or less of an obvious pattern in them? Do they seem any more or less normally distributed?
+
+```
+Answer
+```
+
+### If you could add one more variable, what would it be?
+
+Suppose we could add another variable to this dataset to include in the model. It could be anything related to a country's economy, environment, consumption of specific goods, percent of population with access to high speed internet--anything like this that you can imagine. The goal is to better predict life expectancy and show that GDP and this other variable are important variables for predicting life expectancy.
+
+Keep in mind that your ultimate goal is to tell a useful or interesting story with the data.
+
+**(1)** Which variable would you pick, and why?
+
+```
+Answer
+```
+
+**(2)** How would you interpret the fitted coefficient for this variable after it is added to the model?
+
+```
+Answer
+```
+
+**(3)** Give an example of a variable which you think has a positive correlation with life expectancy, but a negative coefficient when included in a linear model with GDP as predictors. Explain your reasoning.
+
+```
+Answer
+```
+
