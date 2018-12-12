@@ -1,0 +1,253 @@
+---
+title: "Homework 8"
+author: I agree to abide by the Stern Code of Conduct - (NAME & NYU ID)
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggfortify)
+library(fivethirtyeight)
+theme_set(theme_minimal())
+```
+
+## Primary elections, parties, and money
+
+Our goal is to determine the relationships, if any, between winning a primary election, endorsements from party insiders, and raising money.
+
+### Data description
+
+In this homework we analyze the `endorsements` dataset from the `fivethirtyeight` package. This dataset contains information on each candidate in primary elections in the US between `r min(endorsements$year)` and `r max(endorsements$year)`, including variables about party affiliation, proportion of endorsements received, proportion of money raised, proportion of the vote received in the primary, and whether or not that candidate won the primary that year.
+
+Here are a few rows of data:
+
+```{r}
+head(endorsements)
+```
+
+There appear to be positive relationships between endorsements and percent of votes received:
+
+```{r}
+qplot(percentage_endorsement_points, primary_vote_percentage,
+      data = endorsements)
+```
+
+and also between money and percent of votes received:
+
+```{r}
+qplot(percentage_of_money, primary_vote_percentage,
+      data = endorsements)
+```
+
+We can also test for differences in endorsements or money between candidates who won their primaries and those that didn't:
+
+```{r}
+t.test(percentage_endorsement_points ~ won_primary, endorsements)
+t.test(percentage_of_money ~ won_primary, endorsements)
+```
+
+Clearly, there are significant differences for each of these things. But we also notice that endorsements and money are correlated with each other:
+
+```{r}
+qplot(percentage_endorsement_points, percentage_of_money,
+      data = endorsements)
+cor(endorsements$percentage_endorsement_points,
+    endorsements$percentage_of_money)
+```
+
+We want to know if each of these are important predictors of votes **while controlling for the other**. For example, does money remain important if we hold endorsements constant? To address this we will use regression models.
+
+### Linear model
+
+```{r}
+# Simple model with two predictors
+model1 <- lm(primary_vote_percentage ~ 
+     percentage_endorsement_points + percentage_of_money,
+     data = endorsements)
+
+# More complex model with interactions
+model2 <- lm(primary_vote_percentage ~ 
+     percentage_endorsement_points * percentage_of_money,
+     data = endorsements)
+```
+
+Use `summary()` below to answer this question: Is the interaction between money and endorsements statistically significant at the 5 percent level?
+
+```{r}
+# Code here
+
+```
+
+```
+Answer here
+```
+
+Use `summary()` with the simple model below to answer these questions: Are the coefficients for money and endorsements statistically significant at the 5 percent level?
+
+```{r}
+# Code here
+
+```
+
+```
+Answer here: Endorsements only, Money only, or Both
+```
+
+Holding money constant, about how much does percentage of endorsement points need to increase in order to increase the predicted vote share by 1 percentage point?
+
+```
+Answer here: 
+```
+
+Holding endorsements constant, about how much does percentage of money need to increase in order to increase the predicted vote share by 1 percentage point?
+
+```
+Answer here: 
+```
+
+Use `confint()` with the simple model below to answer this question: Is it reasonable to conclude that both of these effects are practically significant? Why or why not?
+
+```{r}
+# Code here
+
+```
+
+```
+Answer here
+```
+
+### Logistic model
+
+In this section we address the same questions as above, but now instead of using the vote share as a continuous outcome variable we use the binary outcome `won_primary`. Since the outcome variable is binary, we will use **logistic regression** to fit models. In `R` we do this with `glm(..., family = binomial)`.
+
+
+```{r}
+# Simpler model with two predictors
+model1 <- glm(won_primary ~ percentage_endorsement_points + 
+               percentage_of_money, 
+             family = binomial, data = endorsements)
+
+# More complex model including party and interactions
+model2 <- glm(won_primary ~ percentage_endorsement_points : party + 
+               percentage_of_money : party + 
+               percentage_endorsement_points * percentage_of_money, 
+             family = binomial, data = endorsements)
+```
+
+Use `summary()` with the more complex model below to answer this question: Since we have included a categorical variable, one of the groups has been chosen as a baseline. Which group is the baseline?
+
+```{r}
+# Code here
+
+```
+
+```
+Answer here: Democrat or Republican
+```
+
+The coefficient for an interaction between the party variable and money tells us the difference between the slope for money in the baseline group and the non-baseline group. Is this difference statistically significant at the 5 percent level? What about for endorsements, does the non-baseline party have an endorsement slope that is significantly different at 5 percent?
+
+```
+Answer here
+```
+
+Similar to the F-test for nested linear models, we can do a tested for nested GLMs:
+
+```{r}
+anova(model1, model2, test = "LRT")
+```
+
+Do we reject the null hypothesis that the simpler model is sufficient at the 5 percent level? What about at the 10 percent level?
+
+```
+Answer here
+```
+
+Now we use the model to predict (1) `yhat` : the probability of winning the primary for each candidate and (2) `predicted_win` : a binary indicator that this probability is higher than the proportion of winners in the dataset, i.e. that candidate is classified as a winner.
+
+```{r}
+ends <- endorsements %>% 
+  mutate(yhat = predict(model1, type = "response"),
+         predicted_win = yhat > mean(won_primary))
+```
+
+Here is a plot showing the two predictor variables on the horizontal and vertical axes, the predicted probability of winning represented by color, and whether the candidate actually won or not represented by the shape of the point:
+
+```{r}
+ggplot(ends, aes(x = percentage_of_money,
+                 y = percentage_endorsement_points,
+                 color = yhat,
+                 shape = won_primary)) + 
+  geom_point(alpha = .8)
+```
+
+Finally, here is a table of predicted wins vs actual wins:
+
+```{r}
+ends %>% group_by(won_primary, predicted_win) %>%
+  summarize(count = n())
+table(ends$won_primary, ends$predicted_win)
+```
+
+Among candidates who won, what proportion were predicted to win? This is called the True Positive Rate (TPR), also known as sensitivity or recall.
+
+```
+Answer here
+```
+
+Among candidates who were predicted to win, what proportion actually won? This is called the Positive Predictive Value (PPV), also known as precision.
+
+```
+Answer
+```
+
+Among candidates who were predicted to win, what proportion lost? This is called the False Discovery Rate (FDR).
+
+```
+Answer
+```
+
+Among all predictions, what proportion match the actual outcome? This is called accuracy.
+
+```
+Answer
+```
+
+Use `exp(confint())` on the simpler model below to answer this question: Holding endorsements constant, if percentage of money increases by 1 percentage point, the predicted odds of winning is multiplied by at least (the lower limit of the exponentiated confidence interval) or at most (the upper limit)
+
+```{r}
+
+```
+
+```
+Answer
+```
+
+### Conclusion
+
+For each of the following questions you may answer with one or two sentences.
+
+Are the answers regarding money and endorsements consistent between the linear and logistic modeling approaches? Why or why not?
+
+```
+Answer
+```
+
+Practically speaking, is it possible in the real world to do something like hold one of these predictors constant while changing the other? Why or why not?
+
+```
+Answer
+```
+
+Does this analysis tell us that receiving more endorsement points causes a candidate to win more votes in their primary? Why or why not?
+
+```
+Answer
+```
+
+Suppose we could enrich this dataset by merging it with others to greatly increase the number of predictor variables and estimate models with almost perfect prediction accuracy. Aside from complicating the interpretation of the money/endorsement coefficients, give one other reason why this might be a bad idea.
+
+```
+Answer
+```
