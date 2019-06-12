@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Counterfactual privilege ICML talk</title>
+  <meta property="og:title" content="Counterfactual privilege ICML talk" />
+  <meta name="twitter:title" content="Counterfactual privilege ICML talk" />
+  <meta name="description" content="A brief post describing counterfactual privilege, a notion we use in a new algorithmic fairness paper to design optimal fair interventions. Links the paper, slides, and so on are included, along with a simple example to illustrate the basic idea.">
+  <meta property="og:description" content="A brief post describing counterfactual privilege, a notion we use in a new algorithmic fairness paper to design optimal fair interventions. Links the paper, slides, and so on are included, along with a simple example to illustrate the basic idea.">
+  <meta name="twitter:description" content="A brief post describing counterfactual privilege, a notion we use in a new algorithmic fairness paper to design optimal fair interventions. Links the paper, slides, and so on are included, along with …">
+  <meta name="author" content="Joshua Loftus"/>
+  <link href='/img/favicon.ico' rel='icon' type='image/x-icon'/>
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@joftius" />
+  <meta name="twitter:creator" content="@joftius" />
+  <meta property="og:url" content="/post/counterfactual-privilege-icml-talk/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Joshua Loftus" />
+
+  <meta name="generator" content="Hugo 0.36" />
+  <link rel="canonical" href="/post/counterfactual-privilege-icml-talk/" />
+  <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Joshua Loftus">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
+  <link rel="stylesheet" href="/css/highlight.min.css" /><link rel="stylesheet" href="/css/codeblock.css" />
+
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-114292497-1', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">Joshua Loftus</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="Blog" href="/">Blog</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Research" href="/page/research/">Research</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Teaching" href="/page/teaching/">Teaching</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="About" href="/page/about/">About</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Tags" href="/tags">Tags</a>
+            </li>
+          
+        
+
+        
+
+        
+      </ul>
+    </div>
+
+    <div class="avatar-container">
+      <div class="avatar-img-border">
+        
+      </div>
+    </div>
+
+  </div>
+</nav>
+
+
+
+
+    
+  
+  
+  
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    <div class="intro-header no-img">
+      
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="post-heading">
+              <h1>Counterfactual privilege ICML talk</h1>
+                
+                
+                  <span class="post-meta">
+  
+  
+  <i class="fa fa-calendar-o"></i>&nbsp;Posted on June 12, 2019
+  
+  
+  &nbsp;|&nbsp;
+  <i class="fa fa-clock-o"></i> 4 minutes (734 words)
+  
+  
+</span>
+
+
+                
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        <script src="/rmarkdown-libs/htmlwidgets/htmlwidgets.js"></script>
+<script src="/rmarkdown-libs/d3/d3.min.js"></script>
+<script src="/rmarkdown-libs/dagre/dagre-d3.min.js"></script>
+<link href="/rmarkdown-libs/mermaid/dist/mermaid.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/mermaid/dist/mermaid.slim.min.js"></script>
+<link href="/rmarkdown-libs/DiagrammeR-styles/styles.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/chromatography/chromatography.js"></script>
+<script src="/rmarkdown-libs/DiagrammeR-binding/DiagrammeR.js"></script>
+
+
+<div id="talk-at-icml2019" class="section level3">
+<h3>Talk at ICML2019</h3>
+<p>I’m talking about some new fairness work at ICML, here’s the <a href="https://icml.cc/Conferences/2019/ScheduleMultitrack?event=4860">schedule</a>, <a href="ICML2019_slides.pdf">slides</a>, <a href="ICML2019_poster.pdf">poster</a>, and <a href="http://proceedings.mlr.press/v97/kusner19a/kusner19a.pdf">paper</a>. Below is a brief description of one of the new concepts in this work.</p>
+</div>
+<div id="counterfactual-privilege-an-asymmetric-fairness-constraint" class="section level3">
+<h3>Counterfactual privilege: an asymmetric fairness constraint</h3>
+<p>In previous work (<a href="https://papers.nips.cc/paper/6995-counterfactual-fairness">paper</a>, <a href="post/algorithmic-fairness-is-as-hard-as-causation/">blog post</a>) we described a causal framework for defining and understanding algorithmic fairness. We start with a mathematical model which can be represented as a graph with arrows designating causal relationships between variables, like this example:</p>
+<pre class="r"><code>mermaid(
+  &quot;graph TB;
+  A[Gender]--&gt;X[Car Color]
+  U(Aggression)--&gt;X
+  U--&gt;Y[Risk]&quot;
+)</code></pre>
+<div id="htmlwidget-1" style="width:672px;height:480px;" class="DiagrammeR html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"diagram":"graph TB;\n  A[Gender]-->X[Car Color]\n  U(Aggression)-->X\n  U-->Y[Risk]"},"evals":[],"jsHooks":[]}</script>
+<p>From such a model we can compute model-based counterfactuals: if this person had identified as a different gender, would they have the same car color or a different one? Any variables which have a directed path starting at gender and ending at that variable might take different values in the counterfactual world. In our previous <strong>counterfactual fairness</strong> work we proposed making the prediction algorithm invariant to such changes. Roughly, it should give the same predictions from actual data that it would give using the model-based counterfactuals.</p>
+<p>Predictions are often used to make decisions about the real world (interventions). In this new work, we shift focus from giving fair predictions to designing fair interventions. A common approach to designing optimal interventions is to maximize some utility function, so we illustrate a new fairness constraint in that framework. Let <span class="math inline">\(U(a,x,z)\)</span> denote the utility of an individual with <span class="math inline">\(A=a\)</span> as the value of their protected attribute (e.g. gender or race), <span class="math inline">\(X=x\)</span> the values of their other predictor variables, and <span class="math inline">\(Z=z\)</span> represents our intervention (e.g. <span class="math inline">\(Z = 1\)</span> or 0 for a binary decision about this individual). We’re trying to find the best intervention <span class="math inline">\(Z\)</span> in the sense that it maximizes expected utility</p>
+<p><span class="math display">\[
+\text{maximize} \sum_i \mathbb E[U(a_i, x_i, z_i) ]
+\]</span></p>
+<p>and we impose the bounded counterfactual privilege constraints</p>
+<p><span class="math display">\[
+\mathbb E[U({\color{red}a_i}, x_i, z_i)] \leq \mathbb E[U({\color{blue}a&#39;}, x_i, z_i)] + \tau
+\]</span> for all <span class="math inline">\(a&#39; \neq a_i\)</span>. In other words, we constrain the intervention so that we don’t make any individual more than <span class="math inline">\(\tau\)</span> units of expected-utility better off than they would have been if they had a counterfactual value of the sensitive attribute.</p>
+</div>
+<div id="implicit-monotonicity-assumption" class="section level3">
+<h3>Implicit monotonicity assumption</h3>
+<p>Encoded in the usual application of fairness ideas and the notion of privilege is an implicit assumption that an individuals’ utility would be higher if they had the most privileged value of the sensitive attribute. This means that in practice, the constraints we impose will tend to be active for those individuals who already have privilege in the actual world, and inactive otherwise. In math, if <span class="math inline">\(a_i\)</span> is not a privileged value of the sensitive attribute but <span class="math inline">\(a&#39;\)</span> is, then (usually)</p>
+<p><span class="math display">\[
+\mathbb E[U({\color{red}a_i}, x_i, z_i)] \leq \mathbb E[U({\color{blue}a&#39;}, x_i, z_i)]
+\]</span> even without the extra <span class="math inline">\(\tau\)</span>.</p>
+</div>
+<div id="intuitive-example" class="section level3">
+<h3>Intuitive example</h3>
+<p>In our paper we describe an example where some government entity has a budget for new classes, the individuals are schools and the intervention value is 1 if that school gets a new class and 0 otherwise. Suppose that school 1 is in a neighborhood with higher average incomes, the students there are predominantly white, and the school is well-resourced and has a high rate of graduation and applications to college. And suppose that due to historical injustices like redlining, school 2 is in a neighborhood with lower average incomes, the students are mostly African-American, and the school has been poorly-funded and has lower graduation rates.</p>
+<p>Consider counterfactuals where we switch the majority race of the students in that school in a (realistic) causal model of the world. In the actual world, for school 1 we have <span class="math inline">\(a_1 = \text{white}\)</span> and school 2 has actual <span class="math inline">\(a_2 = \text{AA}\)</span>, and if utility is defined using things like graduation rates or percent of students applying to college, then based on history and social relations in the US we would expect <span class="math display">\[
+\mathbb E[U(a_1 = \text{white}, x_1)] &gt; \mathbb E[U(a_1 = \text{AA}, x_1)]
+\]</span> We’re trying to design an intervention (fund new classes) to address this inequality by maximizing total utility across schools, and doing so in a way that the amount of the inequality above does not exceed some small value <span class="math inline">\(\tau\)</span>. Meanwhile, since we also expect that <span class="math display">\[
+\mathbb E[U(a_2 = \text{AA}, x_2)] &lt; \mathbb E[U(a_2 = \text{white}, x_2)].
+\]</span> the intervention has more room to improve the outcomes for school 2 before it reaches the privilege constraint boundary.</p>
+</div>
+
+      </article>
+
+      
+        <ul class="pager blog-pager">
+          
+            <li class="previous">
+              <a href="/post/data-for-good-talk-at-columbia-data-science-institute/" data-toggle="tooltip" data-placement="top" title="Data for good talk at Columbia Data Science Institute">&larr; Previous Post</a>
+            </li>
+          
+          
+        </ul>
+      
+
+
+      
+        
+        
+      
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+              <li>
+                <a href="mailto:lastname%20at%20nyu.edu" title="Email me">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://github.com/joftius" title="GitHub">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://twitter.com/joftius" title="Twitter">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://linkedin.com/in/joftius" title="LinkedIn">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+          
+          <li>
+            
+            <a href="/index.xml" title="RSS">
+            
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          
+        </ul>
+        <p class="credits copyright text-muted">
+          
+            
+              <a href="joshualoftus.com">Joshua Loftus</a>
+            
+          
+
+          &nbsp;&bull;&nbsp;
+          2019
+
+          
+            &nbsp;&bull;&nbsp;
+            <a href="/">Joshua Loftus</a>
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+          <a href="http://gohugo.io">Hugo v0.36</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js" integrity="sha384-/y1Nn9+QQAipbNQWU65krzJralCnuOasHncUFXGkdwntGeSvQicrYkiUBwsgUqc1" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js" integrity="sha384-dq1/gEHSxPZQ7DdrM82ID4YVol9BYyU7GbWlIwnwyPzotpoc57wDw/guX8EaYGPx" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="/js/main.js"></script>
+<script src="/js/highlight.min.js"></script>
+<script> hljs.initHighlightingOnLoad(); </script>
+<script> $(document).ready(function() {$("pre.chroma").css("padding","0");}); </script><script> renderMathInElement(document.body); </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script>
+<script src="/js/load-photoswipe.js"></script>
+
+
+
+
+
+
+  </body>
+</html>
+
