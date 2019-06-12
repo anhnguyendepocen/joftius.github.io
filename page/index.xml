@@ -58,8 +58,8 @@ Background material on topics prerequisite to this course, including lecture not
       <guid>/page/research/</guid>
       <description>Causal inference in fairness This work approaches fair machine learning from a causal inference perspective, arguing that determining what is fair is a similar challenge to determining causality.
 Press Some of this work was covered in the New Scientist and 36Kr.
-Publications  M. J. Kusner, J. R. Loftus, C. Russell, R. Silva. Counterfactual fairness. Advances in Neural Information Processing Systems, 2017. [link]
- C. Russell, M. J. Kusner, J.</description>
+Publications  M. J. Kusner, C. Russell, J. R. Loftus, R. Silva. Making Decisions that Reduce Discriminatory Impact. International Conference on Machine Learning, 2019. [link]
+ M. J. Kusner, J.</description>
     </item>
     
     <item>
