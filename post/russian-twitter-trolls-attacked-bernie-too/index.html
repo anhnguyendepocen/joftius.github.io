@@ -184,7 +184,7 @@ ga('send', 'pageview');
   
   
   &nbsp;|&nbsp;
-  <i class="fa fa-clock-o"></i> 9 minutes (1862 words)
+  <i class="fa fa-clock-o"></i> 10 minutes (1951 words)
   
   
 </span>
@@ -245,13 +245,24 @@ theme_set(theme_minimal())
 tweets &lt;- read_csv(&quot;https://gist.githubusercontent.com/joftius/82a8eac9e310bf1e1a2247ef0458e481/raw/7fbcbc8f6b90d1ef2f762703411e91097789904e/fivethirtyeight_russian_tweets_bernie.csv&quot;)</code></pre>
 <p>First, I subsetted their data to tweets that contain “Bernie” or “Sanders,” but not “Sarah” or “Huckabee,” occurred before the election, and looked only at accounts that were categorized as left trolls or right trolls (the large majority of accounts).</p>
 <pre class="r"><code>lrt &lt;- tweets %&gt;% filter(account_category %in% c(&quot;RightTroll&quot;, &quot;LeftTroll&quot;)) %&gt;%
-  select(-external_author_id, -language, -harvested_date, -new_june_2018, -post_type, -account_type)
-lrt$publish_date &lt;- as.Date(lrt$publish_date, &quot;%m/%d/%Y %H:%M&quot;)
+  select(-external_author_id, -language, -harvested_date, -new_june_2018, -post_type, -account_type)</code></pre>
+<pre><code>## Warning: `lang()` is deprecated as of rlang 0.2.0.
+## Please use `call2()` instead.
+## This warning is displayed once per session.</code></pre>
+<pre><code>## Warning: `new_overscope()` is deprecated as of rlang 0.2.0.
+## Please use `new_data_mask()` instead.
+## This warning is displayed once per session.</code></pre>
+<pre><code>## Warning: `overscope_eval_next()` is deprecated as of rlang 0.2.0.
+## Please use `eval_tidy()` with a data mask instead.
+## This warning is displayed once per session.</code></pre>
+<pre class="r"><code>lrt$publish_date &lt;- as.Date(lrt$publish_date, &quot;%m/%d/%Y %H:%M&quot;)
 lrt &lt;- lrt %&gt;% filter(publish_date &lt;= &quot;2016-11-08&quot;)</code></pre>
 <p>How many Bernie tweets were there from each type of account?</p>
 <pre class="r"><code>lrt %&gt;% group_by(account_category) %&gt;% 
   summarise(num_tweets = n()) %&gt;%
   kable()</code></pre>
+<pre><code>## Warning: The `printer` argument is deprecated as of rlang 0.3.0.
+## This warning is displayed once per session.</code></pre>
 <table>
 <thead>
 <tr class="header">

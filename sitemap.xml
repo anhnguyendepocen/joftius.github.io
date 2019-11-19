@@ -3,6 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>/post/a-concise-defense-of-significance/</loc>
+    <lastmod>2019-11-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/post/counterfactual-privilege-icml-talk/</loc>
     <lastmod>2019-06-12T00:00:00+00:00</lastmod>
   </url>
@@ -34,11 +39,15 @@
   
   <url>
     <loc>/</loc>
-    <lastmod>2019-06-12T00:00:00+00:00</lastmod>
+    <lastmod>2019-11-18T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/page/introstats/</loc>
+  </url>
+  
+  <url>
+    <loc>/post/2019-11-18-a-concise-defense-of-significance/</loc>
   </url>
   
   <url>
@@ -84,7 +93,7 @@
   
   <url>
     <loc>/tags/p-values/</loc>
-    <lastmod>2018-02-26T00:00:00+00:00</lastmod>
+    <lastmod>2019-11-18T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -101,7 +110,7 @@
   
   <url>
     <loc>/post/</loc>
-    <lastmod>2019-06-12T00:00:00+00:00</lastmod>
+    <lastmod>2019-11-18T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -113,7 +122,7 @@
   
   <url>
     <loc>/tags/reproducibility-crisis/</loc>
-    <lastmod>2018-02-26T00:00:00+00:00</lastmod>
+    <lastmod>2019-11-18T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -141,13 +150,13 @@
   
   <url>
     <loc>/tags/significance-tests/</loc>
-    <lastmod>2018-02-26T00:00:00+00:00</lastmod>
+    <lastmod>2019-11-18T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>/categories/statistics/</loc>
-    <lastmod>2019-06-12T00:00:00+00:00</lastmod>
+    <lastmod>2019-11-18T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   

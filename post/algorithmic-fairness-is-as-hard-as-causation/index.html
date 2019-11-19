@@ -184,7 +184,7 @@ ga('send', 'pageview');
   
   
   &nbsp;|&nbsp;
-  <i class="fa fa-clock-o"></i> 8 minutes (1626 words)
+  <i class="fa fa-clock-o"></i> 8 minutes (1645 words)
   
   
 </span>
@@ -278,6 +278,8 @@ world$roberts &lt;- predict(roberts_model, type = &quot;response&quot;)
 output &lt;- melt(world, measure.vars = 5:6, variable.name = &quot;Model&quot;, value.name = &quot;Prediction&quot;)
 output %&gt;% group_by(Model, Gender, CarColor) %&gt;% 
   summarise(Predicted = mean(Prediction))</code></pre>
+<pre><code>## Warning: The `printer` argument is deprecated as of rlang 0.3.0.
+## This warning is displayed once per session.</code></pre>
 <pre><code>## # A tibble: 8 x 4
 ## # Groups:   Model, Gender [?]
 ##   Model   Gender CarColor     Predicted

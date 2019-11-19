@@ -7,10 +7,21 @@
     <generator>Hugo -- gohugo.io</generator>
     <managingEditor>lastname at nyu.edu (Joshua Loftus)</managingEditor>
     <webMaster>lastname at nyu.edu (Joshua Loftus)</webMaster>
-    <lastBuildDate>Mon, 26 Feb 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 18 Nov 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/tags/reproducibility-crisis/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>A concise defense of statistical significance</title>
+      <link>/post/a-concise-defense-of-significance/</link>
+      <pubDate>Mon, 18 Nov 2019 00:00:00 +0000</pubDate>
+      <author>lastname at nyu.edu (Joshua Loftus)</author>
+      <guid>/post/a-concise-defense-of-significance/</guid>
+      <description>A letter, signed by over 800 scientists and published in Nature called for an end to using $p$-values to decide whether data refutes or supports a scientific hypothesis. The letter has received widespread coverage and reignited an old debate.
+Weaker arguments Most of the objections to $p$-values or the $p &amp;lt; 0.05$ threshold in these articles can be summarized into two categories:
+ Objections that would apply to any method resulting in a yes/no decision Objections that would apply to any method with yes/no decisions that might be wrong  Banning $p$-values or &amp;ldquo;$p &amp;lt; 0.</description>
+    </item>
     
     <item>
       <title>A conditional approach to inference after model selection</title>

@@ -5,21 +5,28 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-  <title>Significance Tests</title>
-  <meta property="og:title" content="Significance Tests" />
-  <meta name="twitter:title" content="Significance Tests" />
+  <title>A concise defense of statistical significance</title>
+  <meta property="og:title" content="A concise defense of statistical significance" />
+  <meta name="twitter:title" content="A concise defense of statistical significance" />
+  <meta name="description" content="A letter, signed by over 800 scientists and published in Nature called for an end to using $p$-values to decide whether data refutes or supports a scientific hypothesis. The letter has received widespread coverage and reignited an old debate.
+Weaker arguments Most of the objections to $p$-values or the $p &lt; 0.05$ threshold in these articles can be summarized into two categories:
+ Objections that would apply to any method resulting in a yes/no decision Objections that would apply to any method with yes/no decisions that might be wrong  Banning $p$-values or &ldquo;$p &lt; 0.">
+  <meta property="og:description" content="A letter, signed by over 800 scientists and published in Nature called for an end to using $p$-values to decide whether data refutes or supports a scientific hypothesis. The letter has received widespread coverage and reignited an old debate.
+Weaker arguments Most of the objections to $p$-values or the $p &lt; 0.05$ threshold in these articles can be summarized into two categories:
+ Objections that would apply to any method resulting in a yes/no decision Objections that would apply to any method with yes/no decisions that might be wrong  Banning $p$-values or &ldquo;$p &lt; 0.">
+  <meta name="twitter:description" content="A letter, signed by over 800 scientists and published in Nature called for an end to using $p$-values to decide whether data refutes or supports a scientific hypothesis. The letter has received …">
   <meta name="author" content="Joshua Loftus"/>
   <link href='/img/favicon.ico' rel='icon' type='image/x-icon'/>
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@joftius" />
   <meta name="twitter:creator" content="@joftius" />
-  <meta property="og:url" content="/tags/significance-tests/" />
+  <meta property="og:url" content="/post/a-concise-defense-of-significance/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Joshua Loftus" />
 
   <meta name="generator" content="Hugo 0.36" />
-  <link rel="canonical" href="/tags/significance-tests/" />
-  <link rel="alternate" href="/tags/significance-tests/index.xml" type="application/rss+xml" title="Joshua Loftus">
+  <link rel="canonical" href="/post/a-concise-defense-of-significance/" />
+  <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Joshua Loftus">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -154,14 +161,40 @@ ga('send', 'pageview');
 
 
     
+  
+  
+  
+
+
+
+
+  
+
   <header class="header-section ">
+    
     <div class="intro-header no-img">
+      
       <div class="container">
         <div class="row">
           <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-            <div class="page-heading">
-              <h1>#Significance Tests</h1>
-              <hr class="small">
+            <div class="post-heading">
+              <h1>A concise defense of statistical significance</h1>
+                
+                
+                  <span class="post-meta">
+  
+  
+  <i class="fa fa-calendar-o"></i>&nbsp;Posted on November 18, 2019
+  
+  
+  &nbsp;|&nbsp;
+  <i class="fa fa-clock-o"></i> 3 minutes (576 words)
+  
+  
+</span>
+
+
+                
             </div>
           </div>
         </div>
@@ -169,137 +202,80 @@ ga('send', 'pageview');
     </div>
   </header>
 
+
     
-  <div class="container" role="main">
-    <div class="row">
-      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
         
-        <div class="posts-list">
+
+<p>A <a href="https://www.nature.com/articles/d41586-019-00857-9">letter</a>, signed by over 800 scientists and published in Nature called for an end to using $p$-values to decide whether data refutes or supports a scientific hypothesis. The letter has received <a href="https://www.newyorker.com/magazine/2019/09/09/what-statistics-can-and-cant-tell-us-about-ourselves">widespread</a> <a href="https://www.miamiherald.com/news/article237281119.html">coverage</a> and reignited an old debate.</p>
+
+<h2 id="weaker-arguments">Weaker arguments</h2>
+
+<p>Most of the objections to $p$-values or the $p &lt; 0.05$ threshold in these articles can be summarized into two categories:</p>
+
+<ol>
+<li>Objections that would apply to any method resulting in a yes/no decision</li>
+<li>Objections that would apply to any method with yes/no decisions that might be wrong</li>
+</ol>
+
+<p>Banning $p$-values or &ldquo;$p &lt; 0.05$&rdquo; thresholds wouldn&rsquo;t address these objections. We will still have to make decisions, we can&rsquo;t just report a Bayes factor (or a p-value) and refuse to decide whether a drug trial should continue or not. So our decisions will still sometimes be wrong, and in both directions.</p>
+
+<h2 id="stronger-arguments">Stronger arguments</h2>
+
+<p>The last kind of objection is more sensible&ndash;though less often the focal point of this debate&ndash;and I would summarize it as:</p>
+
+<ol>
+<li>Statistical significance is not sufficient for practical significance, we need to know something about the effect size.</li>
+</ol>
+
+<p>I more or less agree with this, but it is not an objection to using $p$-values or $p &lt; 0.05$, it&rsquo;s an objection to <em>misusing</em> them or <em>using them in isolation</em>.</p>
+
+<p>And any method can be misused! A scientist could do many tests and only report the significant results, or they could compute many effect size estimates or Bayes factors and only report the largest ones.</p>
+
+<h2 id="real-roots-of-the-problem">Real roots of the problem</h2>
+
+<p>I think there are two underlying problems that the $p$-value debate is mostly a distraction from: the <a href="https://www.significancemagazine.com/2-uncategorised/593-cargo-cult-statistics-and-scientific-crisis">rote</a>, uncritical application of any kind of statistical method (because, as Jack Schwartz <a href="https://link.springer.com/chapter/10.1007/978-0-8176-4775-9_3">put it</a>, &ldquo;&hellip; the simple-mindedness &hellip; to dress scientific brilliancies and scientific absurdities alike in the impressive uniform of formulae and theorems. Unfortunately however, an absurdity in uniform is far more persuasive than an absurdity unclad.&rdquo;), and the incentive structure of scientific publication.</p>
+
+<p>From <a href="https://journals.plos.org/plosmedicine/article?id=10.1371/journal.pmed.0020124">Why most published research findings are false</a> (Ioannidis):
+- Corollary 4: The greater the flexibility in designs, definitions, outcomes, and analytical modes in a scientific field, the less likely the research findings are to be true.
+- Corollary 5: The greater the financial and other interests and prejudices in a scientific field, the less likely the research findings are to be true.
+- Corollary 6: The hotter a scientific field (with more scientific teams involved), the less likely the research findings are to be true.</p>
+
+<h2 id="the-burden-of-the-burden-of-proof">The burden of the burden of proof</h2>
+
+<p>Lastly, it&rsquo;s unfortunate but amusing that the Herald article mentioned many people misunderstand $p$-values, and the New Yorker article had this correction: &ldquo;An earlier version of this article incorrectly defined $p$-value.&rdquo;</p>
+
+<p>I sympathize with researchers who have done good work but can&rsquo;t get it published because the result isn&rsquo;t &ldquo;significant.&rdquo; This is a problem with publication standards, not statistical methods. It should be normal to publish negative or unimpressive results, otherwise the literature has little to teach us about what <em>doesn&rsquo;t</em> work.</p>
+
+<p>It&rsquo;s also a resource issue. Collecting data is costly. There are many barriers to research other than arbitrary publication standards involving $p$-values, including many other arbitrary publication standards. While discontent has been focused on $p$-values, we may find ourselves suddenly facing <em>de facto</em> expectations of applying (often unnecessary) &ldquo;artificial intelligence&rdquo; to massive datasets in order to be published.</p>
+
+<p>No particular statistical methodology is the cause or solution of these issues. (More and better statistics education is necessary!)</p>
+
+      </article>
+
+      
+        <ul class="pager blog-pager">
           
-            <article class="post-preview">
-              <a href="/post/a-concise-defense-of-significance/">
-                <h2 class="post-title">A concise defense of statistical significance</h2>
-
-                
-              </a>
-
-              <p class="post-meta">
-                Posted on November 18, 2019
-              </p>
-              <div class="post-entry">
-                
-                  
-                    
-                  
-                  A letter, signed by over 800 scientists and published in Nature called for an end to using $p$-values to decide whether data refutes or supports a scientific hypothesis. The letter has received widespread coverage and reignited an old debate.
-[&hellip;] Most of the objections to $p$-values or the $p &lt; 0.05$ threshold in these articles can be summarized into two categories:
-[&hellip;] Banning $p$-values or &ldquo;$p &lt; 0.05$&rdquo; thresholds wouldn&rsquo;t address these objections. We will still have to make decisions, we can&rsquo;t just report a Bayes factor (or a p-value) and refuse to decide whether a drug trial should continue or not. So our decisions will still sometimes be wrong, and in both directions.
-[&hellip;] The last kind of objection is more sensible&ndash;though less &hellip;
-                  <a href="/post/a-concise-defense-of-significance/" class="post-read-more">[Read More]</a>
-                
-              </div>
-
-              
-                <span class="post-meta">
-                  
-                    #<a href="//tags/p-values/">p-values</a>&nbsp;
-                  
-                    #<a href="//tags/reproducibility-crisis/">Reproducibility crisis</a>&nbsp;
-                  
-                    #<a href="//tags/significance-tests/">Significance tests</a>&nbsp;
-                  
-                </span>
-              
-
-            </article>
+            <li class="previous">
+              <a href="/post/counterfactual-privilege-icml-talk/" data-toggle="tooltip" data-placement="top" title="Counterfactual privilege ICML talk">&larr; Previous Post</a>
+            </li>
           
-            <article class="post-preview">
-              <a href="/post/conditional-approach-to-inference-after-model-selection/">
-                <h2 class="post-title">A conditional approach to inference after model selection</h2>
-
-                
-              </a>
-
-              <p class="post-meta">
-                Posted on February 26, 2018
-              </p>
-              <div class="post-entry">
-                
-                  
-                    
-                  
-                  Model selection can invalidate inference, such as significance tests, but statisticians have recently made progress developing methods to adjust for this bias. One approach uses conditional probability, adjusting inferences by conditioning on selecting the chosen model. This post motivates the conditional approach with a simple screening rule example and introduces the <a href="https://github.com/selective-inference">selectiveInference</a> R package that can compute adjusted significance tests after popular model selection methods like forward stepwise and LASSO.
-                  <a href="/post/conditional-approach-to-inference-after-model-selection/" class="post-read-more">[Read More]</a>
-                
-              </div>
-
-              
-                <span class="post-meta">
-                  
-                    #<a href="//tags/r/">R</a>&nbsp;
-                  
-                    #<a href="//tags/selective-inference/">Selective inference</a>&nbsp;
-                  
-                    #<a href="//tags/selection-bias/">Selection bias</a>&nbsp;
-                  
-                    #<a href="//tags/model-selection/">Model selection</a>&nbsp;
-                  
-                    #<a href="//tags/significance-tests/">Significance tests</a>&nbsp;
-                  
-                    #<a href="//tags/p-values/">p-values</a>&nbsp;
-                  
-                    #<a href="//tags/reproducibility-crisis/">Reproducibility crisis</a>&nbsp;
-                  
-                </span>
-              
-
-            </article>
           
-            <article class="post-preview">
-              <a href="/post/model-selection-bias-invalidates-significance-tests/">
-                <h2 class="post-title">Model selection bias invalidates significance tests</h2>
+        </ul>
+      
 
-                
-              </a>
 
-              <p class="post-meta">
-                Posted on February 13, 2018
-              </p>
-              <div class="post-entry">
-                
-                  
-                    
-                  
-                  People often do regression model selection, either by hand or using algorithms like forward stepwise or the lasso. Sometimes they also report significance tests for the variables in the chosen model. After all, a significant <em>p</em>-value means they&rsquo;ve found something real. But there&rsquo;s a problem: the reason for that significant <em>p</em>-value may just be something called model selection bias. This bias can invalidate inferences done after model selection, and may be one of the contributors to the reproducibility crisis in science. Adjusting inference methods to account for model selection is an area of ongoing <a href="page/research/">research</a> where I have done some work.
-                  <a href="/post/model-selection-bias-invalidates-significance-tests/" class="post-read-more">[Read More]</a>
-                
-              </div>
-
-              
-                <span class="post-meta">
-                  
-                    #<a href="//tags/r/">R</a>&nbsp;
-                  
-                    #<a href="//tags/selection-bias/">Selection bias</a>&nbsp;
-                  
-                    #<a href="//tags/model-selection/">Model selection</a>&nbsp;
-                  
-                    #<a href="//tags/significance-tests/">Significance tests</a>&nbsp;
-                  
-                    #<a href="//tags/p-values/">p-values</a>&nbsp;
-                  
-                    #<a href="//tags/reproducibility-crisis/">Reproducibility crisis</a>&nbsp;
-                  
-                </span>
-              
-
-            </article>
-          
-        </div>
+      
         
-      </div>
+        
+      
+
     </div>
   </div>
+</div>
 
     <footer>
   <div class="container">
@@ -342,7 +318,7 @@ ga('send', 'pageview');
           
           <li>
             
-            <a href="/tags/significance-tests/index.xml" title="RSS">
+            <a href="/index.xml" title="RSS">
             
               <span class="fa-stack fa-lg">
                 <i class="fa fa-circle fa-stack-2x"></i>
