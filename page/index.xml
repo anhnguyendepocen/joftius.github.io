@@ -56,10 +56,10 @@ Background material on topics prerequisite to this course, including lecture not
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       <author>lastname at nyu.edu (Joshua Loftus)</author>
       <guid>/page/research/</guid>
-      <description>Causal inference in fairness This work approaches fair machine learning from a causal inference perspective, arguing that determining what is fair is a similar challenge to determining causality.
+      <description>My two areas of active work are summarized below with links to selected papers. More information can be found on my Google Scholar profile page.
+Causal inference in fairness This work approaches fair machine learning from a causal inference perspective, arguing that determining what is fair is a similar challenge to determining causality.
 Press Some of this work was covered in the New Scientist and 36Kr.
-Publications  M. J. Kusner, C. Russell, J. R. Loftus, R. Silva. Making Decisions that Reduce Discriminatory Impact. International Conference on Machine Learning, 2019. [link]
- M. J. Kusner, J.</description>
+Publications  M. J.</description>
     </item>
     
     <item>
@@ -68,8 +68,7 @@ Publications  M. J. Kusner, C. Russell, J. R. Loftus, R. Silva. Making Decisions
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       <author>lastname at nyu.edu (Joshua Loftus)</author>
       <guid>/page/teaching/</guid>
-      <description>Course pages  Stat-UB.103: Statistics for business: control, regression, and forecasting (6 credits)
- Stat-UB.003: Regression and forecasting (page not active) Stats 390: Statistical Consulting Workshop (at Stanford, old page)  Selected links For the R programming language Installation: download and install the R language itself, then download and install the free desktop version of RStudio, finally, you may find this short, free book on the basics of R and RStudio helpful for getting started.</description>
+      <description>Course pages  Stat-UB.103: Introductory statistics (created by Vinu Abeywick) Stat-UB.103 (old): Statistics for business: control, regression, and forecasting Stat-UB.003: Regression and forecasting (page not active) Stats 390: Statistical Consulting Workshop (at Stanford, old page)  Selected links For the R programming language Installation: download and install the R language itself, then download and install the free desktop version of RStudio, finally, you may find this short, free book on the basics of R and RStudio helpful for getting started.</description>
     </item>
     
   </channel>
