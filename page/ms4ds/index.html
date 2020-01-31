@@ -5,23 +5,23 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-  <title>Teaching</title>
-  <meta property="og:title" content="Teaching" />
-  <meta name="twitter:title" content="Teaching" />
-  <meta name="description" content="Course pages and useful learning resources">
-  <meta property="og:description" content="Course pages and useful learning resources">
-  <meta name="twitter:description" content="Course pages and useful learning resources">
+  <title>Modern statistics</title>
+  <meta property="og:title" content="Modern statistics" />
+  <meta name="twitter:title" content="Modern statistics" />
+  <meta name="description" content="Stat-GB.4304 Modern statistics (and causal inference) for data science">
+  <meta property="og:description" content="Stat-GB.4304 Modern statistics (and causal inference) for data science">
+  <meta name="twitter:description" content="Stat-GB.4304 Modern statistics (and causal inference) for data science">
   <meta name="author" content="Joshua Loftus"/>
   <link href='/img/favicon.ico' rel='icon' type='image/x-icon'/>
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@joftius" />
   <meta name="twitter:creator" content="@joftius" />
-  <meta property="og:url" content="/page/teaching/" />
+  <meta property="og:url" content="/page/ms4ds/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Joshua Loftus" />
 
   <meta name="generator" content="Hugo 0.36" />
-  <link rel="canonical" href="/page/teaching/" />
+  <link rel="canonical" href="/page/ms4ds/" />
   <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Joshua Loftus">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
@@ -174,11 +174,11 @@ ga('send', 'pageview');
         <div class="row">
           <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
             <div class="page-heading">
-              <h1>Teaching</h1>
+              <h1>Modern statistics</h1>
                 
                   
                     <hr class="small">
-                    <span class="page-subheading">Course pages and useful learning resources</span>
+                    <span class="page-subheading">Stat-GB.4304 Modern statistics (and causal inference) for data science</span>
                   
                 
                 
@@ -197,44 +197,31 @@ ga('send', 'pageview');
       <article role="main" class="blog-post">
         
 
-<h1 id="course-pages">Course pages</h1>
+<h2 id="course-description">Course description</h2>
+
+<p>This course surveys theory and methods addressing important statistical aspects of data science with a focus on high-dimensional data, statistical learning, and causal inference. We will begin with advances in hypothesis testing such as control of the false discovery rate for multiple comparisons. Then we will discuss statistical theory for popular learning and model selection methods such as the lasso, including recent advances in post-selection inference. Finally, after reviewing frameworks for causal inference the course will conclude by reading literature on the application of statistical learning methods to causal inference.</p>
+
+<h3 id="syllabus">Syllabus</h3>
+
+<p>Provisional syllabus <a href="https://docs.google.com/document/d/1QR54u2MThoNTfFPbUYNE8eQW_XUeQ-Ev6NLfTKjKFYg/edit?usp=sharing">here</a>. Important: check schedule and registration information before attendance.</p>
+
+<h2 id="reading-textbook-references">Reading/textbook references</h2>
+
+<p>These references are generally good, and some parts of them closely match the material we are covering.</p>
 
 <ul>
-<li><a href="../ms4ds/">Stat-GB.4304</a>: Modern statistics for data science</li>
-<li><a href="http://stats103.org/">Stat-UB.103</a>: Introductory statistics (created by Vinu Abeywick)</li>
-<li><a href="../introstats/">Stat-UB.103 (old)</a>: Statistics for business: control, regression, and forecasting</li>
-<li>Stat-UB.003: Regression and forecasting (page not active)</li>
-<li><a href="http://joshualoftus.com/stats390.html">Stats 390</a>: Statistical Consulting Workshop (at Stanford, old page)</li>
+<li><em>Computer Age Statistical Inference: Algorithms, Evidence and Data Science</em> by Bradley Efron and Trevor Hastie. <a href="http://web.stanford.edu/~hastie/CASI/">PDF</a></li>
 </ul>
 
-<h1 id="selected-links">Selected links</h1>
+<p>See syllabus for additional readings.</p>
 
-<h2 id="for-the-r-programming-language">For the R programming language</h2>
-
-<p>Installation: download and install the <a href="https://cran.rstudio.com/">R language</a> itself, then download and install the free desktop version of <a href="https://www.rstudio.com/products/rstudio/download/">RStudio</a>, finally, you may find this short, free book on the <a href="https://ismayc.github.io/rbasics-book/">basics of R and RStudio</a> helpful for getting started.</p>
-
-<h3 id="packages-and-guides">Packages and guides</h3>
+<h2 id="getting-started-with-r">Getting started with R</h2>
 
 <ul>
-<li><p>The <a href="https://www.tidyverse.org/packages/">tidyverse</a> is essential. It&rsquo;s a bundle of packages including blockbusters like <code>ggplot2</code> and <code>dplyr</code>.</p></li>
-
-<li><p>This list of <a href="https://support.rstudio.com/hc/en-us/articles/201057987-Quick-list-of-useful-R-packages">recommended packages</a> has a lot of great suggestions as well.</p></li>
-
-<li><p>There are many great, free books for learning R in more depth than the R Basics one above, including books focusing on <a href="http://socviz.co/gettingstarted.html">visualization</a>, <a href="http://moderndive.com/">introductory statistics</a>, <a href="https://www.tidytextmining.com/">text mining</a>, and <a href="http://r4ds.had.co.nz/">data science</a>.</p></li>
-</ul>
-
-<h3 id="interesting-data-sets">Interesting data sets</h3>
-
-<p>Data in R packages is easy to access. Just <code>install.packages(&quot;packagename&quot;)</code> (with quotes), then <code>library(packagename)</code> (without quotes), and read the package documentation for help. For example, the <code>nycflights13</code> documentation describes 5 dataframes contained in that package, like the <code>flights</code> dataframe and the name and meaning of each variable it contains.</p>
-
-<p>If a package is not available on CRAN (the central repository for R), but is instead only hosted on github, you may need to install the package <code>devtools</code> and use the command <code>devtools::install_github(&quot;authorname/packagename&quot;)</code>.</p>
-
-<ul>
-<li><p><a href="https://cran.r-project.org/web/packages/fivethirtyeight/index.html">FiveThiryEight</a> is an R package with many interesting datasets from the data journalism site with the same name. There are several sports and politics datasets, one about which movies pass or fail the Bechdel test, one about hate crimes and income inequality, one about employment and earnings of recent college graduates by major, and so on. Check the documentation for a full list of datasets and how to use each one.</p></li>
-
-<li><p><a href="https://cran.r-project.org/web/packages/gapminder/index.html">Gapminder</a> is an R package with data including life expectancy and GDP per capita by country and year. This is the data shown in a famous TED talk by the late Hans Rosling.</p></li>
-
-<li><p>The four packages described in <a href="https://blog.rstudio.com/2014/07/23/new-data-packages/">this post</a> on the RStudio blog: <code>babynames</code>, <code>fueleconomy</code>, <code>nasaweather</code> and <code>nycflights13</code>.</p></li>
+<li>Download and install the <a href="https://cran.rstudio.com/">R language</a></li>
+<li>Download and install the free desktop version of <a href="https://www.rstudio.com/products/rstudio/download/">RStudio</a></li>
+<li>Check out this free book on the <a href="https://ismayc.github.io/rbasics-book/">basics of R and RStudio</a></li>
+<li>Install the <a href="https://www.tidyverse.org/packages/">tidyverse</a> bundle of packages using <code>install.packages(&quot;tidyverse&quot;)</code>, and read about <a href="http://ggplot2.tidyverse.org/">ggplot2</a> and <a href="http://dplyr.tidyverse.org/">dplyr</a></li>
 </ul>
 
       </article>

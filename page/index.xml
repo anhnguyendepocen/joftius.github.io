@@ -51,6 +51,15 @@ Background material on topics prerequisite to this course, including lecture not
     </item>
     
     <item>
+      <title>Modern statistics</title>
+      <link>/page/ms4ds/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <author>lastname at nyu.edu (Joshua Loftus)</author>
+      <guid>/page/ms4ds/</guid>
+      <description>Course description This course surveys theory and methods addressing important statistical aspects of data science with a focus on high-dimensional data, statistical learning, and causal inference. We will begin with advances in hypothesis testing such as control of the false discovery rate for multiple comparisons. Then we will discuss statistical theory for popular learning and model selection methods such as the lasso, including recent advances in post-selection inference. Finally, after reviewing frameworks for causal inference the course will conclude by reading literature on the application of statistical learning methods to causal inference.</description>
+    </item>
+    
+    <item>
       <title>Research</title>
       <link>/page/research/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -68,7 +77,7 @@ Publications  M. J.</description>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       <author>lastname at nyu.edu (Joshua Loftus)</author>
       <guid>/page/teaching/</guid>
-      <description>Course pages  Stat-UB.103: Introductory statistics (created by Vinu Abeywick) Stat-UB.103 (old): Statistics for business: control, regression, and forecasting Stat-UB.003: Regression and forecasting (page not active) Stats 390: Statistical Consulting Workshop (at Stanford, old page)  Selected links For the R programming language Installation: download and install the R language itself, then download and install the free desktop version of RStudio, finally, you may find this short, free book on the basics of R and RStudio helpful for getting started.</description>
+      <description>Course pages  Stat-GB.4304: Modern statistics for data science Stat-UB.103: Introductory statistics (created by Vinu Abeywick) Stat-UB.103 (old): Statistics for business: control, regression, and forecasting Stat-UB.003: Regression and forecasting (page not active) Stats 390: Statistical Consulting Workshop (at Stanford, old page)  Selected links For the R programming language Installation: download and install the R language itself, then download and install the free desktop version of RStudio, finally, you may find this short, free book on the basics of R and RStudio helpful for getting started.</description>
     </item>
     
   </channel>
