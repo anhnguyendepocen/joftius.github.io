@@ -1,10 +1,66 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>/</loc>
+    <lastmod>2019-11-18T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>/post/a-concise-defense-of-significance/</loc>
     <lastmod>2019-11-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/categories/</loc>
+    <lastmod>2019-11-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/p-values/</loc>
+    <lastmod>2019-11-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/</loc>
+    <lastmod>2019-11-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/r/</loc>
+    <lastmod>2019-11-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/reproducibility-crisis/</loc>
+    <lastmod>2019-11-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/significance-tests/</loc>
+    <lastmod>2019-11-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/categories/statistics/</loc>
+    <lastmod>2019-11-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/</loc>
+    <lastmod>2019-11-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/algorithmic-fairness/</loc>
+    <lastmod>2019-06-12T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/algorithmic-justice/</loc>
+    <lastmod>2019-06-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -18,12 +74,47 @@
   </url>
   
   <url>
+    <loc>/tags/selection-bias/</loc>
+    <lastmod>2018-10-05T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/bernie-sanders/</loc>
+    <lastmod>2018-07-31T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/categories/politics/</loc>
+    <lastmod>2018-07-31T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/post/russian-twitter-trolls-attacked-bernie-too/</loc>
     <lastmod>2018-07-31T00:00:00+00:00</lastmod>
   </url>
   
   <url>
+    <loc>/tags/twitter/</loc>
+    <lastmod>2018-07-31T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/post/conditional-approach-to-inference-after-model-selection/</loc>
+    <lastmod>2018-02-26T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/model-selection/</loc>
+    <lastmod>2018-02-26T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/categories/science/</loc>
+    <lastmod>2018-02-26T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/selective-inference/</loc>
     <lastmod>2018-02-26T00:00:00+00:00</lastmod>
   </url>
   
@@ -38,43 +129,7 @@
   </url>
   
   <url>
-    <loc>/</loc>
-    <lastmod>2019-11-18T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/page/introstats/</loc>
-  </url>
-  
-  <url>
-    <loc>/post/2019-11-18-a-concise-defense-of-significance/</loc>
-  </url>
-  
-  <url>
     <loc>/page/about/</loc>
-  </url>
-  
-  <url>
-    <loc>/tags/algorithmic-fairness/</loc>
-    <lastmod>2019-06-12T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/algorithmic-justice/</loc>
-    <lastmod>2019-06-12T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/bernie-sanders/</loc>
-    <lastmod>2018-07-31T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/categories/</loc>
-    <priority>0</priority>
   </url>
   
   <url>
@@ -86,48 +141,11 @@
   </url>
   
   <url>
-    <loc>/tags/model-selection/</loc>
-    <lastmod>2018-02-26T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>/page/ms4ds/</loc>
   </url>
   
   <url>
-    <loc>/tags/p-values/</loc>
-    <lastmod>2019-11-18T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>/page/</loc>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/categories/politics/</loc>
-    <lastmod>2018-07-31T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/post/</loc>
-    <lastmod>2019-11-18T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/r/</loc>
-    <lastmod>2018-02-26T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/reproducibility-crisis/</loc>
-    <lastmod>2019-11-18T00:00:00+00:00</lastmod>
-    <priority>0</priority>
   </url>
   
   <url>
@@ -135,49 +153,7 @@
   </url>
   
   <url>
-    <loc>/categories/science/</loc>
-    <lastmod>2018-02-26T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/selection-bias/</loc>
-    <lastmod>2018-10-05T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/selective-inference/</loc>
-    <lastmod>2018-02-26T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/significance-tests/</loc>
-    <lastmod>2019-11-18T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/categories/statistics/</loc>
-    <lastmod>2019-11-18T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/</loc>
-    <lastmod>2019-06-12T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>/page/teaching/</loc>
-  </url>
-  
-  <url>
-    <loc>/tags/twitter/</loc>
-    <lastmod>2018-07-31T00:00:00+00:00</lastmod>
-    <priority>0</priority>
   </url>
   
 </urlset>

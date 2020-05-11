@@ -20,7 +20,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Joshua Loftus" />
 
-  <meta name="generator" content="Hugo 0.36" />
+  <meta name="generator" content="Hugo 0.70.0" />
   <link rel="canonical" href="/page/introstats/" />
   <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Joshua Loftus">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
@@ -82,12 +82,16 @@
     </div>
 </div>
 
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-114292497-1', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-114292497-1', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
 </head>
 
@@ -195,18 +199,11 @@ ga('send', 'pageview');
   <div class="row">
     <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
       <article role="main" class="blog-post">
-        
-
-<h2 id="course-description">Course description</h2>
-
+        <h2 id="course-description">Course description</h2>
 <p>This course examines modern statistical methods as a basis for decision making in the face of uncertainty. Topics include probability theory, discrete and continuous distributions, hypothesis testing, estimation, and statistical quality control. With the aid of computers, these statistical methods are used to analyze data. Also presented are an introduction to statistical models and their application to decision making. Topics include the simple linear regression model, inference in regression analysis, sensitivity analysis, and multiple regression analysis.</p>
-
 <h3 id="syllabus">Syllabus</h3>
-
 <p>Full syllabus here: <a href="http://joshualoftus.com/syllabus103.pdf">pdf</a></p>
-
 <h2 id="assignments">Assignments</h2>
-
 <ul>
 <li>Reading: <a href="http://ccnmtl.columbia.edu/projects/qmss/measurement/validity_and_reliability.html">Reliability and validity</a></li>
 <li>Reading: <a href="https://drive.google.com/file/d/0B-DHaDEbiOGkc1RycUtIcUtIelE/view">OIS</a> Chapter 1, up to and including Section 1.5, but you may skip 1.4.2.</li>
@@ -220,9 +217,7 @@ ga('send', 'pageview');
 <li>Homework 2: see announcement in Classes</li>
 <li>Reading: <a href="https://drive.google.com/file/d/0B-DHaDEbiOGkc1RycUtIcUtIelE/view">OIS</a> Chapter 2, Section 4 up to 2.4.3, and Section 5. Read 2.4.4 by Thursday.</li>
 </ul>
-
 <h2 id="lecture-notes">Lecture notes</h2>
-
 <ul>
 <li><a href="http://joshualoftus.com/notes103/2observational.html">Observational studies</a></li>
 <li><a href="http://joshualoftus.com/notes103/3summaries.html">Summary statistics</a></li>
@@ -258,11 +253,8 @@ ga('send', 'pageview');
 <li><a href="http://joshualoftus.com/notes103/34thefuture.html">Resources to learn more</a></li>
 <li><a href="http://joshualoftus.com/notes103/ethics.pdf">Principles and ethics</a></li>
 </ul>
-
-<h2 id="reading-textbook-references">Reading/textbook references</h2>
-
+<h2 id="readingtextbook-references">Reading/textbook references</h2>
 <p>These references are generally good, and some parts of them closely match the material we are covering.</p>
-
 <ul>
 <li><a href="http://moderndive.com/">ModernDive (MD)</a></li>
 <li><a href="http://compcogscisydney.appspot.com/lsr/lsr-0.5.2.pdf">Learning Statistics with R (LSR)</a></li>
@@ -270,9 +262,7 @@ ga('send', 'pageview');
 <li><a href="https://rafalab.github.io/dsbook/">Introduction to Data Science (IDS)</a></li>
 <li>Statistics, 4th Edition, by Freedman, Pisani, and Purves (FPP). Textbook, <em>not required</em>.</li>
 </ul>
-
 <p>Specific chapter or section references for various topics are as follows.</p>
-
 <ul>
 <li>Controlled and observational studies: LSR 2, especially 2.5 onward; OIS 1.1-1.5; FPP 1-2.</li>
 <li>Summaries and plots: LSR 5; OIS 1.6; MD 3; FPP 3-4,7.</li>
@@ -282,9 +272,7 @@ ga('send', 'pageview');
 <li>Covariance and simple regression: MD 6; LSR 5.7, 15.1-2,4,6,8,9; OIS 7; FPP 8-12.</li>
 <li>Multiple regression: MD 7; LSR 15.3,10; OIS 8.1-3.</li>
 </ul>
-
 <h2 id="getting-started-with-r">Getting started with R</h2>
-
 <ul>
 <li>Download and install the <a href="https://cran.rstudio.com/">R language</a></li>
 <li>Download and install the free desktop version of <a href="https://www.rstudio.com/products/rstudio/download/">RStudio</a></li>
@@ -371,7 +359,7 @@ ga('send', 'pageview');
         </p>
         
         <p class="credits theme-by text-muted">
-          <a href="http://gohugo.io">Hugo v0.36</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
+          <a href="http://gohugo.io">Hugo v0.70.0</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
           
         </p>
       </div>

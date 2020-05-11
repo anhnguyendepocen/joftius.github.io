@@ -17,7 +17,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Joshua Loftus" />
 
-  <meta name="generator" content="Hugo 0.36" />
+  <meta name="generator" content="Hugo 0.70.0" />
   <link rel="canonical" href="/page/" />
   <link rel="alternate" href="/page/index.xml" type="application/rss+xml" title="Joshua Loftus">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
@@ -79,12 +79,16 @@
     </div>
 </div>
 
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-114292497-1', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-114292497-1', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
 </head>
 
@@ -175,35 +179,6 @@ ga('send', 'pageview');
       <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
         
         <div class="posts-list">
-          
-            <article class="post-preview">
-              <a href="/page/introstats/">
-                <h2 class="post-title"></h2>
-
-                
-              </a>
-
-              <p class="post-meta">
-                Posted on January 1, 0001
-              </p>
-              <div class="post-entry">
-                
-                  
-                    
-                  
-                  This course examines modern statistical methods as a basis for decision making in the face of uncertainty. Topics include probability theory, discrete and continuous distributions, hypothesis testing, estimation, and statistical quality control. With the aid of computers, these statistical methods are used to analyze data. Also presented are an introduction to statistical models and their application to decision making. Topics include the simple linear regression model, inference in regression analysis, sensitivity analysis, and multiple regression analysis.
-[&hellip;] Full syllabus here: pdf
-[&hellip;] Homework 4 (solution)
-[&hellip;] Studyguide: Exam 1 (solution)
-[&hellip;] Homework 5 (Rmd)
-[&hellip;] These references are generally good, and some parts of them closely match the material &hellip;
-                  <a href="/page/introstats/" class="post-read-more">[Read More]</a>
-                
-              </div>
-
-              
-
-            </article>
           
             <article class="post-preview">
               <a href="/page/about/">
@@ -321,9 +296,9 @@ Background material on topics prerequisite to this course, including lecture not
                     
                   
                   This course surveys theory and methods addressing important statistical aspects of data science with a focus on high-dimensional data, statistical learning, and causal inference. We will begin with advances in hypothesis testing such as control of the false discovery rate for multiple comparisons. Then we will discuss statistical theory for popular learning and model selection methods such as the lasso, including recent advances in post-selection inference. Finally, after reviewing frameworks for causal inference the course will conclude by reading literature on the application of statistical learning methods to causal inference.
-[&hellip;] Provisional syllabus here.
-Important: check schedule and registration information before attendance.
-[&hellip;] These references are generally good, &hellip;
+[&hellip;] Updated syllabus here.
+[&hellip;] All notebooks linked below, and their .Rmd source files, are available on this github repository.
+[&hellip;] These &hellip;
                   <a href="/page/ms4ds/" class="post-read-more">[Read More]</a>
                 
               </div>
@@ -471,7 +446,7 @@ Important: check schedule and registration information before attendance.
         </p>
         
         <p class="credits theme-by text-muted">
-          <a href="http://gohugo.io">Hugo v0.36</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
+          <a href="http://gohugo.io">Hugo v0.70.0</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
           
         </p>
       </div>

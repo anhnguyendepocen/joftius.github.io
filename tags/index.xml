@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on Joshua Loftus</title>
@@ -7,13 +7,49 @@
     <generator>Hugo -- gohugo.io</generator>
     <managingEditor>lastname at nyu.edu (Joshua Loftus)</managingEditor>
     <webMaster>lastname at nyu.edu (Joshua Loftus)</webMaster>
-    <lastBuildDate>Wed, 12 Jun 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 18 Nov 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>Algorithmic Fairness</title>
+      <title>p-values</title>
+      <link>/tags/p-values/</link>
+      <pubDate>Mon, 18 Nov 2019 00:00:00 +0000</pubDate>
+      <author>lastname at nyu.edu (Joshua Loftus)</author>
+      <guid>/tags/p-values/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>R</title>
+      <link>/tags/r/</link>
+      <pubDate>Mon, 18 Nov 2019 00:00:00 +0000</pubDate>
+      <author>lastname at nyu.edu (Joshua Loftus)</author>
+      <guid>/tags/r/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Reproducibility crisis</title>
+      <link>/tags/reproducibility-crisis/</link>
+      <pubDate>Mon, 18 Nov 2019 00:00:00 +0000</pubDate>
+      <author>lastname at nyu.edu (Joshua Loftus)</author>
+      <guid>/tags/reproducibility-crisis/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Significance tests</title>
+      <link>/tags/significance-tests/</link>
+      <pubDate>Mon, 18 Nov 2019 00:00:00 +0000</pubDate>
+      <author>lastname at nyu.edu (Joshua Loftus)</author>
+      <guid>/tags/significance-tests/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Algorithmic fairness</title>
       <link>/tags/algorithmic-fairness/</link>
       <pubDate>Wed, 12 Jun 2019 00:00:00 +0000</pubDate>
       <author>lastname at nyu.edu (Joshua Loftus)</author>
@@ -22,11 +58,20 @@
     </item>
     
     <item>
-      <title>Algorithmic Justice</title>
+      <title>Algorithmic justice</title>
       <link>/tags/algorithmic-justice/</link>
       <pubDate>Wed, 12 Jun 2019 00:00:00 +0000</pubDate>
       <author>lastname at nyu.edu (Joshua Loftus)</author>
       <guid>/tags/algorithmic-justice/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Selection bias</title>
+      <link>/tags/selection-bias/</link>
+      <pubDate>Fri, 05 Oct 2018 00:00:00 +0000</pubDate>
+      <author>lastname at nyu.edu (Joshua Loftus)</author>
+      <guid>/tags/selection-bias/</guid>
       <description></description>
     </item>
     
@@ -40,7 +85,16 @@
     </item>
     
     <item>
-      <title>Model Selection</title>
+      <title>Twitter</title>
+      <link>/tags/twitter/</link>
+      <pubDate>Tue, 31 Jul 2018 00:00:00 +0000</pubDate>
+      <author>lastname at nyu.edu (Joshua Loftus)</author>
+      <guid>/tags/twitter/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Model selection</title>
       <link>/tags/model-selection/</link>
       <pubDate>Mon, 26 Feb 2018 00:00:00 +0000</pubDate>
       <author>lastname at nyu.edu (Joshua Loftus)</author>
@@ -49,65 +103,11 @@
     </item>
     
     <item>
-      <title>P Values</title>
-      <link>/tags/p-values/</link>
-      <pubDate>Mon, 18 Nov 2019 00:00:00 +0000</pubDate>
-      <author>lastname at nyu.edu (Joshua Loftus)</author>
-      <guid>/tags/p-values/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>R</title>
-      <link>/tags/r/</link>
-      <pubDate>Mon, 26 Feb 2018 00:00:00 +0000</pubDate>
-      <author>lastname at nyu.edu (Joshua Loftus)</author>
-      <guid>/tags/r/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Reproducibility Crisis</title>
-      <link>/tags/reproducibility-crisis/</link>
-      <pubDate>Mon, 18 Nov 2019 00:00:00 +0000</pubDate>
-      <author>lastname at nyu.edu (Joshua Loftus)</author>
-      <guid>/tags/reproducibility-crisis/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Selection Bias</title>
-      <link>/tags/selection-bias/</link>
-      <pubDate>Fri, 05 Oct 2018 00:00:00 +0000</pubDate>
-      <author>lastname at nyu.edu (Joshua Loftus)</author>
-      <guid>/tags/selection-bias/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Selective Inference</title>
+      <title>Selective inference</title>
       <link>/tags/selective-inference/</link>
       <pubDate>Mon, 26 Feb 2018 00:00:00 +0000</pubDate>
       <author>lastname at nyu.edu (Joshua Loftus)</author>
       <guid>/tags/selective-inference/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Significance Tests</title>
-      <link>/tags/significance-tests/</link>
-      <pubDate>Mon, 18 Nov 2019 00:00:00 +0000</pubDate>
-      <author>lastname at nyu.edu (Joshua Loftus)</author>
-      <guid>/tags/significance-tests/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Twitter</title>
-      <link>/tags/twitter/</link>
-      <pubDate>Tue, 31 Jul 2018 00:00:00 +0000</pubDate>
-      <author>lastname at nyu.edu (Joshua Loftus)</author>
-      <guid>/tags/twitter/</guid>
       <description></description>
     </item>
     

@@ -20,7 +20,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Joshua Loftus" />
 
-  <meta name="generator" content="Hugo 0.36" />
+  <meta name="generator" content="Hugo 0.70.0" />
   <link rel="canonical" href="/page/introregression/" />
   <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Joshua Loftus">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
@@ -82,12 +82,16 @@
     </div>
 </div>
 
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-114292497-1', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-114292497-1', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
 </head>
 
@@ -195,26 +199,16 @@ ga('send', 'pageview');
   <div class="row">
     <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
       <article role="main" class="blog-post">
-        
-
-<h2 id="course-description">Course description</h2>
-
+        <h2 id="course-description">Course description</h2>
 <p>The objective of this course is to introduce students to the basic statistical techniques that are widely used in business and other fields. In particular, considerable attention will be devoted to the technique of regression analysis, which is a useful and powerful technique for modeling the relationships between variables of interest.</p>
-
 <h3 id="syllabus">Syllabus</h3>
-
 <p>Full syllabus here: <a href="http://joshualoftus.com/syllabus003.pdf">pdf</a></p>
-
 <p>Background material on topics prerequisite to this course, including lecture notes and a variety of textbook references, is available on the course page for <a href="../../page/introstats/">Stat-UB.103</a>.</p>
-
 <h2 id="assignments">Assignments</h2>
-
 <ul>
 <li>To be posted.</li>
 </ul>
-
 <h2 id="lecture-notes">Lecture notes</h2>
-
 <ul>
 <li><a href="http://joshualoftus.com/notes003/Reference_univariate.html">Stats review</a></li>
 <li><a href="http://joshualoftus.com/notes003/test_practicalities.html">Practical issues with tests</a></li>
@@ -229,11 +223,8 @@ ga('send', 'pageview');
 <li><a href="http://joshualoftus.com/notes003/learning_references.html">References to learn more</a></li>
 <li><a href="http://joshualoftus.com/notes003/ethics.pdf">Principles and ethics</a></li>
 </ul>
-
-<h2 id="reading-textbook-references">Reading/textbook references</h2>
-
+<h2 id="readingtextbook-references">Reading/textbook references</h2>
 <p>These references are generally good, and some parts of them closely match the material we are covering.</p>
-
 <ul>
 <li><a href="http://moderndive.com/">ModernDive (MD)</a></li>
 <li><a href="http://compcogscisydney.appspot.com/lsr/lsr-0.5.2.pdf">Learning Statistics with R (LSR)</a></li>
@@ -241,18 +232,14 @@ ga('send', 'pageview');
 <li><a href="https://rafalab.github.io/dsbook/">Introduction to Data Science (IDS)</a></li>
 <li>Statistics, 4th Edition, by Freedman, Pisani, and Purves (FPP). Textbook, <em>not required</em>.</li>
 </ul>
-
 <p>Specific chapter or section references for various topics are as follows.</p>
-
 <ul>
 <li>Estimation: LSR 10; IDS 32-33; OIS 4.1-2; FPP 21, 23-24.</li>
 <li>Intervals and hypothesis tests: MD Appendix B; LSR 10.5, 11, 13; OIS 4.2-5, 5.1-4, 6.1-2,4-6; IDS 34, 38; FPP 26-29.</li>
 <li>Covariance and simple regression: MD 6; LSR 5.7, 15.1-2,4,6,8,9; OIS 7; FPP 8-12.</li>
 <li>Multiple regression: MD 7; LSR 15.3,10; OIS 8.1-3.</li>
 </ul>
-
 <h2 id="getting-started-with-r">Getting started with R</h2>
-
 <ul>
 <li>Download and install the <a href="https://cran.rstudio.com/">R language</a></li>
 <li>Download and install the free desktop version of <a href="https://www.rstudio.com/products/rstudio/download/">RStudio</a></li>
@@ -339,7 +326,7 @@ ga('send', 'pageview');
         </p>
         
         <p class="credits theme-by text-muted">
-          <a href="http://gohugo.io">Hugo v0.36</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
+          <a href="http://gohugo.io">Hugo v0.70.0</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
           
         </p>
       </div>
